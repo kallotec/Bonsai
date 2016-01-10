@@ -1,0 +1,11 @@
+﻿
+[TODO]
+
+- drawing precision to float
+- gravity
+- jump
+- camera
+- movement acceleration/deceleration
+- configurable gravity
+- pickup + drop object feature
+- aim + throw feature
