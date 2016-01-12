@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Framework", "Bonsai.Framework\Bonsai.Framework.csproj", "{53981ACD-D027-4804-88C4-8AFCB698BB4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonsaiSandbox1", "BonsaiSandbox1\BonsaiSandbox1\BonsaiSandbox1.csproj", "{7CD78DBF-9E7F-4125-BBC0-B03B166141B0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonsaiSandbox1Content", "BonsaiSandbox1\BonsaiSandbox1Content\BonsaiSandbox1Content.contentproj", "{1C2ACB12-EA65-4E74-8635-F33E5EDC8F0E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChastityHands", "ChastityHands\ChastityHands\ChastityHands.csproj", "{CD086F7E-785B-4481-94C2-5640749638E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChastityHandsContent", "ChastityHands\ChastityHandsContent\ChastityHandsContent.contentproj", "{1BBB8254-157E-41E7-AB64-2235481CD1EC}"
@@ -25,12 +21,6 @@ Global
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Debug|x86.Build.0 = Debug|x86
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Release|x86.ActiveCfg = Release|x86
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Release|x86.Build.0 = Release|x86
-		{7CD78DBF-9E7F-4125-BBC0-B03B166141B0}.Debug|x86.ActiveCfg = Debug|x86
-		{7CD78DBF-9E7F-4125-BBC0-B03B166141B0}.Debug|x86.Build.0 = Debug|x86
-		{7CD78DBF-9E7F-4125-BBC0-B03B166141B0}.Release|x86.ActiveCfg = Release|x86
-		{7CD78DBF-9E7F-4125-BBC0-B03B166141B0}.Release|x86.Build.0 = Release|x86
-		{1C2ACB12-EA65-4E74-8635-F33E5EDC8F0E}.Debug|x86.ActiveCfg = Debug|x86
-		{1C2ACB12-EA65-4E74-8635-F33E5EDC8F0E}.Release|x86.ActiveCfg = Release|x86
 		{CD086F7E-785B-4481-94C2-5640749638E4}.Debug|x86.ActiveCfg = Debug|x86
 		{CD086F7E-785B-4481-94C2-5640749638E4}.Debug|x86.Build.0 = Debug|x86
 		{CD086F7E-785B-4481-94C2-5640749638E4}.Release|x86.ActiveCfg = Release|x86

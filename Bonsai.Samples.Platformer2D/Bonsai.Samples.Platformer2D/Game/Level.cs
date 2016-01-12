@@ -47,7 +47,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             get { return tiles.GetLength(1); }
         }
 
-
         public bool IsVisible { get; set; }
         public int DrawOrder { get; set; }
 
@@ -291,8 +290,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             if (this.Exit != null)
                 this.Exit();
         }
-
-
 
     }
 }
