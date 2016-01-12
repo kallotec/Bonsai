@@ -74,7 +74,9 @@
   <ItemGroup>
     <Compile Include="Game\Actors\Player.cs" />
     <Compile Include="Game\Level.cs" />
-    <Compile Include="Game\SandboxGame.cs" />
+    <Compile Include="Game\SandboxGame.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\TileCollision.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
