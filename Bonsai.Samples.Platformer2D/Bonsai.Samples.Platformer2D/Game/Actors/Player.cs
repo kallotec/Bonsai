@@ -12,7 +12,7 @@ using System.Text;
 using System.Diagnostics;
 using Bonsai.Framework.Physics;
 
-namespace BonsaiSandbox1.Game.Actors
+namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
     struct TileEdges
     {

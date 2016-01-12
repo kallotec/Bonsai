@@ -1,5 +1,6 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
+using Bonsai.Framework.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,23 +11,28 @@ using System.Text;
 
 namespace ChastityHands.Game.Entities
 {
-    public class Cock : MoveableActor
+    public class Cock : MoveableActor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {
-        public Cock(int health, string assetTexSkin) : base(0,0)
+        public Cock(int health, string assetTexSkin)
         {
+            IsVisible = true;
+            DrawOrder = 2;
+
             this.Health = health;
             this.assetTexSkin = assetTexSkin;
         }
 
+        string assetTexSkin;
+
         public delegate void delFullyPenetrated();
         public event delFullyPenetrated FullyPenetrated;
 
-        string assetTexSkin;
-
+        public bool IsVisible { get; set; }
+        public int DrawOrder { get; set; }
         public int Health { get; set; }
-        
 
-        public override void LoadContent(ContentManager content)
+
+        public void Load(ContentManager content)
         {
             //load cock skin
             base.Texture = content.Load<Texture2D>(assetTexSkin);
@@ -35,7 +41,11 @@ namespace ChastityHands.Game.Entities
             base.Velocity = new Vector2(0, 1);
         }
 
-        public override void Update(GameFrame gameFrame)
+        public void Unload()
+        {
+        }
+
+        public void Update(GameFrame gameFrame)
         {
             //move
             base.Position += base.Velocity;
@@ -54,19 +64,10 @@ namespace ChastityHands.Game.Entities
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(GameFrame frame, SpriteBatch batch)
         {
-            spriteBatch.Draw(base.Texture, base.Position, base.DrawingTint);
-        }
-
-        public override void CollidedWith(IGameObject actor)
-        {
-        }
-
-        public override void TouchedBy(IGameObject actor)
-        {
+            batch.Draw(base.Texture, base.Position, base.DrawingTint);
         }
 
     }
-
 }

@@ -16,6 +16,12 @@ namespace ChastityHands.Game.Screens
 {
     public class InGameScreen : IScreen
     {
+        public InGameScreen()
+        {
+            IsVisible = true;
+            DrawOrder = 0;
+        }
+
         public delegate void delStartGame(int score, bool completedGame);
         public delegate void delBackToMenu();
         public event delStartGame GameOver;
@@ -24,13 +30,17 @@ namespace ChastityHands.Game.Screens
         Field<string> health;
         Field<string> score;
         List<KeyPressListener> keyListeners;
-        Queue<Cock> cocks;
+        Queue<Cock> cocksAll;
+        Queue<Cock> cocksActive;
         Cock activeCock;
         Hand leftHand;
         Hand rightHand;
         int slapCount = 0;
         int handDamage = 2;
         Texture2D texBackground;
+
+        public bool IsVisible { get; set; }
+        public int DrawOrder { get; set; }
 
 
         public void Load(ContentManager content)
@@ -60,8 +70,8 @@ namespace ChastityHands.Game.Screens
             //hands
             leftHand = new Hand(Handedness.Left, "chastity-hand", "SFX/slap-1");
             rightHand = new Hand(Handedness.Right, "chastity-hand", "SFX/slap-1");
-            leftHand.LoadContent(content);
-            rightHand.LoadContent(content);
+            leftHand.Load(content);
+            rightHand.Load(content);
 
             //position hands
             leftHand.Position = Vector2.Zero - new Vector2(37,0);
@@ -70,27 +80,25 @@ namespace ChastityHands.Game.Screens
             //create lots of cocks
             var cock1 = new Cock(90, "Cocks/cock-1");
             cock1.FullyPenetrated += cock_FullyPenetrated;
-            cock1.LoadContent(content);
+            cock1.Load(content);
             var cock2 = new Cock(130, "Cocks/cock-2");
             cock2.FullyPenetrated += cock_FullyPenetrated;
-            cock2.LoadContent(content);
+            cock2.Load(content);
             var cock3 = new Cock(160, "Cocks/cock-3");
             cock3.FullyPenetrated += cock_FullyPenetrated;
-            cock3.LoadContent(content);
+            cock3.Load(content);
             var cock4 = new Cock(190, "Cocks/cock-4");
             cock4.FullyPenetrated += cock_FullyPenetrated;
-            cock4.LoadContent(content);
+            cock4.Load(content);
 
-            //build cock queue
-            cocks = new Queue<Cock>();
-            cocks.Enqueue(cock1);
-            cocks.Enqueue(cock2);
-            cocks.Enqueue(cock3);
-            cocks.Enqueue(cock4);
+            cocksActive = new Queue<Cock>();
+            cocksAll = new Queue<Cock>();
+            cocksAll.Enqueue(cock1);
+            cocksAll.Enqueue(cock2);
+            cocksAll.Enqueue(cock3);
+            cocksAll.Enqueue(cock4);
 
-            //whip out first cock
-            nextCock();
-
+            ResetGameState();
         }
 
         public void Unload()
@@ -120,11 +128,11 @@ namespace ChastityHands.Game.Screens
             batch.Draw(texBackground, Vector2.Zero, Color.White);
 
             //cock
-            activeCock.Draw(batch);
+            activeCock.Draw(frame, batch);
 
             //hands
-            leftHand.Draw(batch);
-            rightHand.Draw(batch);
+            leftHand.Draw(frame, batch);
+            rightHand.Draw(frame, batch);
 
             //ui
             health.Draw(batch);
@@ -132,12 +140,26 @@ namespace ChastityHands.Game.Screens
 
         }
 
+        public void ResetGameState()
+        {
+            // Clear cock queue
+            cocksActive.Clear();
+
+            // Load up the line of cocks
+            foreach (var cock in cocksAll)
+                cocksActive.Enqueue(cock);
+
+            // Whip out the first cock
+            nextCock();
+
+        }
+
         void nextCock()
         {
-            //get next cock
-            activeCock = cocks.Dequeue();
+            // Get next cock
+            activeCock = cocksActive.Dequeue();
 
-            //update health value
+            // Update health value
             health.Value = activeCock.Health.ToString();
 
         }
@@ -159,7 +181,7 @@ namespace ChastityHands.Game.Screens
             //-- dead cock! --
 
             //any left in cock queue?
-            if (cocks.Count > 0)
+            if (cocksActive.Count > 0)
             {
                 //load next cock
                 nextCock();
@@ -188,7 +210,6 @@ namespace ChastityHands.Game.Screens
 
         }
 
-
         void keyPressed_Left()
         {
             leftHand.HandleSlap();
@@ -213,6 +234,7 @@ namespace ChastityHands.Game.Screens
             if (BackToMenu != null)
                 BackToMenu();
         }
+
 
     }
 }

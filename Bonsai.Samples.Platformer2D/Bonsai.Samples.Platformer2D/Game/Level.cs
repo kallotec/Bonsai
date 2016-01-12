@@ -1,7 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Common;
-using BonsaiSandbox1.Game.Actors;
+using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace BonsaiSandbox1.Game
+namespace Bonsai.Samples.Platformer2D.Game
 {
     public class Level : BonsaiGameObject, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {

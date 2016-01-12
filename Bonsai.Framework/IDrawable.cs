@@ -10,6 +10,7 @@ namespace Bonsai.Framework
     public interface IDrawable
     {
         bool IsVisible { get; set; }
+        int DrawOrder { get; }
 
         void Draw(GameFrame frame, SpriteBatch batch);
     }

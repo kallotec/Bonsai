@@ -10,12 +10,13 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Bonsai.Framework;
 using ChastityHands.Game.Screens;
+using Bonsai.Framework.Common;
 
 namespace ChastityHands.Game
 {
     enum GameState { Menu, InGame, End }
 
-    public class GameManager : BonsaiGameBase
+    public class GameManager : BonsaiGame
     {
         public GameManager()
         {
@@ -30,45 +31,39 @@ namespace ChastityHands.Game
 
         protected override void Init()
         {
-            //setup
-            base.SetWindow(width: 800, height: 600);
-            base.SetMouse(isVisible: false);
-        }
+            // Setup game window
+            base.SetWindow(width: 800, height: 600, showMouse: false);
 
-        protected override void Load(ContentManager content)
-        {
-            //fonts
-            Globals.GeneralFont = content.Load<SpriteFont>("UI/ui_regular");
-
-            //menu
+            // Menu screen
             menuScreen = new MenuScreen();
             menuScreen.StartGame += menuScreen_StartGame;
             menuScreen.QuitGame += menuScreen_QuitGame;
-            menuScreen.Load(content);
 
-            //ingame screen created on start command from menu
+            // InGame screen
+            gameScreen = new InGameScreen();
+            gameScreen.GameOver += gameScreen_GameOver;
+            gameScreen.BackToMenu += gameScreen_BackToMenu;
 
-            //end
+            // EndGame screen
             endScreen = new EndScreen();
             endScreen.StartGame += menuScreen_StartGame;
             endScreen.BackToMenu += endScreen_BackToMenu;
-            endScreen.Load(content);
 
-            //display start menu
+            // Display start menu
             state = GameState.Menu;
 
         }
 
-        protected override void Unload()
+        protected override void Load(ContentManager content)
         {
-            if (menuScreen != null) 
-                menuScreen.Unload();
+            // Fonts
+            Globals.GeneralFont = content.Load<SpriteFont>("UI/ui_regular");
 
-            if (gameScreen != null) 
-                gameScreen.Unload();
+            // Screens
+            menuScreen.Load(content);
+            gameScreen.Load(content);
+            endScreen.Load(content);
 
-            if (endScreen != null) 
-                endScreen.Unload();
         }
 
         protected override void Update(GameFrame frame)
@@ -115,37 +110,38 @@ namespace ChastityHands.Game
 
         void menuScreen_StartGame()
         {
-            //create game screen
-            gameScreen = new InGameScreen();
-            gameScreen.GameOver += gameScreen_GameOver;
-            gameScreen.BackToMenu += gameScreen_BackToMenu;
-            gameScreen.Load(base.Content);
+            // Reset game state
+            gameScreen.ResetGameState();
 
+            // Display InGame screen
             state = GameState.InGame;
 
         }
 
         void menuScreen_QuitGame()
         {
-            //kill app
+            // Kill app
             this.Exit();
         }
 
         void gameScreen_BackToMenu()
         {
+            // Display menu
             state = GameState.Menu;
         }
 
         void gameScreen_GameOver(int score, bool completedGame)
         {
-            //pass score to screen
+            // Pass score to endgame screen
             endScreen.RefreshResults(score, completedGame);
 
+            // Display endgame screen
             state = GameState.End;
         }
 
         void endScreen_BackToMenu()
         {
+            // Display menu
             state = GameState.Menu;
         }
 

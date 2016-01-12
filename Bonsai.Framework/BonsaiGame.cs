@@ -1,4 +1,5 @@
-﻿using Bonsai.Framework.Common;
+﻿using Bonsai.Framework.Actors;
+using Bonsai.Framework.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,24 +16,57 @@ namespace Bonsai.Framework
         {
             Graphics = new GraphicsDeviceManager(this);
             Frame = new GameFrame();
+
+            GameObjects = new List<BonsaiGameObject>();
         }
 
         protected GraphicsDeviceManager Graphics { get; private set; }
         protected GameFrame Frame { get; private set; }
         protected SpriteBatch SpriteBatch { get; private set; }
+        protected List<BonsaiGameObject> GameObjects { get; private set; }
         bool isWindowSet;
         Color backgroundColor = Color.Black;
 
 
         protected abstract void Init();
 
-        protected abstract void Load(ContentManager contentManager);
+        protected virtual void Load(ContentManager contentManager)
+        {
+            var loadables = GameObjects.OfType<ILoadable>();
 
-        protected abstract void Unload();
+            foreach (var obj in loadables)
+                obj.Load(contentManager);
 
-        protected abstract void Update(GameFrame frame);
+        }
 
-        protected abstract void Draw(GameFrame frame);
+        protected virtual void Unload()
+        {
+            var loadables = GameObjects.OfType<ILoadable>();
+
+            foreach (var obj in loadables)
+                obj.Unload();
+        }
+
+        protected virtual void Update(GameFrame frame)
+        {
+            var updateable = GameObjects.OfType<IUpdateable>();
+
+            foreach (var obj in updateable)
+                obj.Update(frame);
+        }
+
+        protected virtual void Draw(GameFrame frame)
+        {
+            SpriteBatch.Begin();
+
+            var drawable = GameObjects.OfType<IDrawable>();
+
+            foreach (var obj in drawable.OrderBy(d => d.DrawOrder))
+                obj.Draw(frame, SpriteBatch);
+
+            SpriteBatch.End();
+        }
+
 
 
         protected sealed override void Initialize()
@@ -97,7 +131,7 @@ namespace Bonsai.Framework
             base.Update(gameTime);
         }
 
-        protected void SetWindow(int width, int height)
+        protected void SetWindow(int width, int height, bool showMouse)
         {
             //adjust window resolution
             Graphics.PreferredBackBufferWidth = width;
@@ -108,6 +142,9 @@ namespace Bonsai.Framework
             Globals.Viewport = Graphics.GraphicsDevice.Viewport.Bounds;
             Globals.Viewport_Centerpoint = new Vector2(Globals.Viewport.Width * 0.5f, Globals.Viewport.Height * 0.5f);
             Globals.Window_Position = new Vector2(this.Window.ClientBounds.X, this.Window.ClientBounds.Y);
+
+            // Mouse
+            SetMouse(showMouse);
 
             isWindowSet = true;
         }

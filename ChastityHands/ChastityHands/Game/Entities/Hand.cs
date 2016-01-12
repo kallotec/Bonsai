@@ -14,10 +14,13 @@ namespace ChastityHands.Game.Entities
 {
     public enum Handedness { Left, Right }
 
-    public class Hand : MoveableActor
+    public class Hand : MoveableActor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {
-        public Hand(Handedness handedness, string texHandPath, string sfxSlapPath) : base(0, 0)
+        public Hand(Handedness handedness, string texHandPath, string sfxSlapPath)
         {
+            IsVisible = true;
+            DrawOrder = 1;
+
             this.texHandPath = texHandPath;
             this.sfxSlapPath = sfxSlapPath;
             this.handedness = handedness;
@@ -29,8 +32,11 @@ namespace ChastityHands.Game.Entities
         Handedness handedness;
         SoundEffect sfxSlap;
 
+        public bool IsVisible { get; set; }
+        public int DrawOrder { get; set; }
 
-        public override void LoadContent(ContentManager content)
+
+        public void Load(ContentManager content)
         {
             //create timer for slap animation
             timerSlap = new MillisecCounter(0100);
@@ -43,32 +49,27 @@ namespace ChastityHands.Game.Entities
             //load slap audio
             sfxSlap = content.Load<SoundEffect>(sfxSlapPath);
         }
-
-        public override void Draw(SpriteBatch batch)
+        
+        public void Unload()
         {
-            //draw hand if slapping
-            if (!timerSlap.Completed)
-            {
-                batch.Draw(base.Texture, base.Position, null, 
-                            Color.White, 0f, Vector2.Zero, 1,
-                            (handedness == Handedness.Left ? SpriteEffects.None : SpriteEffects.FlipHorizontally), 
-                            0);
-            }
-
         }
 
-        public override void Update(GameFrame gameFrame)
+        public void Update(GameFrame gameFrame)
         {
             //update slap display timer
             timerSlap.Update(gameFrame.GameTime.ElapsedGameTime.Milliseconds);
         }
 
-        public override void CollidedWith(IGameObject actor)
+        public void Draw(GameFrame frame, SpriteBatch batch)
         {
-        }
-
-        public override void TouchedBy(IGameObject actor)
-        {
+            //draw hand if slapping
+            if (!timerSlap.Completed)
+            {
+                batch.Draw(base.Texture, base.Position, null,
+                            Color.White, 0f, Vector2.Zero, 1,
+                            (handedness == Handedness.Left ? SpriteEffects.None : SpriteEffects.FlipHorizontally),
+                            0);
+            }
         }
 
         public void HandleSlap()

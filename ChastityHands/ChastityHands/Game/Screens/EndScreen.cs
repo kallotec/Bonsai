@@ -1,4 +1,5 @@
 ﻿using Bonsai.Framework;
+using Bonsai.Framework.Actors;
 using Bonsai.Framework.Common;
 using Bonsai.Framework.Screens;
 using Bonsai.Framework.UI;
@@ -14,8 +15,14 @@ using System.Text;
 
 namespace ChastityHands.Game.Screens
 {
-    public class EndScreen : IScreen
+    public class EndScreen : BonsaiGameObject, IScreen
     {
+        public EndScreen()
+        {
+            IsVisible = true;
+            DrawOrder = 2;
+        }
+
         public delegate void delStartGame();
         public delegate void delBackToMenu();
         public event delStartGame StartGame;
@@ -25,6 +32,10 @@ namespace ChastityHands.Game.Screens
         Field<string> fieldScore;
         Field<string> fieldSuccess;
         Field<string> retryMessage;
+
+        public bool IsVisible { get; set; }
+
+        public int DrawOrder { get; set; }
 
 
         public void Load(ContentManager content)
@@ -62,7 +73,6 @@ namespace ChastityHands.Game.Screens
 
         }
 
-
         public void Unload()
         {
         }
@@ -99,6 +109,7 @@ namespace ChastityHands.Game.Screens
             if (BackToMenu != null)
                 BackToMenu();
         }
+
 
     }
 }
