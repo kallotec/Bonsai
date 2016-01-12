@@ -72,9 +72,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\Actors\Player.cs" />
+    <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />
-    <Compile Include="Game\SandboxGame.cs">
+    <Compile Include="Game\PlatformerGame.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Game\Tile.cs" />

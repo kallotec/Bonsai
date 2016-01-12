@@ -18,9 +18,9 @@ using Bonsai.Samples.Platformer2D.Game;
 
 namespace Bonsai.Samples.Platformer2D
 {
-    public class SandboxGame : BonsaiGame
+    public class PlatformerGame : BonsaiGame
     {
-        public SandboxGame()
+        public PlatformerGame()
         {
             Content.RootDirectory = "Content";
         }

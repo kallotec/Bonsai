@@ -10,7 +10,7 @@ namespace Bonsai.Samples.Platformer2D
         /// </summary>
         static void Main(string[] args)
         {
-            using (SandboxGame game = new SandboxGame())
+            using (PlatformerGame game = new PlatformerGame())
             {
                 game.Run();
             }
