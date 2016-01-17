@@ -1,6 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Content;
+using Bonsai.Framework.Input;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -18,11 +19,10 @@ namespace Bonsai.Samples.Platformer2D.Game
     {
         public Level()
         {
-            IsVisible = true;
             DrawOrder = 0;
         }
 
-        ContentManager content;
+        IContentLoader content;
         Player player;
         Tile[,] tiles;
         Vector2 start;
@@ -47,35 +47,47 @@ namespace Bonsai.Samples.Platformer2D.Game
             get { return tiles.GetLength(1); }
         }
 
-        public bool IsVisible { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; private set; }
         public int DrawOrder { get; set; }
+        public ICamera Camera { get; set; }
 
         public delegate void delExit();
         public event delExit Exit;
 
 
 
-        public void Load(ContentManager content)
+        public void Load(IContentLoader content)
         {
             this.content = content;
 
             //key listeners
             configureKeyListeners();
 
-            var map1 =  "#..................#\n" +
-                        "#..................#\n" +
-                        "#........###.......#\n" +
-                        "#..................#\n" +
-                        "#..................#\n" +
-                        "#....###.....###...#\n" +
-                        "#..............1...#\n" +
-                        "#.........##.....X.#\n" +
-                        "####################";
+            // Create sample map
+            var map1 = "#....................................#\n" +
+                        "#....................................#\n" +
+                        "#........###...............###.......#\n" +
+                        "#....................................#\n" +
+                        "#.1......#...........................#\n" +
+                        "#....###..#..###.......###.....###...#\n" +
+                        "#...........#........................#\n" +
+                        "#.........##.....X..........##.......#\n" +
+                        "######################################";
+            loadMap(map1);
 
+        }
+
+        public void Unload()
+        {
+        }
+
+        void loadMap(string mapFileContents)
+        {
             // Load the level and ensure all of the lines are the same length.
             int width;
             List<string> lines = new List<string>();
-            using (var sr = new StringReader(map1))
+            using (var sr = new StringReader(mapFileContents))
             {
                 string line = sr.ReadLine();
                 line = line.Trim();
@@ -99,7 +111,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 {
                     // to load each tile.
                     var tileType = lines[y][x];
-                    tiles[x, y] = LoadTileByChar(tileType, x, y);
+                    tiles[x, y] = createTile(tileType, x, y);
                 }
             }
 
@@ -111,69 +123,47 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         }
 
-        public void Unload()
-        {
-        }
-
-        Tile LoadTileByChar(char tileType, int x, int y)
+        Tile createTile(char tileType, int x, int y)
         {
             switch (tileType)
             {
+                // Player 1 start point
+                case '1':
+                    if (player != null)
+                        throw new NotSupportedException("A level may only have one starting point.");
+
+                    var centerPoint = GetBounds(x, y).Center;
+                    start = new Vector2(centerPoint.X, centerPoint.Y);
+
+                    // Create player
+                    player = new Player(this, start);
+                    player.Load(content);
+
+                    Camera.SetFocus(player);
+
+                    return new Tile(null, TileCollision.Passable, Color.Transparent);
+
                 // Blank space
                 case '.':
-                    return loadBlankTile();
+                    return new Tile(Globals.Pixel_HalfTransparent, TileCollision.Passable, Color.Gray);
                     
                 // Exit
                 case 'X':
-                    return loadExitTile(x, y);
+                    if (exit != invalidPosition)
+                        throw new NotSupportedException("A level may only have one exit.");
 
-                // Player 1 start point
-                case '1':
-                    return loadStartTile(x, y);
+                    exit = GetBounds(x, y).Center;
+
+                    return new Tile(Globals.Pixel, TileCollision.Passable, Color.Green);
 
                 // Impassable block
                 case '#':
-                    return loadSolidTile();
+                    return new Tile(Globals.Pixel, TileCollision.Impassable, Color.Gray);
 
                 // Unknown tile type character
                 default:
                     throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position {1}, {2}.", tileType, x, y));
             }
-        }
-
-        Tile loadBlankTile()
-        {
-            return new Tile(Globals.Pixel_HalfTransparent, TileCollision.Passable, Color.Gray);
-        }
-
-        Tile loadSolidTile()
-        {
-            return new Tile(Globals.Pixel, TileCollision.Impassable, Color.Gray);
-        }
-
-        Tile loadStartTile(int x, int y)
-        {
-            if (player != null)
-                throw new NotSupportedException("A level may only have one starting point.");
-
-            var centerPoint = GetBounds(x, y).Center;
-            start = new Vector2(centerPoint.X, centerPoint.Y);
-
-            //create player
-            player = new Player(this, start);
-            player.Load(content);
-
-            return new Tile(null, TileCollision.Passable, Color.Transparent);
-        }
-
-        Tile loadExitTile(int x, int y)
-        {
-            if (exit != invalidPosition)
-                throw new NotSupportedException("A level may only have one exit.");
-
-            exit = GetBounds(x, y).Center;
-
-            return new Tile(Globals.Pixel, TileCollision.Passable, Color.Green);
         }
 
 

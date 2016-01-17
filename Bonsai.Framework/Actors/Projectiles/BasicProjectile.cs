@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Bonsai.Framework.Common;
+using Bonsai.Framework;
 using Bonsai.Framework.Actors.Projectiles;
 using System.Collections.Generic;
 

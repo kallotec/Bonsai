@@ -4,8 +4,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Bonsai.Framework;
 using Bonsai.Framework.Actors;
+using Bonsai.Framework.Collision;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework.Maths
 {
     public class EntityMathHelper
     {

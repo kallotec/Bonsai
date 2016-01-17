@@ -1,11 +1,12 @@
 ﻿
 [TODO]
 
-- drawing precision to float
-- gravity
-- jump
-- camera
-- movement acceleration/deceleration
+- drawing precision to float (camera shake on collision, possible secondary issue)
 - configurable gravity
 - pickup + drop object feature
 - aim + throw feature
+
+
+
+last updated: 
+17/01/2016

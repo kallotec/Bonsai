@@ -1,6 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Content;
+using Bonsai.Framework.Input;
 using Bonsai.Framework.Screens;
 using Bonsai.Framework.UI;
 using ChastityHands.Game.Entities;
@@ -19,7 +20,6 @@ namespace ChastityHands.Game.Screens
     {
         public EndScreen()
         {
-            IsVisible = true;
             DrawOrder = 2;
         }
 
@@ -33,12 +33,13 @@ namespace ChastityHands.Game.Screens
         Field<string> fieldSuccess;
         Field<string> retryMessage;
 
-        public bool IsVisible { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; set; }
 
         public int DrawOrder { get; set; }
 
 
-        public void Load(ContentManager content)
+        public void Load(IContentLoader content)
         {
             //enter key listener
             keyListeners = new List<KeyPressListener>

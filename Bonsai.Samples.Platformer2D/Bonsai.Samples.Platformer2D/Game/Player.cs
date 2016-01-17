@@ -1,5 +1,4 @@
 ﻿using Bonsai.Framework;
-using Bonsai.Framework.Common;
 using Bonsai.Framework.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -10,33 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using Bonsai.Framework.Physics;
+using Bonsai.Framework.Collision;
+using Bonsai.Framework.Content;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
-    struct TileEdges
-    {
-        public TileEdges(Vector2 position, Vector2 objSize)
-        {
-            this.position = position;
-            this.objSize = objSize;
-        }
-
-        Vector2 position;
-        Vector2 objSize;
-
-        public int LeftIndex { get { return (int)position.X / Tile.Width; } }
-        public int RightIndex { get { return (int)(position.X + objSize.X) / Tile.Width; } }
-        public int TopIndex { get { return (int)position.Y / Tile.Height; } }
-        public int BottomIndex { get { return (int)(position.Y + objSize.Y) / Tile.Height; } }
-
-    }
 
     public class Player : MoveableActor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {
         public Player(Level level, Vector2 startPosition)
         {
-            IsVisible = true;
             DrawOrder = 1;
 
             collisionWidth = 20;
@@ -59,11 +41,12 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         bool isJumping;
         Rectangle drawingBox;
 
-        public bool IsVisible { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; private set; }
         public int DrawOrder { get; private set; }
 
 
-        public void Load(ContentManager content)
+        public void Load(IContentLoader content)
         {
             base.Texture = Globals.Pixel;
             base.DrawingTint = Color.Red;
@@ -154,9 +137,6 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         public void Draw(GameFrame frame, SpriteBatch batch)
         {
-            if (!IsVisible)
-                return;
-
             // Draw tinted box
             batch.Draw(base.Texture, base.Position, this.drawingBox, base.DrawingTint);
 
@@ -164,5 +144,22 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
 
 
+        struct TileEdges
+        {
+            public TileEdges(Vector2 position, Vector2 objSize)
+            {
+                this.position = position;
+                this.objSize = objSize;
+            }
+
+            Vector2 position;
+            Vector2 objSize;
+
+            public int LeftIndex { get { return (int)position.X / Tile.Width; } }
+            public int RightIndex { get { return (int)(position.X + objSize.X) / Tile.Width; } }
+            public int TopIndex { get { return (int)position.Y / Tile.Height; } }
+            public int BottomIndex { get { return (int)(position.Y + objSize.Y) / Tile.Height; } }
+
+        }
     }
 }

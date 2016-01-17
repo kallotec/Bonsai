@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Bonsai.Framework.Common;
+using Bonsai.Framework;
 using Bonsai.Framework.Actors.Projectiles;
 
 namespace Bonsai.Framework.Actors.Weapons

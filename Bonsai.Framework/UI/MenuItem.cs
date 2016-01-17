@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Bonsai.Framework;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Input;
 
 namespace Bonsai.Framework.UI
 {

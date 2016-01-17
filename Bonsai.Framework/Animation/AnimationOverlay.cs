@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework.Animation
 {
     public enum SpriteAnimationType { SingleFrame, LoopingAnimation, NonLooping_ResetBackToStartingFrame, NonLooping_PauseOnEndFrame }
     public enum SpriteOriginType { TopLeft, Center }

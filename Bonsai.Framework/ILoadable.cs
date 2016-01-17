@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Bonsai.Framework.Content;
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace Bonsai.Framework
 {
     public interface ILoadable
     {
-        void Load(ContentManager content);
+        void Load(IContentLoader loader);
         void Unload();
     }
 }

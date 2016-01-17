@@ -1,6 +1,6 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +15,6 @@ namespace ChastityHands.Game.Entities
     {
         public Cock(int health, string assetTexSkin)
         {
-            IsVisible = true;
             DrawOrder = 2;
 
             this.Health = health;
@@ -27,12 +26,13 @@ namespace ChastityHands.Game.Entities
         public delegate void delFullyPenetrated();
         public event delFullyPenetrated FullyPenetrated;
 
-        public bool IsVisible { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; set; }
         public int DrawOrder { get; set; }
         public int Health { get; set; }
 
 
-        public void Load(ContentManager content)
+        public void Load(IContentLoader content)
         {
             //load cock skin
             base.Texture = content.Load<Texture2D>(assetTexSkin);

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Bonsai.Framework;
 using ChastityHands.Game.Screens;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Content;
 
 namespace ChastityHands.Game
 {
@@ -54,7 +54,7 @@ namespace ChastityHands.Game
 
         }
 
-        protected override void Load(ContentManager content)
+        protected override void Load(IContentLoader content)
         {
             // Fonts
             Globals.GeneralFont = content.Load<SpriteFont>("UI/ui_regular");

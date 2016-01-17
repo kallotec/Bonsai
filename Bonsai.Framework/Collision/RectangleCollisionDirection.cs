@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bonsai.Framework.Physics
+namespace Bonsai.Framework.Collision
 {
     public enum RectangleCollisionDirection
     {

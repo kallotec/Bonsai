@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework.Collision
 {
     /// <summary>
     /// A set of helpful methods for working with rectangles.

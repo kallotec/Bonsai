@@ -1,5 +1,6 @@
 ﻿using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
+using Bonsai.Framework;
+using Bonsai.Framework.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -24,18 +25,19 @@ namespace Bonsai.Framework
         protected GameFrame Frame { get; private set; }
         protected SpriteBatch SpriteBatch { get; private set; }
         protected List<BonsaiGameObject> GameObjects { get; private set; }
+        protected IContentLoader ContentLoader { get; private set; }
         bool isWindowSet;
         Color backgroundColor = Color.Black;
 
 
         protected abstract void Init();
 
-        protected virtual void Load(ContentManager contentManager)
+        protected virtual void Load(IContentLoader contentManager)
         {
             var loadables = GameObjects.OfType<ILoadable>();
 
             foreach (var obj in loadables)
-                obj.Load(contentManager);
+                obj.Load(ContentLoader);
 
         }
 
@@ -51,63 +53,77 @@ namespace Bonsai.Framework
         {
             var updateable = GameObjects.OfType<IUpdateable>();
 
-            foreach (var obj in updateable)
+            foreach (var obj in updateable.Where(u => !u.IsDisabled))
                 obj.Update(frame);
         }
 
         protected virtual void Draw(GameFrame frame)
         {
-            SpriteBatch.Begin();
+            // Try get camera
+            var camera = GameObjects.OfType<ICamera>().FirstOrDefault();
 
-            var drawable = GameObjects.OfType<IDrawable>();
+            // Apply camera transform if camera present
+            if (camera != null)
+                SpriteBatch.Begin(SpriteSortMode.Deferred, 
+                                  BlendState.AlphaBlend, 
+                                  null, null, null, null, 
+                                  camera.Transform);
+            else
+                SpriteBatch.Begin();
 
-            foreach (var obj in drawable.OrderBy(d => d.DrawOrder))
+            // Draw all drawable game objects
+            foreach (var obj in GameObjects.OfType<IDrawable>()
+                                           .Where(d => !d.IsHidden)
+                                           .OrderBy(d => d.DrawOrder))
                 obj.Draw(frame, SpriteBatch);
 
             SpriteBatch.End();
         }
 
 
-
         protected sealed override void Initialize()
         {
+            // Create content loader
+            this.ContentLoader = new StandardContentLoader(Content);
+            Globals.Content = ContentLoader;
+
             //call overridden init()
             Init();
 
             base.Initialize();
         }
 
-        protected override sealed void LoadContent()
+        protected sealed override void LoadContent()
         {
             if (isWindowSet == false)
                 throw new InvalidOperationException("SetWindow() was not called in Init()");
 
             //globals
             Globals.Device = GraphicsDevice;
-            Globals.Content = Content;
 
             this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             //call overridden load()
             Content.RootDirectory = "Content";
-            Load(this.Content);
+            Load(this.ContentLoader);
 
             //pass back to xna framework pipeline
             base.LoadContent();
         }
 
-        protected override sealed void UnloadContent()
+        protected sealed override void UnloadContent()
         {
-            Content.Unload();
-
-            //call overridden unload()
+            // Call overridden unload()
             Unload();
 
-            //pass back to xna framework pipeline
+            // Content manager
+            Content.Unload();
+
+            // Pass back to xna
             base.UnloadContent();
         }
 
-        protected override sealed void Update(GameTime gameTime)
+        protected sealed override void Update(GameTime gameTime)
         {
             //update frame data
             Frame.Update(gameTime);
@@ -115,11 +131,11 @@ namespace Bonsai.Framework
             //call overriden update()
             Update(this.Frame);
 
-            //pass back to xna framework pipeline
+            //pass back to xna
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        protected sealed override void Draw(GameTime gameTime)
         {
             //clear
             GraphicsDevice.Clear(backgroundColor);
@@ -127,7 +143,7 @@ namespace Bonsai.Framework
             //call overriden draw()
             Draw(this.Frame);
 
-            //pass back to xna framework pipeline
+            //pass back to xna
             base.Update(gameTime);
         }
 

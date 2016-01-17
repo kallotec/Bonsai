@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework
 {
     public class GameFrame
     {

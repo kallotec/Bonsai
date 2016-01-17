@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Bonsai.Framework.Common;
+using Bonsai.Framework;
 using Microsoft.Xna.Framework.Input;
+using Bonsai.Framework.Input;
 
 namespace Bonsai.Framework.UI
 {

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework.Content
 {
     public enum TextureFormatterOption { no_shine, low_shine, high_shine, shiny_top_border }
 

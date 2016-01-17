@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Bonsai.Framework.Common;
+using Bonsai.Framework;
 using System.Diagnostics;
 
 namespace Bonsai.Framework.Actors

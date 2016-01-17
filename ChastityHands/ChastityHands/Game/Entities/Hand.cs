@@ -1,6 +1,6 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
+using Bonsai.Framework.Content;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -18,7 +18,6 @@ namespace ChastityHands.Game.Entities
     {
         public Hand(Handedness handedness, string texHandPath, string sfxSlapPath)
         {
-            IsVisible = true;
             DrawOrder = 1;
 
             this.texHandPath = texHandPath;
@@ -32,11 +31,12 @@ namespace ChastityHands.Game.Entities
         Handedness handedness;
         SoundEffect sfxSlap;
 
-        public bool IsVisible { get; set; }
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; set; }
         public int DrawOrder { get; set; }
 
 
-        public void Load(ContentManager content)
+        public void Load(IContentLoader content)
         {
             //create timer for slap animation
             timerSlap = new MillisecCounter(0100);

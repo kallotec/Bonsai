@@ -5,14 +5,15 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Bonsai.Framework.Content;
 
 namespace Bonsai.Framework
 {
     public class Globals
     {
         public static GraphicsDevice Device;
-        public static ContentManager Content;
-        public static Camera2D Camera;
+        public static IContentLoader Content;
+        public static ICamera Camera;
         public static Rectangle Viewport;
 
         public static Vector2 Viewport_Centerpoint;

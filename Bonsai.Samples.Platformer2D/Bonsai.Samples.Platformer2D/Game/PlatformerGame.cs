@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Common;
 using Bonsai.Framework.Screens;
 using System.Diagnostics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
@@ -31,11 +30,16 @@ namespace Bonsai.Samples.Platformer2D
             // Setup game window
             base.SetWindow(width: 800, height: 600, showMouse: true);
 
+            // Create camera
+            var camera = new StandardCamera(base.GraphicsDevice.Viewport);
+            base.GameObjects.Add(camera);
+
             // Create level
             var level = new Level();
+            level.Camera = camera;
             level.Exit += () => { this.Exit(); };
-
             base.GameObjects.Add(level);
+
         }
 
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.Common
+namespace Bonsai.Framework.Collision
 {
     public enum AABBSide { Left, Top, Right, Bottom }
 
