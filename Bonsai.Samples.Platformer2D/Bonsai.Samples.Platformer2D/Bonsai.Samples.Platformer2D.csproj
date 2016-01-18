@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\TileCollision.cs" />
+    <Compile Include="Game\TileMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

@@ -40,6 +40,15 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         float jumpAcceleration = 5f;
         bool isJumping;
         Rectangle drawingBox;
+        int tileWidth
+        {
+            get { return level.TileMap.TileSize.X; }
+        }
+        int tileHeight
+        {
+            get { return level.TileMap.TileSize.Y; }
+        }
+
 
         public bool IsHidden { get; set; }
         public bool IsDisabled { get; private set; }
@@ -61,7 +70,6 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             var lastEdges = getEdges();
 
 
-
             // [ Y ]
 
             base.Position.Y = (float)Math.Round(base.Position.Y + base.Velocity.Y); //* (float)frame.GameTime.ElapsedGameTime.TotalSeconds;
@@ -69,24 +77,24 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
             //jumping
             if (base.Velocity.Y < 0
-                && (level.GetCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || level.GetCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable))
+                && (level.TileMap.GetCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable))
             {
                 //project out of collision
-                base.Position.Y = (lastEdges.TopIndex * Tile.Height);
+                base.Position.Y = (lastEdges.TopIndex * tileHeight);
                 base.Velocity.Y = 0;
             }
             //falling
             else if (base.Velocity.Y > 0
-                && (level.GetCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable || level.GetCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+                && (getCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
             {
                 //project out of collision
-                base.Position.Y = (newEdges.BottomIndex * Tile.Height) - (this.collisionHeight + 1);
+                base.Position.Y = (newEdges.BottomIndex * tileHeight) - (this.collisionHeight + 1);
                 base.Velocity.Y = 0;
                 isJumping = false;
             }
 
-            //jump action
-            if (frame.KeyboardState.IsKeyDown(Keys.Up) && !isJumping)
+            //jump action, only jump when landed and not already jumping
+            if (base.Velocity.Y == 0 && frame.KeyboardState.IsKeyDown(Keys.Up) && !isJumping)
             {
                 isJumping = true;
                 base.Velocity.Y = -jumpAcceleration;
@@ -104,18 +112,18 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
             // Left movement collision
             if (base.Velocity.X < 0
-                && (level.GetCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || level.GetCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+                && (getCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable))
             {
                 //project out of collision
-                base.Position.X = (lastEdges.LeftIndex * Tile.Width) + 1;
+                base.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
                 base.Velocity.X = 0;
             }
             // Right movement collision
             else if (base.Velocity.X > 0
-                && (level.GetCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable || level.GetCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+                && (getCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
             {
                 //project out of collision
-                base.Position.X = (newEdges.RightIndex * Tile.Width) - (this.collisionWidth + 1);
+                base.Position.X = (newEdges.RightIndex * tileWidth) - (this.collisionWidth + 1);
                 base.Velocity.X = 0;
             }
 
@@ -127,12 +135,6 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             else
                 base.Velocity.X = 0f;
 
-
-        }
-
-        TileEdges getEdges()
-        {
-            return new TileEdges(base.Position, new Vector2(collisionWidth, collisionHeight));
         }
 
         public void Draw(GameFrame frame, SpriteBatch batch)
@@ -142,24 +144,15 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         }
 
-
-
-        struct TileEdges
+        TileMap.TileEdges getEdges()
         {
-            public TileEdges(Vector2 position, Vector2 objSize)
-            {
-                this.position = position;
-                this.objSize = objSize;
-            }
-
-            Vector2 position;
-            Vector2 objSize;
-
-            public int LeftIndex { get { return (int)position.X / Tile.Width; } }
-            public int RightIndex { get { return (int)(position.X + objSize.X) / Tile.Width; } }
-            public int TopIndex { get { return (int)position.Y / Tile.Height; } }
-            public int BottomIndex { get { return (int)(position.Y + objSize.Y) / Tile.Height; } }
-
+            return level.TileMap.GetEdges(base.Position, collisionWidth, collisionHeight);
         }
+
+        TileCollision getCollision(int xIndex, int yIndex)
+        {
+            return level.TileMap.GetCollision(xIndex, yIndex);
+        }
+
     }
 }

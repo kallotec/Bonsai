@@ -39,6 +39,10 @@ namespace Bonsai.Framework
             // TODO: offset by viewport size, I think?
             center = new Vector2(focus.X - viewport.Width / 2, focus.Y - viewport.Height / 2);
 
+            // Stop camera going outside map left
+            if (center.X < focus.X - viewport.Width / 2)
+                center.X = focus.X - viewport.Width / 2;
+
             transform = Matrix.CreateScale(new Vector3(1, 1, 0)) * 
                         Matrix.CreateTranslation(new Vector3(-center.X, -center.Y, 0));
 
