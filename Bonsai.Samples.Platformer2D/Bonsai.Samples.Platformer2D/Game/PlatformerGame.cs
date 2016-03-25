@@ -10,10 +10,10 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Bonsai.Framework;
 using Bonsai.Framework.Actors;
-using Bonsai.Framework.Screens;
 using System.Diagnostics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Bonsai.Samples.Platformer2D.Game;
+using Bonsai.Framework.Content;
 
 namespace Bonsai.Samples.Platformer2D
 {
@@ -24,22 +24,46 @@ namespace Bonsai.Samples.Platformer2D
             Content.RootDirectory = "Content";
         }
 
+        StandardCamera camera;
+        Level level;
+        HUD hud;
 
         protected override void Init()
         {
-            // Setup game window
-            base.SetWindow(width: 800, height: 600, showMouse: true);
+            // Set up the game window
+            base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
 
             // Create camera
-            var camera = new StandardCamera(base.GraphicsDevice.Viewport);
-            base.GameObjects.Add(camera);
+            camera = new StandardCamera(base.GraphicsDevice.Viewport);
 
             // Create level
-            var level = new Level();
+            level = new Level();
             level.Camera = camera;
-            level.Exit += () => { this.Exit(); };
-            base.GameObjects.Add(level);
 
+            // Create HUD
+            hud = new HUD(level);
+            hud.ScreenBounds = base.GraphicsDevice.Viewport.Bounds;
+            hud.Exit += () => { this.Exit(); };
+
+            // Add objects to pipeline
+            base.GameObjects.Add(camera);
+            base.GameObjects.Add(level);
+            base.GameObjects.Add(hud);
+
+        }
+
+        protected override void Load(IContentLoader loader)
+        {
+            // Enfore load sequence
+            level.Load(loader);
+            hud.Load(loader);
+        }
+
+        protected override void Unload()
+        {
+            // Enfore unload sequence
+            hud.Unload();
+            level.Unload();
         }
 
     }

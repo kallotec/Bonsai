@@ -25,16 +25,22 @@ namespace Bonsai.Framework
         {
             get { return transform; }
         }
-
         public bool IsDisabled { get; private set; }
+        public Vector2 Focus
+        {
+            get
+            {
+                return (focusedActor != null
+                          ? focusedActor.Position
+                          : focusedPoint ?? new Vector2(0));
+            }
+        }
 
 
         public void Update(GameFrame frame)
         {
             // Decide what to focus on
-            var focus = (focusedActor != null 
-                            ? focusedActor.Position 
-                            : focusedPoint ?? new Vector2(0));
+            var focus = Focus;
 
             // TODO: offset by viewport size, I think?
             center = new Vector2(focus.X - viewport.Width / 2, focus.Y - viewport.Height / 2);
@@ -46,6 +52,8 @@ namespace Bonsai.Framework
             transform = Matrix.CreateScale(new Vector3(1, 1, 0)) * 
                         Matrix.CreateTranslation(new Vector3(-center.X, -center.Y, 0));
 
+            //// Run update actions
+            //ActionsStore.ForEach(a => a());
         }
 
         public void SetFocus(StaticActor focusedActor)
@@ -59,7 +67,6 @@ namespace Bonsai.Framework
             this.focusedActor = null;
             this.focusedPoint = focusedPoint;
         }
-
 
     }
 }

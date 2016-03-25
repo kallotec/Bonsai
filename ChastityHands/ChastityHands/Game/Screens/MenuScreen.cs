@@ -16,7 +16,7 @@ using System.Text;
 
 namespace ChastityHands.Game.Screens
 {
-    public class MenuScreen : BonsaiGameObject, IScreen
+    public class MenuScreen : BonsaiGameObject, IHUD
     {
         public MenuScreen()
         {
@@ -46,10 +46,10 @@ namespace ChastityHands.Game.Screens
             };
 
             //ui
-            fieldInstructions = new Field<string>(Globals.GeneralFont, "[Chastity Hands]\n\nDefend yourself with <Left Arrow> and <Right Arrow>\n\n-------------\n\nPress <Enter> to start game or <Esc> to quit", string.Empty, eDisplayMode.LabelOnly)
+            fieldInstructions = new Field<string>(Globals.GeneralFont, "[Chastity Hands]\n\nDefend yourself with <Left Arrow> and <Right Arrow>\n\n-------------\n\nPress <Enter> to start game or <Esc> to quit", string.Empty, FieldDisplayMode.LabelOnly)
             {
                 Position = Bonsai.Framework.Globals.Viewport_Centerpoint + new Vector2(0, -70),
-                Alignment = eTextAlignment.Center,
+                Alignment = FieldAlignmentMode.Center,
                 Color = Color.White,
             };
         }

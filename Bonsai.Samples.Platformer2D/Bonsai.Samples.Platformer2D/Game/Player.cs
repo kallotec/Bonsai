@@ -14,7 +14,6 @@ using Bonsai.Framework.Content;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
-
     public class Player : MoveableActor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {
         public Player(Level level, Vector2 startPosition)
@@ -49,15 +48,12 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             get { return level.TileMap.TileSize.Y; }
         }
 
-
-        public bool IsHidden { get; set; }
-        public bool IsDisabled { get; private set; }
-        public int DrawOrder { get; private set; }
+        public bool IsDisabled { get; set; }
 
 
-        public void Load(IContentLoader content)
+        public void Load(IContentLoader loader)
         {
-            base.Texture = Globals.Pixel;
+            base.Texture = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
             base.DrawingTint = Color.Red;
         }
 
@@ -98,6 +94,9 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             {
                 isJumping = true;
                 base.Velocity.Y = -jumpAcceleration;
+
+                // Update level variable
+                level.Jumps.Value++;
             }
 
             //apply gravity, todo: clamp

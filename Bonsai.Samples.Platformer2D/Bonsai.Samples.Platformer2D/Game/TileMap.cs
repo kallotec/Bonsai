@@ -1,5 +1,7 @@
 ﻿using Bonsai.Framework;
+using Bonsai.Framework.Content;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +23,8 @@ namespace Bonsai.Samples.Platformer2D.Game
         public Tile[,] Tiles { get; private set; }
         public Vector2? Start { get; private set; }
         public Vector2? Exit { get; private set; }
+        Texture2D pixel_half_trans;
+        Texture2D pixel;
 
         public Point TileSize
         {
@@ -38,8 +42,13 @@ namespace Bonsai.Samples.Platformer2D.Game
         }
 
 
-        public void LoadMap(string mapFileData)
+        public void LoadContent(IContentLoader loader, string mapFileData)
         {
+            // Textures
+
+            pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
+            pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
+
             // Load the level and ensure all of the lines are the same length.
             int width;
             List<string> lines = new List<string>();
@@ -117,7 +126,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
                 // Blank space
                 case '.':
-                    return new Tile(Globals.Pixel_HalfTransparent, TileCollision.Passable, Color.Gray);
+                    return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
 
                 // Exit
                 case 'X':
@@ -127,11 +136,11 @@ namespace Bonsai.Samples.Platformer2D.Game
                     var exitPoint = GetBounds(x, y).Center;
                     Exit = new Vector2(exitPoint.X, exitPoint.Y);
 
-                    return new Tile(Globals.Pixel, TileCollision.Passable, Color.Green);
+                    return new Tile(pixel, TileCollision.Passable, Color.Green);
 
                 // Impassable block
                 case '#':
-                    return new Tile(Globals.Pixel, TileCollision.Impassable, Color.Gray);
+                    return new Tile(pixel, TileCollision.Impassable, Color.Gray);
 
                 // Unknown tile type character
                 default:

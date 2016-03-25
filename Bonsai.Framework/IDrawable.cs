@@ -10,6 +10,7 @@ namespace Bonsai.Framework
     {
         bool IsHidden { get; set; }
         int DrawOrder { get; }
+        bool IsAttachedToCamera { get; }
 
         void Draw(GameFrame frame, SpriteBatch batch);
     }

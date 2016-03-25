@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.UI
+namespace Bonsai.Framework.UI.Menus
 {
     public delegate void delMenuItemClick();
 

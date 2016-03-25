@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Bonsai.Framework.Actors
 {
-    public abstract class StaticActor : BonsaiGameObject
+    public abstract class StaticActor : DrawableBase
     {
         public StaticActor() { }
 

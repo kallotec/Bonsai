@@ -2,6 +2,10 @@
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
+using Bonsai.Framework.Particles;
+using Bonsai.Framework.UI;
+using Bonsai.Framework.UI.Messages;
+using Bonsai.Framework.UI.Widgets;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -15,33 +19,35 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Level : BonsaiGameObject, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
+    public class Level : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
     {
         public Level()
         {
-            DrawOrder = 0;
+            base.DrawOrder = 0;
+            popupManager = new PopupManager();
+            keyListeners = new List<KeyPressListener>();
+            //particles = new List<ParticleGroup>();
         }
 
         IContentLoader content;
         Player player;
-        Random random = new Random(354668);
+        PopupManager popupManager;
         List<KeyPressListener> keyListeners;
+        SpriteFont font;
+        //List<ParticleGroup> particles;
 
-        public bool IsHidden { get; set; }
-        public bool IsDisabled { get; private set; }
-        public int DrawOrder { get; set; }
+        public GameVariable<int> Jumps;
+        public bool IsDisabled { get; set; }
         public ICamera Camera { get; set; }
         public TileMap TileMap { get; private set; }
-        public delegate void delExit();
-        public event delExit Exit;
 
 
-        public void Load(IContentLoader content)
+        public void Load(IContentLoader loader)
         {
-            this.content = content;
+            this.content = loader;
 
-            //key listeners
-            configureKeyListeners();
+            // Fonts
+            font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
 
             // Create sample map
             var map1 =  "#....................................#\n" +
@@ -55,29 +61,51 @@ namespace Bonsai.Samples.Platformer2D.Game
                         "######################################";
 
             TileMap = new TileMap(tileWidth: 22, tileHeight: 22);
-            TileMap.LoadMap(map1);
+            TileMap.LoadContent(loader, map1);
 
             // Create player
             player = new Player(this, TileMap.Start.Value);
-            player.Load(content);
+            player.Load(loader);
 
             // Focus camera on player
             Camera.SetFocus(player);
+            
+            // Setup game variables
+            Jumps = new GameVariable<int>();
+
+            // Key listeners
+            keyListeners = new List<KeyPressListener>
+            {
+                new KeyPressListener(Keys.M, () => 
+                {
+                    popupManager.AddMessage(
+                        "Hey!", 
+                        new PopupSettings
+                        {
+                            LifeInMillisecs = 1000,
+                            Velocity = new Vector2(0, -10),
+                            Font = font,
+                            Position = player.Position + new Vector2(0,-20)
+                        });
+                })
+            };
 
         }
 
         public void Unload()
         {
+            Jumps.Unload();
+            popupManager.Clear();
         }
 
         public void Update(GameFrame frame)
         {
-            // Key listeners
+            // Keys
             foreach (var listener in keyListeners)
                 listener.Update(frame.GameTime);
 
             player.Update(frame);
-
+            popupManager.Update(frame);
         }
 
         public void Draw(GameFrame frame, SpriteBatch batch)
@@ -94,29 +122,19 @@ namespace Bonsai.Samples.Platformer2D.Game
                         continue;
 
                     batch.Draw(tile.Texture, new Rectangle((int)position.X, (int)position.Y, TileMap.TileSize.X, TileMap.TileSize.Y), tile.Tint);
-
                 }
             }
 
-            //draw player
+            // Player
             player.Draw(frame, batch);
 
-        }
+            //// Particles
+            //foreach (var particle in particles)
+            //    particle.Draw(batch);
 
+            // Messages
+            popupManager.Draw(frame, batch);
 
-        void configureKeyListeners()
-        {
-            keyListeners = new List<KeyPressListener>();
-
-            //[esc]
-            keyListeners.Add(new KeyPressListener(Keys.Escape, new KeyPressListener.delKeyPressed(keyPressed_Esc)));
-
-        }
-
-        void keyPressed_Esc()
-        {
-            if (this.Exit != null)
-                this.Exit();
         }
 
     }

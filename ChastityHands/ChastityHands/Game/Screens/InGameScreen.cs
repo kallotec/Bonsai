@@ -15,7 +15,7 @@ using System.Text;
 
 namespace ChastityHands.Game.Screens
 {
-    public class InGameScreen : IScreen
+    public class InGameScreen : IHUD
     {
         public InGameScreen()
         {
@@ -59,11 +59,11 @@ namespace ChastityHands.Game.Screens
             };
 
             //ui elements
-            health = new Field<string>(Globals.GeneralFont, "Health:", string.Empty, eDisplayMode.LabelAndValue)
+            health = new Field<string>(Globals.GeneralFont, "Health:", string.Empty, FieldDisplayMode.LabelAndValue)
             {
                 Position = new Microsoft.Xna.Framework.Vector2(10, 10),
             };
-            score = new Field<string>(Globals.GeneralFont, "Score:", "0", eDisplayMode.LabelAndValue)
+            score = new Field<string>(Globals.GeneralFont, "Score:", "0", FieldDisplayMode.LabelAndValue)
             {
                 Position = new Microsoft.Xna.Framework.Vector2(10, 50),
             };

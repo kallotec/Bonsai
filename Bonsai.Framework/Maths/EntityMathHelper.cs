@@ -10,6 +10,8 @@ namespace Bonsai.Framework.Maths
 {
     public class EntityMathHelper
     {
+        static Vector2 up = new Vector2(1, 0);
+
         public static float CalculateDistanceBetween(Vector2 a, Vector2 b)
         {
             Vector2 delta = b - a;
@@ -54,7 +56,7 @@ namespace Bonsai.Framework.Maths
         public static Vector2 PlotVector(float direction, int distance, Vector2 currentPosition)
         {
             Matrix rotMatrix = Matrix.CreateRotationZ(direction);
-            Vector2 dest = Vector2.Transform(Globals.Up, rotMatrix);
+            Vector2 dest = Vector2.Transform(up, rotMatrix);
             dest *= distance;
             dest += currentPosition;
             return dest;

@@ -25,7 +25,8 @@ namespace Bonsai.Framework
         protected GameFrame Frame { get; private set; }
         protected SpriteBatch SpriteBatch { get; private set; }
         protected List<BonsaiGameObject> GameObjects { get; private set; }
-        protected IContentLoader ContentLoader { get; private set; }
+        protected IContentLoader Loader { get; private set; }
+        protected ICamera Camera { get; private set; }
         bool isWindowSet;
         Color backgroundColor = Color.Black;
 
@@ -37,7 +38,7 @@ namespace Bonsai.Framework
             var loadables = GameObjects.OfType<ILoadable>();
 
             foreach (var obj in loadables)
-                obj.Load(ContentLoader);
+                obj.Load(Loader);
 
         }
 
@@ -62,6 +63,13 @@ namespace Bonsai.Framework
             // Try get camera
             var camera = GameObjects.OfType<ICamera>().FirstOrDefault();
 
+            // Drawable objects
+            var objects = GameObjects.OfType<IDrawable>()
+                                           .Where(d => !d.IsHidden)
+                                           .OrderBy(d => d.DrawOrder);
+
+            // ------------- DRAW OBJS NOT ATTACHED TO CAMERA --------------
+
             // Apply camera transform if camera present
             if (camera != null)
                 SpriteBatch.Begin(SpriteSortMode.Deferred, 
@@ -71,23 +79,36 @@ namespace Bonsai.Framework
             else
                 SpriteBatch.Begin();
 
-            // Draw all drawable game objects
-            foreach (var obj in GameObjects.OfType<IDrawable>()
-                                           .Where(d => !d.IsHidden)
-                                           .OrderBy(d => d.DrawOrder))
+            // Draw all objs not attached to camera
+            foreach (var obj in objects.Where(o => !o.IsAttachedToCamera))
                 obj.Draw(frame, SpriteBatch);
 
             SpriteBatch.End();
+
+            // --------------- DRAW OBJS ATTACHED TO CAMERA ---------------
+
+            // Apply camera transform if camera present
+            SpriteBatch.Begin();
+
+            // Draw all objs not attached to camera
+            foreach (var obj in objects.Where(o => o.IsAttachedToCamera))
+                obj.Draw(frame, SpriteBatch);
+
+            SpriteBatch.End();
+
+            // --------------- --------------- --------------- -----------
         }
 
 
         protected sealed override void Initialize()
         {
             // Create content loader
-            this.ContentLoader = new StandardContentLoader(Content);
-            Globals.Content = ContentLoader;
+            this.Loader = new StandardContentLoader(Content);
 
-            //call overridden init()
+            // Add default camera if no custom one was specified
+            Camera = new StandardCamera(GraphicsDevice.Viewport);
+
+            // Call overridden init()
             Init();
 
             base.Initialize();
@@ -95,19 +116,20 @@ namespace Bonsai.Framework
 
         protected sealed override void LoadContent()
         {
+            // Enforce the SetWindow() call
             if (isWindowSet == false)
                 throw new InvalidOperationException("SetWindow() was not called in Init()");
-
-            //globals
-            Globals.Device = GraphicsDevice;
+            // Enforce a camera instance being available
+            if (Camera == null)
+                throw new InvalidOperationException("A camera object must be set");
 
             this.SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //call overridden load()
+            // Call overridden load()
             Content.RootDirectory = "Content";
-            Load(this.ContentLoader);
+            Load(this.Loader);
 
-            //pass back to xna framework pipeline
+            // Pass back to xna framework pipeline
             base.LoadContent();
         }
 
@@ -144,25 +166,31 @@ namespace Bonsai.Framework
             Draw(this.Frame);
 
             //pass back to xna
-            base.Update(gameTime);
+            base.Draw(gameTime);
         }
 
-        protected void SetWindow(int width, int height, bool showMouse)
+        protected void SetWindow(string windowTitle, int width, int height, bool showMouse)
         {
+            if (isWindowSet)
+                return;
+
+            isWindowSet = true;
+
             //adjust window resolution
             Graphics.PreferredBackBufferWidth = width;
             Graphics.PreferredBackBufferHeight = height;
             Graphics.ApplyChanges();
 
-            //track resolution changes globally
-            Globals.Viewport = Graphics.GraphicsDevice.Viewport.Bounds;
-            Globals.Viewport_Centerpoint = new Vector2(Globals.Viewport.Width * 0.5f, Globals.Viewport.Height * 0.5f);
-            Globals.Window_Position = new Vector2(this.Window.ClientBounds.X, this.Window.ClientBounds.Y);
+            base.Window.Title = windowTitle;
+
+            ////track resolution changes globally
+            //Globals.Viewport = Graphics.GraphicsDevice.Viewport.Bounds;
+            //Globals.Viewport_Centerpoint = new Vector2(Globals.Viewport.Width * 0.5f, Globals.Viewport.Height * 0.5f);
+            //Globals.Window_Position = new Vector2(this.Window.ClientBounds.X, this.Window.ClientBounds.Y);
 
             // Mouse
             SetMouse(showMouse);
 
-            isWindowSet = true;
         }
 
         protected void SetMouse(bool isVisible)

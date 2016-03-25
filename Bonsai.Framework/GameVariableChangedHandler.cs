@@ -5,11 +5,5 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    public interface IUpdateable
-    {
-        bool IsDisabled { get; }
-
-        void Update(GameFrame frame);
-
-    }
+    public delegate void GameVariableChangedHandler<T>(T newValue);
 }

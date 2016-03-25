@@ -16,7 +16,7 @@ using System.Text;
 
 namespace ChastityHands.Game.Screens
 {
-    public class EndScreen : BonsaiGameObject, IScreen
+    public class EndScreen : BonsaiGameObject, IHUD
     {
         public EndScreen()
         {
@@ -49,25 +49,25 @@ namespace ChastityHands.Game.Screens
             };
 
             //score
-            fieldScore = new Field<string>(Globals.GeneralFont, "Score: ", "0", eDisplayMode.LabelAndValue)
+            fieldScore = new Field<string>(Globals.GeneralFont, "Score: ", "0", FieldDisplayMode.LabelAndValue)
             {
-                Alignment = eTextAlignment.Center,
+                Alignment = FieldAlignmentMode.Center,
                 Position = new Vector2(Bonsai.Framework.Globals.Viewport_Centerpoint.X, Bonsai.Framework.Globals.Viewport.Top + 60),
                 Color = Color.SkyBlue,
             };
 
             //success
-            fieldSuccess = new Field<string>(Globals.GeneralFont, "Success: ", "false", eDisplayMode.LabelAndValue)
+            fieldSuccess = new Field<string>(Globals.GeneralFont, "Success: ", "false", FieldDisplayMode.LabelAndValue)
             {
-                Alignment = eTextAlignment.Center,
+                Alignment = FieldAlignmentMode.Center,
                 Position = fieldScore.Position + new Vector2(0, 60),
                 Color = Color.SkyBlue,
             }; 
 
             //retry msg
-            retryMessage = new Field<string>(Globals.GeneralFont, "Press <Enter> to retry or <Esc> to menu", string.Empty, eDisplayMode.LabelOnly)
+            retryMessage = new Field<string>(Globals.GeneralFont, "Press <Enter> to retry or <Esc> to menu", string.Empty, FieldDisplayMode.LabelOnly)
             {
-                Alignment = eTextAlignment.Center,
+                Alignment = FieldAlignmentMode.Center,
                 Position = Bonsai.Framework.Globals.Viewport_Centerpoint,
                 Color = Color.SkyBlue,
             }; 

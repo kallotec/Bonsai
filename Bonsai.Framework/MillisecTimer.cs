@@ -45,6 +45,18 @@ namespace Bonsai.Framework
         }
 
 
+        public void Update(int millisecs)
+        {
+            if (completed)
+                return;
+
+            current += millisecs;
+
+            if (current >= max)
+                completed = true;
+
+        }
+
         public void Reset()
         {
             //if premature reset (i.e. before timer has completed)
@@ -82,19 +94,6 @@ namespace Bonsai.Framework
             configuredMax = maxMillisecs;
 
             this.Reset();
-        }
-
-
-        public void Update(int millisecs)
-        {
-            if (completed)
-                return;
-
-            current += millisecs;
-
-            if (current >= max)
-                completed = true;
-
         }
 
     }

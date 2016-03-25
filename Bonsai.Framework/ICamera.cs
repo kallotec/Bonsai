@@ -10,6 +10,7 @@ namespace Bonsai.Framework
     public interface ICamera : Bonsai.Framework.IUpdateable
     {
         Matrix Transform { get; }
+        Vector2 Focus { get; }
 
         void SetFocus(StaticActor focusedActor);
         void SetFocus(Vector2 focusedPoint);

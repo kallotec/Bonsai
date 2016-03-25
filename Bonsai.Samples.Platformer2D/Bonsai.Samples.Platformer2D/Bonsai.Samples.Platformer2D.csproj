@@ -72,6 +72,8 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentPaths.cs" />
+    <Compile Include="Game\HUD.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />
     <Compile Include="Game\PlatformerGame.cs">
