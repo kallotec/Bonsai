@@ -24,21 +24,18 @@ namespace Bonsai.Samples.Platformer2D
             Content.RootDirectory = "Content";
         }
 
-        StandardCamera camera;
         Level level;
         HUD hud;
+
 
         protected override void Init()
         {
             // Set up the game window
             base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
 
-            // Create camera
-            camera = new StandardCamera(base.GraphicsDevice.Viewport);
-
             // Create level
             level = new Level();
-            level.Camera = camera;
+            level.Camera = base.Camera;
 
             // Create HUD
             hud = new HUD(level);
@@ -46,7 +43,6 @@ namespace Bonsai.Samples.Platformer2D
             hud.Exit += () => { this.Exit(); };
 
             // Add objects to pipeline
-            base.GameObjects.Add(camera);
             base.GameObjects.Add(level);
             base.GameObjects.Add(hud);
 
@@ -54,14 +50,14 @@ namespace Bonsai.Samples.Platformer2D
 
         protected override void Load(IContentLoader loader)
         {
-            // Enfore load sequence
+            // Enforce load sequence
             level.Load(loader);
             hud.Load(loader);
         }
 
         protected override void Unload()
         {
-            // Enfore unload sequence
+            // Enforce unload sequence
             hud.Unload();
             level.Unload();
         }

@@ -61,9 +61,18 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
         }
 
-        public void Update(GameFrame frame)
+        public void Update(GameTime time)
         {
             var lastEdges = getEdges();
+            var kbState = Keyboard.GetState();
+
+            //move action
+            if (kbState.IsKeyDown(Keys.Left))
+                base.Velocity.X = MathHelper.Clamp((base.Velocity.X + -moveAcceleration), -moveSpeedMax, moveSpeedMax);
+            else if (kbState.IsKeyDown(Keys.Right))
+                base.Velocity.X = MathHelper.Clamp((base.Velocity.X - -moveAcceleration), -moveSpeedMax, moveSpeedMax);
+            else
+                base.Velocity.X = 0f;
 
 
             // [ Y ]
@@ -90,7 +99,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             }
 
             //jump action, only jump when landed and not already jumping
-            if (base.Velocity.Y == 0 && frame.KeyboardState.IsKeyDown(Keys.Up) && !isJumping)
+            if (base.Velocity.Y == 0 && kbState.IsKeyDown(Keys.Up) && !isJumping)
             {
                 isJumping = true;
                 base.Velocity.Y = -jumpAcceleration;
@@ -126,17 +135,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 base.Velocity.X = 0;
             }
 
-            //move action
-            if (frame.KeyboardState.IsKeyDown(Keys.Left))
-                base.Velocity.X = MathHelper.Clamp((base.Velocity.X + -moveAcceleration), -moveSpeedMax, moveSpeedMax);
-            else if (frame.KeyboardState.IsKeyDown(Keys.Right))
-                base.Velocity.X = MathHelper.Clamp((base.Velocity.X - -moveAcceleration), -moveSpeedMax, moveSpeedMax);
-            else
-                base.Velocity.X = 0f;
-
+            
         }
 
-        public void Draw(GameFrame frame, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             // Draw tinted box
             batch.Draw(base.Texture, base.Position, this.drawingBox, base.DrawingTint);
@@ -155,3 +157,80 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
     }
 }
+
+
+//public void Update(GameTime time)
+//{
+//    var lastEdges = getEdges();
+//    var kbState = Keyboard.GetState();
+
+//    // [ Y ]
+
+//    base.Position.Y = (float)Math.Round(base.Position.Y + base.Velocity.Y); //* (float)frame.GameTime.ElapsedGameTime.TotalSeconds;
+//    var newEdges = getEdges();
+
+//    //jumping
+//    if (base.Velocity.Y < 0
+//        && (level.TileMap.GetCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable))
+//    {
+//        //project out of collision
+//        base.Position.Y = (lastEdges.TopIndex * tileHeight);
+//        base.Velocity.Y = 0;
+//    }
+//    //falling
+//    else if (base.Velocity.Y > 0
+//        && (getCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+//    {
+//        //project out of collision
+//        base.Position.Y = (newEdges.BottomIndex * tileHeight) - (this.collisionHeight + 1);
+//        base.Velocity.Y = 0;
+//        isJumping = false;
+//    }
+
+//    //jump action, only jump when landed and not already jumping
+//    if (base.Velocity.Y == 0 && kbState.IsKeyDown(Keys.Up) && !isJumping)
+//    {
+//        isJumping = true;
+//        base.Velocity.Y = -jumpAcceleration;
+
+//        // Update level variable
+//        level.Jumps.Value++;
+//    }
+
+//    //apply gravity, todo: clamp
+//    base.Velocity.Y = MathHelper.Clamp(base.Velocity.Y + (gravity * 1), -maxFallSpeed, maxFallSpeed);
+
+
+
+//    // [ X ]
+
+//    base.Position.X = (float)Math.Round(base.Position.X + base.Velocity.X);
+//    newEdges = getEdges();
+
+//    // Left movement collision
+//    if (base.Velocity.X < 0
+//        && (getCollision(newEdges.LeftIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.LeftIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+//    {
+//        //project out of collision
+//        base.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
+//        base.Velocity.X = 0;
+//    }
+//    // Right movement collision
+//    else if (base.Velocity.X > 0
+//        && (getCollision(newEdges.RightIndex, newEdges.TopIndex) == TileCollision.Impassable || getCollision(newEdges.RightIndex, newEdges.BottomIndex) == TileCollision.Impassable))
+//    {
+//        //project out of collision
+//        base.Position.X = (newEdges.RightIndex * tileWidth) - (this.collisionWidth + 1);
+//        base.Velocity.X = 0;
+//    }
+
+//    //move action
+//    if (kbState.IsKeyDown(Keys.Left))
+//        base.Velocity.X = MathHelper.Clamp((base.Velocity.X + -moveAcceleration), -moveSpeedMax, moveSpeedMax);
+//    else if (kbState.IsKeyDown(Keys.Right))
+//        base.Velocity.X = MathHelper.Clamp((base.Velocity.X - -moveAcceleration), -moveSpeedMax, moveSpeedMax);
+//    else
+//        base.Velocity.X = 0f;
+
+//}
+

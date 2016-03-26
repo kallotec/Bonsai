@@ -6,18 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.UI.Widgets;
+using Bonsai.Framework.Utility;
 
-namespace Bonsai.Framework.UI.Messages
+namespace Bonsai.Framework.UI.Widgets.Popups
 {
-    public class TextPopup : TextWidget<string>
+    public class PopupTextWidget<T> : TextWidget<T>
     {
-        public TextPopup(string text, PopupSettings popupSettings)
-            : base(text, popupSettings)
+        public PopupTextWidget(T value, PopupSettings popupSettings) : base(value, popupSettings)
         {
             this.popupSettings = popupSettings;
+            counter = new MillisecCounter(popupSettings.LifeInMillisecs);
         }
 
-        int fadeOutCounter;
+        MillisecCounter counter;
         Vector2 offset;
 
         PopupSettings popupSettings;
@@ -29,13 +30,13 @@ namespace Bonsai.Framework.UI.Messages
                 return;
 
             // Fadeout
-            fadeOutCounter += gameTime.ElapsedGameTime.Milliseconds;
+            counter.Update(gameTime.ElapsedGameTime.Milliseconds);
 
             // Move
             offset += popupSettings.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds,
                                                            (float)gameTime.ElapsedGameTime.TotalSeconds);
             // Die
-            if (fadeOutCounter >= popupSettings.LifeInMillisecs)
+            if (counter.Completed)
                 this.DeleteMe = true;
         }
 

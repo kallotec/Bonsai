@@ -4,8 +4,8 @@ using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.UI;
-using Bonsai.Framework.UI.Messages;
 using Bonsai.Framework.UI.Widgets;
+using Bonsai.Framework.UI.Widgets.Popups;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -29,7 +29,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             //particles = new List<ParticleGroup>();
         }
 
-        IContentLoader content;
         Player player;
         PopupManager popupManager;
         List<KeyPressListener> keyListeners;
@@ -44,8 +43,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Load(IContentLoader loader)
         {
-            this.content = loader;
-
             // Fonts
             font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
 
@@ -98,19 +95,19 @@ namespace Bonsai.Samples.Platformer2D.Game
             popupManager.Clear();
         }
 
-        public void Update(GameFrame frame)
+        public void Update(GameTime time)
         {
             // Keys
             foreach (var listener in keyListeners)
-                listener.Update(frame.GameTime);
+                listener.Update(time);
 
-            player.Update(frame);
-            popupManager.Update(frame);
+            player.Update(time);
+            popupManager.Update(time);
         }
 
-        public void Draw(GameFrame frame, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
-            //draw tile map
+            // Draw map
             for (var x = 0; x < TileMap.Tiles.GetLength(0); x++)
             {
                 for (var y = 0; y < TileMap.Tiles.GetLength(1); y++)
@@ -126,14 +123,14 @@ namespace Bonsai.Samples.Platformer2D.Game
             }
 
             // Player
-            player.Draw(frame, batch);
+            player.Draw(time, batch);
 
             //// Particles
             //foreach (var particle in particles)
             //    particle.Draw(batch);
 
             // Messages
-            popupManager.Draw(frame, batch);
+            popupManager.Draw(time, batch);
 
         }
 

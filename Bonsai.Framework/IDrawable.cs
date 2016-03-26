@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace Bonsai.Framework
         int DrawOrder { get; }
         bool IsAttachedToCamera { get; }
 
-        void Draw(GameFrame frame, SpriteBatch batch);
+        void Draw(GameTime time, SpriteBatch batch);
     }
 }

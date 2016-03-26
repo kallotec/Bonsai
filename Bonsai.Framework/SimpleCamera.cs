@@ -8,9 +8,9 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    public class StandardCamera : BonsaiGameObject, Bonsai.Framework.ICamera
+    public class SimpleCamera : BonsaiGameObject, Bonsai.Framework.ICamera
     {
-        public StandardCamera(Viewport viewport)
+        public SimpleCamera(Viewport viewport)
         {
             this.viewport = viewport;
         }
@@ -37,7 +37,7 @@ namespace Bonsai.Framework
         }
 
 
-        public void Update(GameFrame frame)
+        public void Update(GameTime time)
         {
             // Decide what to focus on
             var focus = Focus;

@@ -3,13 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Framework", "Bonsai.Framework\Bonsai.Framework.csproj", "{53981ACD-D027-4804-88C4-8AFCB698BB4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChastityHands", "ChastityHands\ChastityHands\ChastityHands.csproj", "{CD086F7E-785B-4481-94C2-5640749638E4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChastityHandsContent", "ChastityHands\ChastityHandsContent\ChastityHandsContent.contentproj", "{1BBB8254-157E-41E7-AB64-2235481CD1EC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Samples.Platformer2D", "Bonsai.Samples.Platformer2D\Bonsai.Samples.Platformer2D\Bonsai.Samples.Platformer2D.csproj", "{EAD3A31E-D1AD-4057-ADF8-C8918B0E09C6}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Bonsai.Samples.Platformer2DContent", "Bonsai.Samples.Platformer2D\Bonsai.Samples.Platformer2DContent\Bonsai.Samples.Platformer2DContent.contentproj", "{172663A6-32DC-4CA4-B3E2-3DAC190E3B6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Samples.Platformer2DContent", "Bonsai.Samples.Platformer2D\Bonsai.Samples.Platformer2DContent\Bonsai.Samples.Platformer2DContent.contentproj", "{172663A6-32DC-4CA4-B3E2-3DAC190E3B6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD24DFE5-4924-4276-8E8D-6110C2F03FE8}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +22,6 @@ Global
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Debug|x86.Build.0 = Debug|x86
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Release|x86.ActiveCfg = Release|x86
 		{53981ACD-D027-4804-88C4-8AFCB698BB4C}.Release|x86.Build.0 = Release|x86
-		{CD086F7E-785B-4481-94C2-5640749638E4}.Debug|x86.ActiveCfg = Debug|x86
-		{CD086F7E-785B-4481-94C2-5640749638E4}.Debug|x86.Build.0 = Debug|x86
-		{CD086F7E-785B-4481-94C2-5640749638E4}.Release|x86.ActiveCfg = Release|x86
-		{CD086F7E-785B-4481-94C2-5640749638E4}.Release|x86.Build.0 = Release|x86
-		{1BBB8254-157E-41E7-AB64-2235481CD1EC}.Debug|x86.ActiveCfg = Debug|x86
-		{1BBB8254-157E-41E7-AB64-2235481CD1EC}.Release|x86.ActiveCfg = Release|x86
 		{EAD3A31E-D1AD-4057-ADF8-C8918B0E09C6}.Debug|x86.ActiveCfg = Debug|x86
 		{EAD3A31E-D1AD-4057-ADF8-C8918B0E09C6}.Debug|x86.Build.0 = Debug|x86
 		{EAD3A31E-D1AD-4057-ADF8-C8918B0E09C6}.Release|x86.ActiveCfg = Release|x86

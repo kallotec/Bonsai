@@ -9,32 +9,33 @@ using Bonsai.Framework.Actors;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.UI.Widgets;
 
-namespace Bonsai.Framework.UI.Messages
+namespace Bonsai.Framework.UI.Widgets.Popups
 {
     public class PopupManager : DrawableBase, IUpdateable
     {
         public PopupManager()
         {
-            msgs = new List<TextPopup>();
+            msgs = new List<PopupTextWidget<string>>();
         }
 
-        List<TextPopup> msgs;
+        List<PopupTextWidget<string>> msgs;
 
         public bool IsDisabled { get; set; }
 
 
-        public void Update(GameFrame frame)
+        public void Update(GameTime time)
         {
-            TextPopup current = null;
+            PopupTextWidget<string> current = null;
 
             // Update fading messages and remove any expired
-            for (int x = 0; x < this.msgs.Count; x++)
+            for (var x = 0; x < this.msgs.Count; x++)
             {
                 current = this.msgs[x];
-                current.Update(frame.GameTime);
+                current.Update(time);
 
                 if (current.DeleteMe)
                 {
+                    current.Unload();
                     this.msgs.RemoveAt(x);
                     x--;
                 }
@@ -42,9 +43,9 @@ namespace Bonsai.Framework.UI.Messages
             }
         }
 
-        public void Draw(GameFrame frame, SpriteBatch spriteBatch)
+        public void Draw(GameTime time, SpriteBatch spriteBatch)
         {
-            // TODO: draw only messages that are within the camera's viewport
+            // TODO: Draw only messages that are within the camera's viewport
 
             // Draw out fading messages
             for (var x = 0; x < this.msgs.Count; x++)
@@ -54,12 +55,22 @@ namespace Bonsai.Framework.UI.Messages
 
         public void AddMessage(string msg, PopupSettings popupSettings)
         {
-            msgs.Add(new TextPopup(msg, popupSettings));
+            // Load up a new popup
+            var popup = new PopupTextWidget<string>(msg, popupSettings);
+            popup.Load(loader:null);
+
+            msgs.Add(popup);
         }
 
         public void Clear()
         {
-            this.msgs.Clear();
+            // Unload and clear all
+            for (var x = 0; x < this.msgs.Count; x++)
+            {
+                this.msgs[x].Unload();
+                this.msgs.RemoveAt(x);
+                x--;
+            }
         }
 
     }

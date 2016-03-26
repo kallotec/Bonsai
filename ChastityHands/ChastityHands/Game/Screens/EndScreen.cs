@@ -2,7 +2,6 @@
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
-using Bonsai.Framework.Screens;
 using Bonsai.Framework.UI;
 using ChastityHands.Game.Entities;
 using Microsoft.Xna.Framework;

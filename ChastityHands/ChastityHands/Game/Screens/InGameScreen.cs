@@ -1,8 +1,8 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
-using Bonsai.Framework.Screens;
 using Bonsai.Framework.UI;
+using Bonsai.Framework.UI.Widgets;
 using ChastityHands.Game.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -15,7 +15,7 @@ using System.Text;
 
 namespace ChastityHands.Game.Screens
 {
-    public class InGameScreen : IHUD
+    public class InGameScreen : DrawableBase
     {
         public InGameScreen()
         {
@@ -27,8 +27,8 @@ namespace ChastityHands.Game.Screens
         public event delStartGame GameOver;
         public event delBackToMenu BackToMenu;
 
-        Field<string> health;
-        Field<string> score;
+        TextWidget<int> health;
+        TextWidget<int> score;
         List<KeyPressListener> keyListeners;
         Queue<Cock> cocksAll;
         Queue<Cock> cocksActive;
@@ -38,10 +38,6 @@ namespace ChastityHands.Game.Screens
         int slapCount = 0;
         int handDamage = 2;
         Texture2D texBackground;
-
-        public bool IsHidden { get; set; }
-        public bool IsDisabled { get; set; }
-        public int DrawOrder { get; set; }
 
 
         public void Load(IContentLoader content)
@@ -59,14 +55,22 @@ namespace ChastityHands.Game.Screens
             };
 
             //ui elements
-            health = new Field<string>(Globals.GeneralFont, "Health:", string.Empty, FieldDisplayMode.LabelAndValue)
+            health = new TextWidget<int>(0, new WidgetSettings
             {
+                Label = "Health:",
+                Font = Globals.GeneralFont,
+                ForegroundColor = Color.White,
                 Position = new Microsoft.Xna.Framework.Vector2(10, 10),
-            };
-            score = new Field<string>(Globals.GeneralFont, "Score:", "0", FieldDisplayMode.LabelAndValue)
+                DisplayMode = FieldDisplayMode.LabelAndValue,
+            });
+            score = new TextWidget<int>(0, new WidgetSettings
             {
+                Label = "Score:",
+                Font = Globals.GeneralFont,
+                ForegroundColor = Color.White,
                 Position = new Microsoft.Xna.Framework.Vector2(10, 50),
-            };
+                DisplayMode = FieldDisplayMode.LabelAndValue,
+            });
 
             //hands
             leftHand = new Hand(Handedness.Left, "chastity-hand", "SFX/slap-1");
@@ -76,8 +80,8 @@ namespace ChastityHands.Game.Screens
 
             //position hands
             leftHand.Position = Vector2.Zero - new Vector2(37,0);
-            rightHand.Position = new Vector2((Bonsai.Framework.Globals.Viewport.Right - 430) + 37, 0);
-
+            rightHand.Position = new Vector2((Globals.Viewport.Right - 430) + 37, 0);
+            
             //create lots of cocks
             var cock1 = new Cock(90, "Cocks/cock-1");
             cock1.FullyPenetrated += cock_FullyPenetrated;
@@ -235,7 +239,6 @@ namespace ChastityHands.Game.Screens
             if (BackToMenu != null)
                 BackToMenu();
         }
-
 
     }
 }

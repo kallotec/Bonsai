@@ -8,5 +8,6 @@ namespace Bonsai.Framework.Content
     public interface IContentLoader
     {
         T Load<T>(string path, bool ignoreCache = false);
+        void Cleanup();
     }
 }

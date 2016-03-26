@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bonsai.Framework
 {
@@ -16,53 +17,63 @@ namespace Bonsai.Framework
         public BonsaiGame()
         {
             Graphics = new GraphicsDeviceManager(this);
-            Frame = new GameFrame();
-
-            GameObjects = new List<BonsaiGameObject>();
+            GameObjects = new List<object>();
         }
 
+        protected List<object> GameObjects { get; private set; }
         protected GraphicsDeviceManager Graphics { get; private set; }
-        protected GameFrame Frame { get; private set; }
         protected SpriteBatch SpriteBatch { get; private set; }
-        protected List<BonsaiGameObject> GameObjects { get; private set; }
-        protected IContentLoader Loader { get; private set; }
-        protected ICamera Camera { get; private set; }
+        protected IContentLoader Loader { get; set; }
+        protected ICamera Camera { get; set; }
         bool isWindowSet;
         Color backgroundColor = Color.Black;
 
 
+        /// <summary>
+        /// Sets up a standard Loader and Camera
+        /// </summary>
         protected abstract void Init();
 
-        protected virtual void Load(IContentLoader contentManager)
+        /// <summary>
+        /// Calls .Load() on all ILoadable objects found in the GameObjects collection in parallel
+        /// </summary>
+        /// <param name="loader">Content loader implementation chosen in Init()</param>
+        protected virtual void Load(IContentLoader loader)
         {
             var loadables = GameObjects.OfType<ILoadable>();
+            var tasks = new List<Task>();
 
+            // Load in parallel
             foreach (var obj in loadables)
-                obj.Load(Loader);
+                tasks.Add(Task.Factory.StartNew(() => obj.Load(loader)));
+
+            // Block until all is loaded
+            Task.WaitAll(tasks.ToArray());
 
         }
 
+        /// <summary>
+        /// Calls .Unload() on all ILoadables found in the GameObjects collection
+        /// </summary>
         protected virtual void Unload()
         {
-            var loadables = GameObjects.OfType<ILoadable>();
-
-            foreach (var obj in loadables)
-                obj.Unload();
+            // Call unload on all ILoadables
+            GameObjects.OfType<ILoadable>()
+                       .ToList()
+                       .ForEach(l => l.Unload());
         }
 
-        protected virtual void Update(GameFrame frame)
+        /// <summary>
+        /// Calls .Draw() on all IDrawable objects found in GameObjects based on .DrawOrder/.IsHidden. 
+        /// Also handles applying the Camera's matrix based on value of IDrawable.IsAttachedToCamera. 
+        /// Draws objects that are not attached to camera first.
+        /// </summary>
+        protected override void Draw(GameTime time)
         {
-            var updateable = GameObjects.OfType<IUpdateable>();
+            // Clear
+            GraphicsDevice.Clear(backgroundColor);
 
-            foreach (var obj in updateable.Where(u => !u.IsDisabled))
-                obj.Update(frame);
-        }
-
-        protected virtual void Draw(GameFrame frame)
-        {
             // Try get camera
-            var camera = GameObjects.OfType<ICamera>().FirstOrDefault();
-
             // Drawable objects
             var objects = GameObjects.OfType<IDrawable>()
                                            .Where(d => !d.IsHidden)
@@ -70,132 +81,131 @@ namespace Bonsai.Framework
 
             // ------------- DRAW OBJS NOT ATTACHED TO CAMERA --------------
 
-            // Apply camera transform if camera present
-            if (camera != null)
-                SpriteBatch.Begin(SpriteSortMode.Deferred, 
-                                  BlendState.AlphaBlend, 
-                                  null, null, null, null, 
-                                  camera.Transform);
-            else
-                SpriteBatch.Begin();
+            // Apply camera transform
+            SpriteBatch.Begin(SpriteSortMode.Deferred, 
+                              BlendState.AlphaBlend, 
+                              null, null, null, null, 
+                              this.Camera.Transform);
 
             // Draw all objs not attached to camera
             foreach (var obj in objects.Where(o => !o.IsAttachedToCamera))
-                obj.Draw(frame, SpriteBatch);
+                obj.Draw(time, SpriteBatch);
 
             SpriteBatch.End();
 
             // --------------- DRAW OBJS ATTACHED TO CAMERA ---------------
 
-            // Apply camera transform if camera present
             SpriteBatch.Begin();
 
-            // Draw all objs not attached to camera
+            // Draw all objs attached to camera
             foreach (var obj in objects.Where(o => o.IsAttachedToCamera))
-                obj.Draw(frame, SpriteBatch);
+                obj.Draw(time, SpriteBatch);
 
             SpriteBatch.End();
 
             // --------------- --------------- --------------- -----------
         }
 
-
-        protected sealed override void Initialize()
+        /// <summary>
+        /// Calls .Update(time) on all IUpdateable objects found in GameObjects.
+        /// </summary>
+        protected override void Update(GameTime time)
         {
-            // Create content loader
-            this.Loader = new StandardContentLoader(Content);
+            var updateable = GameObjects.OfType<IUpdateable>();
 
-            // Add default camera if no custom one was specified
-            Camera = new StandardCamera(GraphicsDevice.Viewport);
+            foreach (var obj in updateable.Where(u => !u.IsDisabled))
+                obj.Update(time);
 
-            // Call overridden init()
-            Init();
-
-            base.Initialize();
         }
 
-        protected sealed override void LoadContent()
-        {
-            // Enforce the SetWindow() call
-            if (isWindowSet == false)
-                throw new InvalidOperationException("SetWindow() was not called in Init()");
-            // Enforce a camera instance being available
-            if (Camera == null)
-                throw new InvalidOperationException("A camera object must be set");
-
-            this.SpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // Call overridden load()
-            Content.RootDirectory = "Content";
-            Load(this.Loader);
-
-            // Pass back to xna framework pipeline
-            base.LoadContent();
-        }
-
-        protected sealed override void UnloadContent()
-        {
-            // Call overridden unload()
-            Unload();
-
-            // Content manager
-            Content.Unload();
-
-            // Pass back to xna
-            base.UnloadContent();
-        }
-
-        protected sealed override void Update(GameTime gameTime)
-        {
-            //update frame data
-            Frame.Update(gameTime);
-
-            //call overriden update()
-            Update(this.Frame);
-
-            //pass back to xna
-            base.Update(gameTime);
-        }
-
-        protected sealed override void Draw(GameTime gameTime)
-        {
-            //clear
-            GraphicsDevice.Clear(backgroundColor);
-
-            //call overriden draw()
-            Draw(this.Frame);
-
-            //pass back to xna
-            base.Draw(gameTime);
-        }
-
+        /// <summary>
+        /// Sets up the game window
+        /// </summary>
         protected void SetWindow(string windowTitle, int width, int height, bool showMouse)
         {
             if (isWindowSet)
                 return;
 
             isWindowSet = true;
+            base.Window.Title = windowTitle;
 
-            //adjust window resolution
+            // Adjust window resolution
             Graphics.PreferredBackBufferWidth = width;
             Graphics.PreferredBackBufferHeight = height;
             Graphics.ApplyChanges();
-
-            base.Window.Title = windowTitle;
-
-            ////track resolution changes globally
-            //Globals.Viewport = Graphics.GraphicsDevice.Viewport.Bounds;
-            //Globals.Viewport_Centerpoint = new Vector2(Globals.Viewport.Width * 0.5f, Globals.Viewport.Height * 0.5f);
-            //Globals.Window_Position = new Vector2(this.Window.ClientBounds.X, this.Window.ClientBounds.Y);
 
             // Mouse
             SetMouse(showMouse);
 
         }
 
+        /// <summary>
+        /// Toggle mouse visibility
+        /// </summary>
         protected void SetMouse(bool isVisible)
         {
             this.IsMouseVisible = isVisible;
+        }
+
+        /// <summary>
+        /// Sealed XNA framework method. Delegates to Init() override, then sets up defaults to core services if they're not provided.
+        /// </summary>
+        protected sealed override void Initialize()
+        {
+            // Create default camera
+            // This is done BEFORE Init() incase it is referenced
+            if (Camera == null)
+                Camera = new SimpleCamera(GraphicsDevice.Viewport);
+
+            // Init override
+            Init();
+
+            // Create default content loader
+            if (Loader == null)
+                Loader = new SimpleContentLoader(Content);
+
+            // Create drawing services
+            this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // Add camera for updating
+            GameObjects.Add(Camera);
+
+            // Pass back to XNA.
+            // If not, then the LoadContent() chain doesn't get called!
+            base.Initialize();
+        }
+
+        /// <summary>
+        /// Sealed XNA framework method. Validates Camera and window is setup, then delegates to Load(). 
+        /// Ensures base.LoadContent() is the last thing called.
+        /// </summary>
+        protected sealed override void LoadContent()
+        {
+            // Enforce the SetWindow() call
+            if (isWindowSet == false)
+                throw new InvalidOperationException("SetWindow() was not called in Init()");
+
+            // Call overridden load
+            Load(this.Loader);
+
+            // Pass back to XNA
+            base.LoadContent();
+        }
+
+        /// <summary>
+        /// Calls Unload() override, cleans up Loader, and ensures base.UnloadContent() is the last thing called.
+        /// </summary>
+        protected sealed override void UnloadContent()
+        {
+            // Call overridden unload()
+            Unload();
+
+            // Cleanup content loader
+            if (Loader != null)
+                Loader.Cleanup();
+
+            // Pass back to XNA
+            base.UnloadContent();
         }
 
     }

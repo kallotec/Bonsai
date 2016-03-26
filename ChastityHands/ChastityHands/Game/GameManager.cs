@@ -21,18 +21,22 @@ namespace ChastityHands.Game
         public GameManager()
         {
             state = GameState.Menu;
+            instance = this;
         }
 
         GameState state;
         MenuScreen menuScreen;
         InGameScreen gameScreen;
         EndScreen endScreen;
+        static GameManager instance;
 
+        public static GameManager Instance { get { return instance; } }
 
+        
         protected override void Init()
         {
             // Setup game window
-            base.SetWindow(width: 800, height: 600, showMouse: false);
+            base.SetWindow("Chastity Hands!", width: 800, height: 600, showMouse: false);
 
             // Menu screen
             menuScreen = new MenuScreen();

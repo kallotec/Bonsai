@@ -53,27 +53,23 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // [Fields]
             // FPS variable
-            fields.Add(new VariableTextWidget<int>(
-                variable: fps,
-                defaultValue: 0,
+            fields.Add(new TextWidget<int>(
+                variable: this.fps,
                 settings: new WidgetSettings
                 {
                     Font = fontGeneral,
                     Label = "FPS: ",
-                    Format = null,
                     Position = new Vector2(10, 10),
                 }
             ));
 
             // Jumps variable
-            fields.Add(new VariableTextWidget<int>(
+            fields.Add(new TextWidget<int>(
                 variable: level.Jumps,
-                defaultValue: 0,
                 settings: new WidgetSettings
                 {
                     Font = fontGeneral,
                     Label = "Jumps: ",
-                    Format = null,
                     Position = new Vector2(ScreenBounds.Width / 2, 40),
                     Alignment = FieldAlignmentMode.Center,
                     ForegroundColor = Color.Green,
@@ -92,10 +88,10 @@ namespace Bonsai.Samples.Platformer2D.Game
                 fields[x].Unload();
         }
 
-        public void Update(Framework.GameFrame frame)
+        public void Update(GameTime time)
         {
             // Calculate FPS
-            fps_ms += frame.GameTime.ElapsedGameTime.TotalMilliseconds;
+            fps_ms += time.ElapsedGameTime.TotalMilliseconds;
             frame_count += 1;
             if (fps_ms >= 1000.0d)
             {
@@ -106,14 +102,14 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Key listeners
             foreach (var listener in keyListeners)
-                listener.Update(frame.GameTime);
+                listener.Update(time);
 
         }
 
-        public void Draw(GameFrame frame, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             for (var x = 0; x < fields.Count; x++)
-                fields[x].Draw(frame, batch);
+                fields[x].Draw(time, batch);
         }
 
 

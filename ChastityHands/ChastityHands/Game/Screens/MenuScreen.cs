@@ -2,7 +2,6 @@
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
-using Bonsai.Framework.Screens;
 using Bonsai.Framework.UI;
 using ChastityHands.Game.Entities;
 using Microsoft.Xna.Framework;
@@ -48,7 +47,7 @@ namespace ChastityHands.Game.Screens
             //ui
             fieldInstructions = new Field<string>(Globals.GeneralFont, "[Chastity Hands]\n\nDefend yourself with <Left Arrow> and <Right Arrow>\n\n-------------\n\nPress <Enter> to start game or <Esc> to quit", string.Empty, FieldDisplayMode.LabelOnly)
             {
-                Position = Bonsai.Framework.Globals.Viewport_Centerpoint + new Vector2(0, -70),
+                Position = Globals.Viewport_Centerpoint + new Vector2(0, -70),
                 Alignment = FieldAlignmentMode.Center,
                 Color = Color.White,
             };

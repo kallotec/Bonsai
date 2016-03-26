@@ -10,27 +10,60 @@ namespace Bonsai.Framework.UI.Widgets
 {
     public class TextWidget<T> : WidgetBase, IWidget
     {
-        public TextWidget(T value, WidgetSettings settings)
-            : base(settings)
+        public TextWidget(T value, WidgetSettings settings) : base(settings)
         {
-            UpdateValue(value);
+            if (value == null)
+                throw new ArgumentNullException("value");
+            if (settings == null)
+                throw new ArgumentNullException("settings");
+
+            this.value = value;
         }
 
-
-        public virtual void Load(IContentLoader loader)
+        public TextWidget(GameVariable<T> variable, WidgetSettings settings) : base(settings)
         {
+            if (variable == null)
+                throw new ArgumentNullException("variable");
+            if (settings == null)
+                throw new ArgumentNullException("settings");
+
+            this.variable = variable;
         }
 
-        public virtual void Unload()
+        GameVariable<T> variable;
+        T value;
+
+
+        public void Load(IContentLoader loader)
         {
+            // Initialize text field based on the type of field supplied
+            if (variable != null)
+            {
+                // Dynamic variable field
+                UpdateText(variable.Value);
+
+                // Subscribe to variable changes
+                variable.Changed += handleVariableChanged;
+            }
+            else
+            {
+                // Static text field
+                UpdateText(value);
+            }
         }
 
-        public void Draw(GameFrame frame, SpriteBatch batch)
+        public void Unload()
+        {
+            if (variable != null)
+                variable.Changed -= handleVariableChanged;
+        }
+
+        public void Draw(GameTime time, SpriteBatch batch)
         {
             batch.DrawString(base.Settings.Font, base.Text, base.Settings.Position, base.Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
         }
 
-        protected void UpdateValue(T newValue)
+        public void UpdateText(T newValue)
         {
             // Compile new value into a string based on options
 
@@ -66,6 +99,12 @@ namespace Bonsai.Framework.UI.Widgets
                     break;
             }
 
+        }
+
+        void handleVariableChanged(T newValue)
+        {
+            // Update text field with new value
+            UpdateText(newValue);
         }
 
     }
