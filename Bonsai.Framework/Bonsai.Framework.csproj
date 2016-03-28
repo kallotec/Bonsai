@@ -73,7 +73,7 @@
     <Compile Include="Actors\Projectiles\PenetrationSettings.cs" />
     <Compile Include="Actors\Projectiles\PenetrationType.cs" />
     <Compile Include="Actors\StaticActor.cs" />
-    <Compile Include="BonsaiGameObject.cs" />
+    <Compile Include="GameComponentBase.cs" />
     <Compile Include="Actors\Projectiles\IProjectile.cs" />
     <Compile Include="Actors\Weapons\IWeapon.cs" />
     <Compile Include="Actors\Weapons\SimpleWeapon.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="ILoadable.cs" />
-    <Compile Include="IUpdateable.cs" />
+    <Compile Include="UpdateableBase.cs" />
     <Compile Include="Particles\ParticleData.cs" />
     <Compile Include="Particles\ParticleGroup.cs" />
     <Compile Include="Collision\RectangleCollision.cs" />

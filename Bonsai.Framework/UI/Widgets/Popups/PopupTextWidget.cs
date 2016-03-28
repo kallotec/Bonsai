@@ -15,12 +15,11 @@ namespace Bonsai.Framework.UI.Widgets.Popups
         public PopupTextWidget(T value, PopupSettings popupSettings) : base(value, popupSettings)
         {
             this.popupSettings = popupSettings;
-            counter = new MillisecCounter(popupSettings.LifeInMillisecs);
+            lifetime = new MillisecCounter(popupSettings.LifeInMillisecs);
         }
 
-        MillisecCounter counter;
+        MillisecCounter lifetime;
         Vector2 offset;
-
         PopupSettings popupSettings;
 
 
@@ -30,13 +29,13 @@ namespace Bonsai.Framework.UI.Widgets.Popups
                 return;
 
             // Fadeout
-            counter.Update(gameTime.ElapsedGameTime.Milliseconds);
+            lifetime.Update(gameTime.ElapsedGameTime.Milliseconds);
 
             // Move
             offset += popupSettings.Velocity * new Vector2((float)gameTime.ElapsedGameTime.TotalSeconds,
                                                            (float)gameTime.ElapsedGameTime.TotalSeconds);
             // Die
-            if (counter.Completed)
+            if (lifetime.Completed)
                 this.DeleteMe = true;
         }
 

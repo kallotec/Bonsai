@@ -73,6 +73,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Key listeners
             keyListeners = new List<KeyPressListener>
             {
+                // [M] key generates a text popup at the players position
                 new KeyPressListener(Keys.M, () => 
                 {
                     popupManager.AddMessage(

@@ -37,7 +37,7 @@ namespace Bonsai.Framework
 
         public void Unload()
         {
-            // TODO: remove handlers properly
+            // Remove handlers
             Changed = null;
         }
 

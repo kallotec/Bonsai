@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    public class SimpleCamera : BonsaiGameObject, Bonsai.Framework.ICamera
+    public class SimpleCamera : GameComponentBase, Bonsai.Framework.ICamera
     {
         public SimpleCamera(Viewport viewport)
         {
@@ -25,7 +25,6 @@ namespace Bonsai.Framework
         {
             get { return transform; }
         }
-        public bool IsDisabled { get; private set; }
         public Vector2 Focus
         {
             get
@@ -35,6 +34,7 @@ namespace Bonsai.Framework
                           : focusedPoint ?? new Vector2(0));
             }
         }
+        public bool IsDisabled { get; private set; }
 
 
         public void Update(GameTime time)
@@ -52,8 +52,6 @@ namespace Bonsai.Framework
             transform = Matrix.CreateScale(new Vector3(1, 1, 0)) * 
                         Matrix.CreateTranslation(new Vector3(-center.X, -center.Y, 0));
 
-            //// Run update actions
-            //ActionsStore.ForEach(a => a());
         }
 
         public void SetFocus(StaticActor focusedActor)

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Bonsai.Framework.Actors
 {
-    public abstract class BonsaiGameObject
+    public abstract class GameComponentBase
     {
         public bool DeleteMe { get; set; }
     }

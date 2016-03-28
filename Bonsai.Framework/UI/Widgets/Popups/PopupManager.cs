@@ -11,7 +11,7 @@ using Bonsai.Framework.UI.Widgets;
 
 namespace Bonsai.Framework.UI.Widgets.Popups
 {
-    public class PopupManager : DrawableBase, IUpdateable
+    public class PopupManager : DrawableBase, IUpdateable, IDrawable
     {
         public PopupManager()
         {
