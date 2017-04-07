@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    public class SimpleCamera : GameComponentBase, Bonsai.Framework.ICamera
+    public class SimpleCamera : Bonsai.Framework.ICamera
     {
         public SimpleCamera(Viewport viewport)
         {
@@ -18,7 +18,7 @@ namespace Bonsai.Framework
         Matrix transform;
         Vector2 center;
         Viewport viewport;
-        StaticActor focusedActor;
+        GameEntity focusedActor;
         Vector2? focusedPoint;
 
         public Matrix Transform
@@ -54,7 +54,7 @@ namespace Bonsai.Framework
 
         }
 
-        public void SetFocus(StaticActor focusedActor)
+        public void SetFocus(GameEntity focusedActor)
         {
             this.focusedPoint = null;
             this.focusedActor = focusedActor;

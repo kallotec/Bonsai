@@ -22,8 +22,7 @@ namespace Bonsai.Framework
                 this.value = value;
 
                 // Notify subscribers of change
-                if (Changed != null)
-                    Changed(this.value);
+                Changed?.Invoke(this.value);
             }
         }
 

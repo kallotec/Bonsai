@@ -62,7 +62,10 @@
     <Compile Include="Actors\MoveableActor.cs" />
     <Compile Include="BonsaiGame.cs" />
     <Compile Include="Animation\AnimationOverlay.cs" />
+    <Compile Include="Components\PhysicalProperties.cs" />
+    <Compile Include="Components\PhysicsComponent.cs" />
     <Compile Include="DrawableBase.cs" />
+    <Compile Include="GameEntity.cs" />
     <Compile Include="GameVariable.cs" />
     <Compile Include="GameVariableChangedHandler.cs" />
     <Compile Include="Input\KeyPressListener.cs" />
@@ -87,7 +90,7 @@
     <Compile Include="IDrawable.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="ILoadable.cs" />
-    <Compile Include="UpdateableBase.cs" />
+    <Compile Include="IUpdateable.cs" />
     <Compile Include="Particles\ParticleData.cs" />
     <Compile Include="Particles\ParticleGroup.cs" />
     <Compile Include="Collision\RectangleCollision.cs" />

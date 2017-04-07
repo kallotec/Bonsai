@@ -11,9 +11,10 @@ namespace Bonsai.Framework.Actors
     {
         public MoveableActor() {}
 
-        protected float Acceleration;
-        protected int Speed;
+        //protected int Speed;
         protected Vector2 Velocity;
+        //protected float Acceleration;
+        //protected float Direction;
 
     }
 }

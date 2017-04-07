@@ -82,9 +82,9 @@ namespace Bonsai.Framework
             // ------------- DRAW OBJS NOT ATTACHED TO CAMERA --------------
 
             // Apply camera transform
-            SpriteBatch.Begin(SpriteSortMode.Deferred, 
-                              BlendState.AlphaBlend, 
-                              null, null, null, null, 
+            SpriteBatch.Begin(SpriteSortMode.Deferred,
+                              BlendState.AlphaBlend,
+                              null, null, null, null,
                               this.Camera.Transform);
 
             // Draw all objs not attached to camera

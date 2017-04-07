@@ -119,8 +119,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             keyListeners.Add(new KeyPressListener(Keys.Escape, () => 
             {
                 // Send game exit request
-                if (this.Exit != null)
-                    this.Exit();
+                this.Exit?.Invoke();
 
             }));
 

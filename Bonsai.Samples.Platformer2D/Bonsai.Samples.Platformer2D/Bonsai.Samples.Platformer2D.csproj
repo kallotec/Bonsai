@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentPaths.cs" />
+    <Compile Include="Game\Components\CollisionDetector.cs" />
     <Compile Include="Game\HUD.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />
