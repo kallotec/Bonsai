@@ -18,7 +18,7 @@ namespace Bonsai.Framework.Components
 
         public void ApplyForceY(float force, PhysicalProperties props)
         {
-            props.Velocity.Y -= force;
+            props.Velocity.Y = -force;
         }
 
         //public void ApplyForceX(float force, PhysicalProperties props)
