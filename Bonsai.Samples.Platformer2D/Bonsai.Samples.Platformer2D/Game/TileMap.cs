@@ -166,10 +166,10 @@ namespace Bonsai.Samples.Platformer2D.Game
             int tileWidth;
             int tileHeight;
 
-            public int LeftIndex { get { return (int)position.X / tileWidth; } }
-            public int RightIndex { get { return (int)(position.X + objWidth) / tileWidth; } }
-            public int TopIndex { get { return (int)position.Y / tileHeight; } }
-            public int BottomIndex { get { return (int)(position.Y + objHeight) / tileHeight; } }
+            public int LeftIndex { get { return (int)Math.Round(position.X) / tileWidth; } }
+            public int RightIndex { get { return (int)(Math.Round(position.X) + objWidth) / tileWidth; } }
+            public int TopIndex { get { return (int)Math.Round(position.Y) / tileHeight; } }
+            public int BottomIndex { get { return (int)(Math.Round(position.Y) + objHeight) / tileHeight; } }
 
         }
     }

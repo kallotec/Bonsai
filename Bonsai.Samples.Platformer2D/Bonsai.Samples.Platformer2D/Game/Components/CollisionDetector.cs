@@ -3,6 +3,7 @@ using Bonsai.Samples.Platformer2D.Game;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -26,22 +27,38 @@ namespace Bonsai.Samples.Platformer.Components
         }
 
 
-        public CollisionDirection[] ApplyPhysics(PhysicalProperties props, float delta)
+        public CollisionDirection[] ApplyPhysics(PhysicalProperties props, GameTime gameTime)
         {
+            var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             var allCollisions = new List<CollisionDirection>();
             var lastEdges = GetEdges(props);
 
+            // Apply gravity
+
+            if (props.HasGravity && props.Velocity.Y > 0)
+            {
+                props.Velocity.Y = MathHelper.Clamp(
+                    props.Velocity.Y + props.Gravity,
+                    -props.TerminalVelocity,
+                    props.TerminalVelocity);
+            }
+            else
+            {
+                props.Velocity.Y = (props.Velocity.Y + props.Gravity);
+            }
+
             // [ Y ]
 
-            // Apply gravity
-            props.Velocity.Y = MathHelper.Clamp(props.Velocity.Y + (props.Gravity * 1), -props.TerminalVelocity, props.TerminalVelocity);
-            props.Position.Y = (float)Math.Round(props.Position.Y + props.Velocity.Y); // * (float)frame.GameTime.ElapsedGameTime.TotalSeconds;
+            // Move
+
+            props.Position.Y = props.Position.Y + (props.Velocity.Y * delta);
 
             var newEdges = GetEdges(props);
             var collisionsY = CheckForCollisions(props);
             allCollisions.AddRange(collisionsY);
 
-            // Jumping
+            // Jumping map collision
             if (collisionsY.Contains(CollisionDirection.Top))
             {
                 //project out of collision
@@ -58,19 +75,20 @@ namespace Bonsai.Samples.Platformer.Components
 
             // [ X ]
 
-            props.Position.X = (float)Math.Round(props.Position.X + props.Velocity.X);
+            props.Position.X = props.Position.X + (props.Velocity.X * delta);
+
             newEdges = GetEdges(props);
             var collisionsX = CheckForCollisions(props);
             allCollisions.AddRange(collisionsX);
 
-            // Left movement collision
+            // Left movement map collision
             if (collisionsX.Contains(CollisionDirection.Left))
             {
                 //project out of collision
                 props.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
                 props.Velocity.X = 0;
             }
-            // Right movement collision
+            // Right movement map collision
             else if (collisionsX.Contains(CollisionDirection.Right))
             {
                 //project out of collision
