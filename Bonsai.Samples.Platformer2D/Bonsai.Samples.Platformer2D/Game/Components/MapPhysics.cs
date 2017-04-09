@@ -9,6 +9,8 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer.Components
 {
+    public enum CollisionDirection { Left, Top, Right, Bottom }
+
     public class MapPhysics
     {
         public MapPhysics(Level level)
@@ -17,21 +19,15 @@ namespace Bonsai.Samples.Platformer.Components
         }
 
         Level _level;
-        int tileWidth
-        {
-            get { return _level.Map.TileSize.X; }
-        }
-        int tileHeight
-        {
-            get { return _level.Map.TileSize.Y; }
-        }
+        int tileWidth => _level.Map.TileSize.X;
+        int tileHeight => _level.Map.TileSize.Y;
 
 
-        public CollisionDirection[] ApplyPhysics(PhysicalProperties props, GameTime gameTime)
+        public Dictionary<CollisionDirection, TileCollision> ApplyPhysics(PhysicalProperties props, GameTime gameTime)
         {
             var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            var allCollisions = new List<CollisionDirection>();
+            var allCollisions = new Dictionary<CollisionDirection, TileCollision>();
             var lastEdges = getEdges(props);
 
             // Apply gravity
@@ -55,18 +51,18 @@ namespace Bonsai.Samples.Platformer.Components
             props.Position.Y = props.Position.Y + (props.Velocity.Y * delta);
 
             var newEdges = getEdges(props);
-            var collisionsY = checkForCollisions(props);
-            allCollisions.AddRange(collisionsY);
+            var collisionsY = collisionCheck(props);
+            mergeCollisionDictionary(allCollisions, collisionsY);
 
             // Jumping map collision
-            if (collisionsY.Contains(CollisionDirection.Top))
+            if (collisionsY.ContainsKey(CollisionDirection.Top))
             {
                 //project out of collision
                 props.Position.Y = (lastEdges.TopIndex * tileHeight);
                 props.Velocity.Y = 0;
             }
             // Falling
-            else if (collisionsY.Contains(CollisionDirection.Bottom))
+            else if (collisionsY.ContainsKey(CollisionDirection.Bottom))
             {
                 //project out of collision
                 props.Position.Y = (newEdges.BottomIndex * tileHeight) - (props.CollisionRect.Height + 1);
@@ -78,69 +74,89 @@ namespace Bonsai.Samples.Platformer.Components
             props.Position.X = props.Position.X + (props.Velocity.X * delta);
 
             newEdges = getEdges(props);
-            var collisionsX = checkForCollisions(props);
-            allCollisions.AddRange(collisionsX);
+            var collisionsX = collisionCheck(props);
+            mergeCollisionDictionary(allCollisions, collisionsX);
 
             // Left movement - map collision
-            if (collisionsX.Contains(CollisionDirection.Left))
+            if (collisionsX.ContainsKey(CollisionDirection.Left))
             {
                 //project out of collision
                 props.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
                 props.Velocity.X = 0;
             }
             // Right movement - map collision
-            else if (collisionsX.Contains(CollisionDirection.Right))
+            else if (collisionsX.ContainsKey(CollisionDirection.Right))
             {
                 //project out of collision
                 props.Position.X = (newEdges.RightIndex * tileWidth) - (props.CollisionRect.Width + 1);
                 props.Velocity.X = 0;
             }
             
-            // Apply friction and slow horizxontal movement
-            if (collisionsY.Contains(CollisionDirection.Bottom) && _level.HasGravity && props.Velocity.X != 0)
+            // Apply friction and slow horizontal movement
+            if (collisionsY.ContainsKey(CollisionDirection.Bottom) && _level.HasGravity && props.Velocity.X != 0)
             {
                 // TODO:
             }
 
-            return allCollisions.ToArray();
+            return allCollisions;
         }
 
-        CollisionDirection[] checkForCollisions(PhysicalProperties props)
+        Dictionary<CollisionDirection, TileCollision> collisionCheck(PhysicalProperties props)
         {
-            var collisions = new List<CollisionDirection>();
+            var collisions = new Dictionary<CollisionDirection, TileCollision>();
             var edges = getEdges(props);
 
             // Jumping
             if (props.Velocity.Y < 0)
             {
-                var hitRoof = (getCollision(edges.LeftIndex, edges.TopIndex) == TileCollision.Impassable || getCollision(edges.RightIndex, edges.TopIndex) == TileCollision.Impassable);
-                if (hitRoof)
-                    collisions.Add(CollisionDirection.Top);
+                var leftTopCollisionType = getCollision(edges.LeftIndex, edges.TopIndex);
+                var rightTopCollisionType = getCollision(edges.RightIndex, edges.TopIndex);
+
+                var hitRoof = (leftTopCollisionType == TileCollision.Impassable || rightTopCollisionType == TileCollision.Impassable);
+                var isDeath = (leftTopCollisionType == TileCollision.Death || rightTopCollisionType == TileCollision.Death);
+
+                if (hitRoof || isDeath)
+                    collisions.Add(CollisionDirection.Top, isDeath ? TileCollision.Death : TileCollision.Impassable);
             }
             // Falling
             else if (props.Velocity.Y > 0)
             {
-                var hitFloor = (getCollision(edges.LeftIndex, edges.BottomIndex) == TileCollision.Impassable || getCollision(edges.RightIndex, edges.BottomIndex) == TileCollision.Impassable);
-                if (hitFloor)
-                    collisions.Add(CollisionDirection.Bottom);
+                var leftBottomCollisionType = getCollision(edges.LeftIndex, edges.BottomIndex);
+                var rightBottomCollisionType = getCollision(edges.RightIndex, edges.BottomIndex);
+
+                var hitFloor = (leftBottomCollisionType == TileCollision.Impassable || rightBottomCollisionType == TileCollision.Impassable);
+                var isDeath = (leftBottomCollisionType == TileCollision.Death || rightBottomCollisionType == TileCollision.Death);
+
+                if (hitFloor || isDeath)
+                    collisions.Add(CollisionDirection.Bottom, isDeath ? TileCollision.Death : TileCollision.Impassable);
             }
 
             // Left movement
             if (props.Velocity.X < 0)
             {
-                var hitLeftWall = (getCollision(edges.LeftIndex, edges.TopIndex) == TileCollision.Impassable || getCollision(edges.LeftIndex, edges.BottomIndex) == TileCollision.Impassable);
-                if (hitLeftWall)
-                    collisions.Add(CollisionDirection.Left);
+                var leftTopCollisionType = getCollision(edges.LeftIndex, edges.TopIndex);
+                var leftBottomCollisionType = getCollision(edges.LeftIndex, edges.BottomIndex);
+
+                var hitLeftWall = (leftTopCollisionType == TileCollision.Impassable || leftBottomCollisionType == TileCollision.Impassable);
+                var isDeath = (leftTopCollisionType == TileCollision.Death || leftBottomCollisionType == TileCollision.Death);
+
+                if (hitLeftWall || isDeath)
+                    collisions.Add(CollisionDirection.Left, isDeath ? TileCollision.Death : TileCollision.Impassable);
             }
             // Right movement collision
             else if (props.Velocity.X > 0)
             {
-                var hitRightWall = (getCollision(edges.RightIndex, edges.TopIndex) == TileCollision.Impassable || getCollision(edges.RightIndex, edges.BottomIndex) == TileCollision.Impassable);
-                if (hitRightWall)
-                    collisions.Add(CollisionDirection.Right);
+                var rightTopCollisionType = getCollision(edges.RightIndex, edges.TopIndex);
+                var rightBottomCollisionType = getCollision(edges.RightIndex, edges.BottomIndex);
+
+                var hitRightWall = (rightTopCollisionType == TileCollision.Impassable || rightBottomCollisionType == TileCollision.Impassable);
+                var isDeath = (rightTopCollisionType == TileCollision.Death || rightBottomCollisionType == TileCollision.Death);
+
+                if (hitRightWall || isDeath)
+                    collisions.Add(CollisionDirection.Right, isDeath ? TileCollision.Death : TileCollision.Impassable);
             }
 
-            return collisions.ToArray();
+            return collisions;
         }
 
         Map.TileEdges getEdges(PhysicalProperties props)
@@ -153,7 +169,16 @@ namespace Bonsai.Samples.Platformer.Components
             return _level.Map.GetCollision(xIndex, yIndex);
         }
 
-        public enum CollisionDirection { Left, Top, Right, Bottom }
+        void mergeCollisionDictionary(Dictionary<CollisionDirection, TileCollision> target, Dictionary<CollisionDirection, TileCollision> source)
+        {
+            foreach(var kvp in source)
+            {
+                if (target.ContainsKey(kvp.Key) && target[kvp.Key] == TileCollision.Death)
+                    target[kvp.Key] = kvp.Value;
+                else
+                    target.Add(kvp.Key, kvp.Value);
+            }
+        }
 
     }
 }

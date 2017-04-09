@@ -45,6 +45,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         Vector2? playerStart;
         Vector2? playerExit;
         IContentLoader _loader;
+        string currentMapPath;
 
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
@@ -111,6 +112,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         void loadMap(string mapPath, IContentLoader loader)
         {
+            currentMapPath = mapPath;
+
             // Variables
             Jumps.Value = 0;
             CoinsCount.Value = 0;
@@ -154,39 +157,43 @@ namespace Bonsai.Samples.Platformer2D.Game
         Tile[,] generateTileGrid(string mapData)
         {
             // Load the level and ensure all of the lines are the same length.
-            int width;
-            List<string> lines = new List<string>();
+            int width = 0;
+
+            var lines = new List<string>();
+
             using (var sr = new StringReader(mapData))
             {
-                string line = sr.ReadLine();
-                line = line.Trim();
-                width = line.Length;
-                while (line != null)
+                var line = string.Empty;
+
+                while ((line = sr.ReadLine()) != null)
                 {
+                    width = Math.Max(width, line.Length);
                     lines.Add(line);
-                    if (line.Length != width)
-                        throw new Exception(string.Format("The length of line {0} is different from all preceeding lines.", lines.Count));
-                    line = sr.ReadLine();
                 }
             }
 
             var tileGrid = new Tile[width, lines.Count];
 
-            // Loop over every tile position,
-            for (int y = 0; y < tileGrid.GetLength(1); ++y)
+            // Loop over every tile position
+            for (var y = 0; y < tileGrid.GetLength(1); ++y)
             {
                 for (var x = 0; x < tileGrid.GetLength(0); ++x)
                 {
-                    // to load each tile.
-                    var tileType = lines[y][x];
-                    tileGrid[x, y] = createTile(tileType, x, y);
+                    // to load each tile
+                    var tileType = ' ';
+                    var line = lines[y];
+
+                    if (line.Length > x)
+                        tileType = line[x];
+
+                    tileGrid[x, y] = createTileData(tileType, x, y);
                 }
             }
 
             return tileGrid;
         }
 
-        Tile createTile(char tileType, int x, int y)
+        Tile createTileData(char tileType, int x, int y)
         {
             var tileRect = new Rectangle(x * Map.TileSize.X, y * Map.TileSize.Y, Map.TileSize.X, Map.TileSize.Y);
             var tileCenter = new Vector2(tileRect.Center.X, tileRect.Center.Y);
@@ -203,12 +210,17 @@ namespace Bonsai.Samples.Platformer2D.Game
                     return new Tile(null, TileCollision.Passable, Color.Transparent);
 
                 // Blank space
-                case '.':
+                case ' ':
                     return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
 
+                // Coin
                 case 'c':
                     addCoinToLevel(tileCenter);
                     return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
+
+                // Death
+                case '^':
+                    return new Tile(pixel_half_trans, TileCollision.Death, Color.Red);
 
                 // Exit
                 case 'X':
@@ -276,9 +288,31 @@ namespace Bonsai.Samples.Platformer2D.Game
             player.Update(time);
 
             // Map collisions
-            var wallCollisions = phys.ApplyPhysics(player.Props, time);
+            var mapCollisions = phys.ApplyPhysics(player.Props, time);
 
-            player.Props.Grounded = (wallCollisions.Contains(MapPhysics.CollisionDirection.Bottom) == true);
+            // Handle death tiles
+            var death = mapCollisions.ContainsValue(TileCollision.Death);
+            if (death)
+            {
+                onDeath();
+                return;
+            }
+
+            // Handle grounded flag
+            var grounded = false;
+
+            if (mapCollisions.ContainsKey(CollisionDirection.Bottom))
+                grounded = (mapCollisions[CollisionDirection.Bottom] == TileCollision.Impassable);
+
+            player.Props.Grounded = grounded;
+        }
+
+        void onDeath()
+        {
+            // TODO: Play sfx, etc
+
+            // Reload current map
+            loadMap(currentMapPath, _loader);
         }
 
         void updateCoins()
@@ -310,7 +344,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 door.Overlapping(player);
 
-                loadMap(ContentPaths.PATH_MAP_1, _loader);
+                loadMap(ContentPaths.PATH_MAP_2, _loader);
             }
 
         }

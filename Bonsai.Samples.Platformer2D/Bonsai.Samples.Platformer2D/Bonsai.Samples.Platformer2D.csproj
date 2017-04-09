@@ -89,6 +89,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\map2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\map1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -21,5 +21,9 @@ namespace Bonsai.Samples.Platformer2D.Game
         /// </summary>
         Impassable = 1,
 
+        /// <summary>
+        /// Player should die if it touches this tile
+        /// </summary>
+        Death = 2,
     }
 }
