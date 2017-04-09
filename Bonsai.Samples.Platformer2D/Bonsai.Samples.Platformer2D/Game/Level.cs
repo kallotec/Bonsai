@@ -29,7 +29,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             base.DrawOrder = 0;
             popupManager = new PopupManager();
             keyListeners = new List<KeyPressListener>();
-            phys = new MapPhysics(this);
 
             coins = new List<Coin>();
         }
@@ -45,6 +44,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         Door door;
         Vector2? playerStart;
         Vector2? playerExit;
+        IContentLoader _loader;
 
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
@@ -58,7 +58,10 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Load(IContentLoader loader)
         {
+            _loader = loader;
+
             // Physics
+            phys = new MapPhysics(this);
             Gravity = 5f;
             TerminalVelocity = 200f;
 
@@ -67,20 +70,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
             pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
 
-            // Create tile map
-            Map = new Map(tileWidth: 22, tileHeight: 22);
-            // Create map tiles
-            var tileGrid = generateTileGrid(loader);
-            Map.Tiles = tileGrid;
-
-            // Verify that the level has a beginning and an end.
-            if (playerStart == null)
-                throw new NotSupportedException("A level must have a starting point.");
-            if (playerExit == null)
-                throw new NotSupportedException("A level must have an exit.");
-
             // Create player
-            player = new Player(this, playerStart.Value);
+            player = new Player(this);
             player.Load(loader);
 
             // Focus camera on player
@@ -90,6 +81,15 @@ namespace Bonsai.Samples.Platformer2D.Game
             Jumps = new GameVariable<int>();
             CoinsCount = new GameVariable<int>();
 
+            setupKeyListeners();
+
+            // Load first map
+            loadMap(ContentPaths.PATH_MAP_1, loader);
+
+        }
+
+        void setupKeyListeners()
+        {
             // Key listeners
             keyListeners = new List<KeyPressListener>
             {
@@ -107,17 +107,52 @@ namespace Bonsai.Samples.Platformer2D.Game
                         });
                 })
             };
+        }
+
+        void loadMap(string mapPath, IContentLoader loader)
+        {
+            // Variables
+            Jumps.Value = 0;
+            CoinsCount.Value = 0;
+
+            // Reset game objects
+            coins.Clear();
+            playerStart = null;
+            playerExit = null;
+
+            // Create map
+            Map = new Map(tileWidth: 22, tileHeight: 22);
+
+            // Create map tiles
+            var mapData = getMapData(mapPath);
+            var tileGrid = generateTileGrid(mapData);
+            Map.Tiles = tileGrid;
+
+            // Set player position for new map
+            player.Props.Position = playerStart.Value;
+
+            // Verify that the level has a beginning and an end.
+            if (playerStart == null)
+                throw new NotSupportedException("A level must have a starting point.");
+            if (playerExit == null)
+                throw new NotSupportedException("A level must have an exit.");
 
         }
 
-        Tile[,] generateTileGrid(IContentLoader loader)
+        string getMapData(string mapPath)
         {
-            // Read map data
             var mapData = string.Empty;
-            using (var stream = TitleContainer.OpenStream(ContentPaths.PATH_MAP_1))
+
+            // Read map data from file
+            using (var stream = TitleContainer.OpenStream(mapPath))
             using (var rdr = new StreamReader(stream))
                 mapData = rdr.ReadToEnd();
 
+            return mapData;
+        }
+
+        Tile[,] generateTileGrid(string mapData)
+        {
             // Load the level and ensure all of the lines are the same length.
             int width;
             List<string> lines = new List<string>();
@@ -144,14 +179,14 @@ namespace Bonsai.Samples.Platformer2D.Game
                 {
                     // to load each tile.
                     var tileType = lines[y][x];
-                    tileGrid[x, y] = createTile(tileType, x, y, loader);
+                    tileGrid[x, y] = createTile(tileType, x, y);
                 }
             }
 
             return tileGrid;
         }
 
-        Tile createTile(char tileType, int x, int y, IContentLoader loader)
+        Tile createTile(char tileType, int x, int y)
         {
             var tileRect = new Rectangle(x * Map.TileSize.X, y * Map.TileSize.Y, Map.TileSize.X, Map.TileSize.Y);
             var tileCenter = new Vector2(tileRect.Center.X, tileRect.Center.Y);
@@ -172,7 +207,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                     return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
 
                 case 'c':
-                    addCoinToLevel(loader, tileCenter);
+                    addCoinToLevel(tileCenter);
                     return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
 
                 // Exit
@@ -182,7 +217,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
                     playerExit = tileCenter;
 
-                    addDoorToLevel(loader, playerExit.Value);
+                    addDoorToLevel(playerExit.Value);
 
                     return new Tile(pixel, TileCollision.Passable, Color.Gray);
 
@@ -196,22 +231,22 @@ namespace Bonsai.Samples.Platformer2D.Game
             }
         }
 
-        void addCoinToLevel(IContentLoader loader, Vector2 position)
+        void addCoinToLevel(Vector2 position)
         {
             var coin = new Coin();
-            coin.Load(loader);
+            coin.Load(_loader);
             coin.Props.Position = position;
             coins.Add(coin);
         }
 
-        void addDoorToLevel(IContentLoader loader, Vector2 position)
+        void addDoorToLevel(Vector2 position)
         {
             // Create door
             door = new Door();
             position.X -= door.CollisionBox.Center.X;
             position.Y -= door.CollisionBox.Center.Y;
             door.Props.Position = position;
-            door.Load(loader);
+            door.Load(_loader);
         }
 
         public void Unload()
@@ -275,26 +310,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 door.Overlapping(player);
 
-                resetLevel();
+                loadMap(ContentPaths.PATH_MAP_1, _loader);
             }
-
-        }
-
-        void resetLevel()
-        {
-            Jumps.Value = 0;
-            CoinsCount.Value = 0;
-
-            player.Props.Position = playerStart.Value;
-
-            // Reset coins
-            foreach (var coin in coins)
-            {
-                coin.IsCollisionEnabled = true;
-                coin.IsHidden = false;
-            }
-
-            door.IsCollisionEnabled = true;
 
         }
 

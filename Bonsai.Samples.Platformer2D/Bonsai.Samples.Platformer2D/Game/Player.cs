@@ -17,22 +17,18 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
     public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
     {
-        public Player(Level Level, Vector2 StartPosition)
+        public Player(Level Level)
         {
             DrawOrder = 1;
             level = Level;
 
             // Physical properties
             Props.Direction = Direction.Right;
-            Props.Position = StartPosition;
             Props.TopSpeed = 150f;
             Props.CollisionRect = new Rectangle(0, 0, 15, 20);
-
         }
 
         Level level;
-        int tileWidth => level.Map.TileSize.X;
-        int tileHeight => level.Map.TileSize.Y;
         float jumpPower = 180f;
         float acceleration = 20f;
 
