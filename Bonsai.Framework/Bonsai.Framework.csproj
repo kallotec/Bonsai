@@ -62,10 +62,11 @@
     <Compile Include="Actors\MoveableActor.cs" />
     <Compile Include="BonsaiGame.cs" />
     <Compile Include="Animation\AnimationOverlay.cs" />
-    <Compile Include="Components\PhysicalProperties.cs" />
-    <Compile Include="Components\PhysicsComponent.cs" />
+    <Compile Include="Actors\Actor.cs" />
+    <Compile Include="Collision\ActorCollider.cs" />
+    <Compile Include="Direction.cs" />
+    <Compile Include="PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
-    <Compile Include="GameEntity.cs" />
     <Compile Include="GameVariable.cs" />
     <Compile Include="GameVariableChangedHandler.cs" />
     <Compile Include="Input\KeyPressListener.cs" />

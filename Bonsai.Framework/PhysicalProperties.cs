@@ -5,27 +5,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bonsai.Framework.Components
+namespace Bonsai.Framework
 {
     public class PhysicalProperties
     {
+        public PhysicalProperties()
+        {
+            Tint = Color.White;
+        }
+
         public Vector2 Position;
 
         // Visuals
-        public Color? DrawingTint;
+        public Color Tint;
         public Texture2D Texture;
+        public Direction Direction;
 
         // Movement
         public Vector2 Velocity;
-        public float Acceleration;
-        public float JumpPower;
         public float TopSpeed;
-        public float Gravity;
-        public float TerminalVelocity;
-        public bool HasGravity => Gravity != 0;
 
         // Object
         public Rectangle CollisionRect;
+        public bool Grounded;
 
 
         public void AddForceX(float power, bool overrideTopSpeed = false)
@@ -41,6 +43,13 @@ namespace Bonsai.Framework.Components
                     -TopSpeed,
                     TopSpeed);
             }
+
+            // Set direction
+            if (Velocity.X > 0)
+                Direction = Direction.Right;
+            else if (Velocity.X < 0)
+                Direction = Direction.Left;
+
         }
 
         public void AddForceY(float power, bool overrideTopSpeed = false)

@@ -33,6 +33,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         List<KeyPressListener> keyListeners;
         double fps_ms = 0;
         int frame_count = 0;
+        int screenMargin = 40;
 
         public delegate void delExit();
         public event delExit Exit;
@@ -70,9 +71,22 @@ namespace Bonsai.Samples.Platformer2D.Game
                 {
                     Font = fontGeneral,
                     Label = "Jumps: ",
-                    Position = new Vector2(ScreenBounds.Width / 2, 40),
+                    Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
                     Alignment = FieldAlignmentMode.Center,
                     ForegroundColor = Color.Green,
+                }
+            ));
+
+            // Coins variable
+            fields.Add(new TextWidget<int>(
+                variable: level.CoinsCount,
+                settings: new WidgetSettings
+                {
+                    Font = fontGeneral,
+                    Label = "Coins: ",
+                    Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
+                    Alignment = FieldAlignmentMode.Right,
+                    ForegroundColor = Color.Yellow,
                 }
             ));
 

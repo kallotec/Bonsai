@@ -18,7 +18,7 @@ namespace Bonsai.Framework
         Matrix transform;
         Vector2 center;
         Viewport viewport;
-        GameEntity focusedActor;
+        Actor focusedActor;
         Vector2? focusedPoint;
 
         public Matrix Transform
@@ -30,7 +30,7 @@ namespace Bonsai.Framework
             get
             {
                 return (focusedActor != null
-                          ? focusedActor.Position
+                          ? focusedActor.Props.Position
                           : focusedPoint ?? new Vector2(0));
             }
         }
@@ -54,7 +54,7 @@ namespace Bonsai.Framework
 
         }
 
-        public void SetFocus(GameEntity focusedActor)
+        public void SetFocus(Actor focusedActor)
         {
             this.focusedPoint = null;
             this.focusedActor = focusedActor;

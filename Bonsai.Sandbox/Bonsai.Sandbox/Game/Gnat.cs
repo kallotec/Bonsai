@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using Bonsai.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Bonsai.Framework.Components;
 using Bonsai.Framework.Input;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
@@ -19,18 +18,14 @@ namespace Bonsai.Sandbox.Game
         {
             props = new PhysicalProperties
             {
-                Gravity = 0.2f,
-                TerminalVelocity = 20f,
             };
 
             drawingBox = new Rectangle(0, 0, 20, 20);
-            physics = new PhysicsComponent();
             keyListeners = new List<KeyPressListener>();
         }
 
         PhysicalProperties props;
         Rectangle drawingBox;
-        PhysicsComponent physics;
         List<KeyPressListener> keyListeners;
 
         public int DrawOrder { get; set; }
@@ -42,7 +37,7 @@ namespace Bonsai.Sandbox.Game
         public void Load(IContentLoader loader)
         {
             props.Texture = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
-            props.DrawingTint = Color.Red;
+            props.Tint = Color.Red;
 
             setupKeyListeners();
         }
@@ -54,7 +49,7 @@ namespace Bonsai.Sandbox.Game
 
         public void Update(GameTime time)
         {
-            physics.UpdateMovement(props, time.ElapsedGameTime.Milliseconds);
+            //physics.UpdateMovement(props, time.ElapsedGameTime.Milliseconds);
 
 
             // Key listeners
@@ -68,7 +63,7 @@ namespace Bonsai.Sandbox.Game
             batch.Draw(props.Texture,
                 props.Position,
                 this.drawingBox,
-                props.DrawingTint.Value);
+                props.Tint);
         }
 
         void setupKeyListeners()
@@ -78,7 +73,7 @@ namespace Bonsai.Sandbox.Game
             {
                 Debug.WriteLine("[W] pressed");
 
-                physics.ApplyForceY(5, props);
+                //physics.ApplyForceY(5, props);
 
             }));
 

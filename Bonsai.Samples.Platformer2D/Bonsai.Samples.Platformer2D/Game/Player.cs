@@ -11,110 +11,75 @@ using System.Text;
 using System.Diagnostics;
 using Bonsai.Framework.Collision;
 using Bonsai.Framework.Content;
-using Bonsai.Framework.Components;
 using Bonsai.Samples.Platformer.Components;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
-    public class Player : GameEntity, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
+    public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
     {
         public Player(Level Level, Vector2 StartPosition)
         {
             DrawOrder = 1;
-            collisionWidth = 20;
-            collisionHeight = 20;
-            drawingBox = new Rectangle(0, 0, collisionWidth, collisionHeight);
-
             level = Level;
 
-            props = new PhysicalProperties
-            {
-                Position = StartPosition,
-                DrawingTint = Color.Red,
-                Acceleration = 20f,
-                TopSpeed = 150f,
-                Gravity = 5f,
-                TerminalVelocity = 200f,
-                JumpPower = 180f,
-                CollisionRect = new Rectangle(0, 0, collisionWidth, collisionHeight)
-            };
+            // Physical properties
+            Props.Direction = Direction.Right;
+            Props.Position = StartPosition;
+            Props.TopSpeed = 150f;
+            Props.CollisionRect = new Rectangle(0, 0, 15, 20);
 
-            collision = new CollisionDetector(level);
         }
 
-        int collisionWidth;
-        int collisionHeight;
         Level level;
-        bool isJumping;
-        Rectangle drawingBox;
-        int tileWidth
-        {
-            get { return level.TileMap.TileSize.X; }
-        }
-        int tileHeight
-        {
-            get { return level.TileMap.TileSize.Y; }
-        }
-        PhysicalProperties props;
-        CollisionDetector collision;
+        int tileWidth => level.Map.TileSize.X;
+        int tileHeight => level.Map.TileSize.Y;
+        float jumpPower = 180f;
+        float acceleration = 20f;
 
-        public override Vector2 Position { get { return props.Position; } } //HACK:
         public bool IsHidden { get; set; }
         public int DrawOrder { get; set; }
         public bool IsAttachedToCamera { get; set; }
         public bool IsDisabled { get; set; }
+        public bool IsCollisionEnabled { get; set; }
+        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.CollisionRect.Width, Props.CollisionRect.Height);
 
 
         public void Load(IContentLoader loader)
         {
-            props.Texture = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
-            props.DrawingTint = Color.Red;
+            Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITE_MARIO);
         }
 
         public void Unload()
         {
         }
 
+
         public void Update(GameTime time)
         {
             var kbState = Keyboard.GetState();
 
-            // Do physics
-            var collisions = collision.ApplyPhysics(props, time);
-
-            // Handle collisions
-            // Landing
-            if (collisions.Contains(CollisionDetector.CollisionDirection.Bottom))
-            {
-                isJumping = false;
-            }
-
             // Move left/right
             if (kbState.IsKeyDown(Keys.Left))
             {
-                props.AddForceX(-props.Acceleration);
+                Props.AddForceX(-acceleration);
             }
             else if (kbState.IsKeyDown(Keys.Right))
             {
-                props.AddForceX(props.Acceleration);
+                Props.AddForceX(acceleration);
             }
             else
             {
-                props.Velocity.X = 0;
+                // TODO: Deceleration
+                Props.Velocity.X = 0;
             }
 
-            //Console.WriteLine(props.Velocity.X);
-            //Console.WriteLine(props.Velocity.Y);
-            //Console.WriteLine(props.Position.Y);
-            //Console.WriteLine(time.ElapsedGameTime.TotalSeconds);
 
             // Jump action
-            var isOnGround = (props.Velocity.Y == 0 && !isJumping);
-            if (kbState.IsKeyDown(Keys.Up) && isOnGround)
-            {
-                isJumping = true;
+            var canJump = (Props.Grounded && Props.Velocity.Y == 0);
 
-                props.AddForceY(-props.JumpPower, overrideTopSpeed: true);
+            if (kbState.IsKeyDown(Keys.Up) && canJump)
+            {
+                Props.AddForceY(-jumpPower, overrideTopSpeed: true);
 
                 // Update level variable
                 level.Jumps.Value++;
@@ -125,8 +90,22 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         public void Draw(GameTime time, SpriteBatch batch)
         {
+            // Default direction is Right
+            var flip = (Props.Direction == Direction.Left);
+
+            batch.Draw(Props.Texture, Props.Position, Props.CollisionRect, Props.Tint, 0f, new Vector2(), 1f, (flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0f);
+
             // Draw tinted box
-            batch.Draw(props.Texture, props.Position, this.drawingBox, props.DrawingTint.Value);
+            // batch.Draw(Props.Texture, Props.Position, , Props.DrawingTint.Value);
+        }
+
+
+        public void Overlapping(object actor)
+        {
+            if (actor == null)
+                return;
+
+            Debug.WriteLine("Player Overlapping: " + actor.GetType().Name);
         }
 
     }

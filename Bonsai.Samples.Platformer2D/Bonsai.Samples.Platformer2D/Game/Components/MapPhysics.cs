@@ -1,4 +1,4 @@
-﻿using Bonsai.Framework.Components;
+﻿using Bonsai.Framework;
 using Bonsai.Samples.Platformer2D.Game;
 using Microsoft.Xna.Framework;
 using System;
@@ -9,9 +9,9 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer.Components
 {
-    public class CollisionDetector
+    public class MapPhysics
     {
-        public CollisionDetector(Level level)
+        public MapPhysics(Level level)
         {
             _level = level;
         }
@@ -19,11 +19,11 @@ namespace Bonsai.Samples.Platformer.Components
         Level _level;
         int tileWidth
         {
-            get { return _level.TileMap.TileSize.X; }
+            get { return _level.Map.TileSize.X; }
         }
         int tileHeight
         {
-            get { return _level.TileMap.TileSize.Y; }
+            get { return _level.Map.TileSize.Y; }
         }
 
 
@@ -32,20 +32,20 @@ namespace Bonsai.Samples.Platformer.Components
             var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             var allCollisions = new List<CollisionDirection>();
-            var lastEdges = GetEdges(props);
+            var lastEdges = getEdges(props);
 
             // Apply gravity
 
-            if (props.HasGravity && props.Velocity.Y > 0)
+            if (_level.HasGravity && props.Velocity.Y > 0)
             {
                 props.Velocity.Y = MathHelper.Clamp(
-                    props.Velocity.Y + props.Gravity,
-                    -props.TerminalVelocity,
-                    props.TerminalVelocity);
+                    props.Velocity.Y + _level.Gravity,
+                    -_level.TerminalVelocity,
+                    _level.TerminalVelocity);
             }
             else
             {
-                props.Velocity.Y = (props.Velocity.Y + props.Gravity);
+                props.Velocity.Y = (props.Velocity.Y + _level.Gravity);
             }
 
             // [ Y ]
@@ -54,8 +54,8 @@ namespace Bonsai.Samples.Platformer.Components
 
             props.Position.Y = props.Position.Y + (props.Velocity.Y * delta);
 
-            var newEdges = GetEdges(props);
-            var collisionsY = CheckForCollisions(props);
+            var newEdges = getEdges(props);
+            var collisionsY = checkForCollisions(props);
             allCollisions.AddRange(collisionsY);
 
             // Jumping map collision
@@ -77,33 +77,38 @@ namespace Bonsai.Samples.Platformer.Components
 
             props.Position.X = props.Position.X + (props.Velocity.X * delta);
 
-            newEdges = GetEdges(props);
-            var collisionsX = CheckForCollisions(props);
+            newEdges = getEdges(props);
+            var collisionsX = checkForCollisions(props);
             allCollisions.AddRange(collisionsX);
 
-            // Left movement map collision
+            // Left movement - map collision
             if (collisionsX.Contains(CollisionDirection.Left))
             {
                 //project out of collision
                 props.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
                 props.Velocity.X = 0;
             }
-            // Right movement map collision
+            // Right movement - map collision
             else if (collisionsX.Contains(CollisionDirection.Right))
             {
                 //project out of collision
                 props.Position.X = (newEdges.RightIndex * tileWidth) - (props.CollisionRect.Width + 1);
                 props.Velocity.X = 0;
             }
-
+            
+            // Apply friction and slow horizxontal movement
+            if (collisionsY.Contains(CollisionDirection.Bottom) && _level.HasGravity && props.Velocity.X != 0)
+            {
+                // TODO:
+            }
 
             return allCollisions.ToArray();
         }
 
-        public CollisionDirection[] CheckForCollisions(PhysicalProperties props)
+        CollisionDirection[] checkForCollisions(PhysicalProperties props)
         {
             var collisions = new List<CollisionDirection>();
-            var edges = GetEdges(props);
+            var edges = getEdges(props);
 
             // Jumping
             if (props.Velocity.Y < 0)
@@ -138,14 +143,14 @@ namespace Bonsai.Samples.Platformer.Components
             return collisions.ToArray();
         }
 
-        public TileMap.TileEdges GetEdges(PhysicalProperties props)
+        Map.TileEdges getEdges(PhysicalProperties props)
         {
-            return _level.TileMap.GetEdges(props.Position, props.CollisionRect.Width, props.CollisionRect.Height);
+            return _level.Map.GetEdges(props.Position, props.CollisionRect.Width, props.CollisionRect.Height);
         }
 
         TileCollision getCollision(int xIndex, int yIndex)
         {
-            return _level.TileMap.GetCollision(xIndex, yIndex);
+            return _level.Map.GetCollision(xIndex, yIndex);
         }
 
         public enum CollisionDirection { Left, Top, Right, Bottom }

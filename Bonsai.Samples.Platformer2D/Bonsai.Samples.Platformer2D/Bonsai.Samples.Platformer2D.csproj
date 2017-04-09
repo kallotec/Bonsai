@@ -73,7 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentPaths.cs" />
-    <Compile Include="Game\Components\CollisionDetector.cs" />
+    <Compile Include="Game\Coin.cs" />
+    <Compile Include="Game\Components\MapPhysics.cs" />
+    <Compile Include="Game\Door.cs" />
     <Compile Include="Game\HUD.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />
@@ -82,11 +84,14 @@
     </Compile>
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\TileCollision.cs" />
-    <Compile Include="Game\TileMap.cs" />
+    <Compile Include="Game\Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\map1.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>

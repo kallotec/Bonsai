@@ -13,9 +13,6 @@ using Bonsai.Framework.Content;
 
 namespace Bonsai.Sandbox.Game
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class SandboxGame : BonsaiGame
     {
         public SandboxGame()

@@ -12,7 +12,7 @@ namespace Bonsai.Framework
         Matrix Transform { get; }
         Vector2 Focus { get; }
 
-        void SetFocus(GameEntity focusedActor);
+        void SetFocus(Actor focusedActor);
         void SetFocus(Vector2 focusedPoint);
 
     }
