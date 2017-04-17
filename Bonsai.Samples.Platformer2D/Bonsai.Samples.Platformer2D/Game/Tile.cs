@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Bonsai.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,15 @@ namespace Bonsai.Samples.Platformer2D.Game
             Texture = texture;
             Collision = collision;
             Tint = tint;
+
+            Entities = new List<ICollidable>();
         }
 
         public Texture2D Texture;
         public TileCollision Collision;
         public Color Tint;
+
+        public List<ICollidable> Entities;
 
     }
 }

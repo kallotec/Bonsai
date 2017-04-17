@@ -72,7 +72,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Physics
             phys = new MapPhysics(this);
             Gravity = 5f;
-            Friction = 0.4f;
+            Friction = 0.1f;
             TerminalVelocity = 200f;
 
             // Content
@@ -314,7 +314,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 grounded = (mapCollisions[CollisionDirection.Bottom] == TileCollision.Impassable);
 
             player.Props.Grounded = grounded;
-            
+
         }
 
         void onDeath()

@@ -16,6 +16,7 @@ namespace Bonsai.Framework.Animation
         {
             drawingRect = new Rectangle(0, yOffset, width, height);
 
+            ID = Guid.NewGuid().ToString();
             Name = name;
             AnimationType = animType;
             FrameCount = frames;
@@ -28,6 +29,7 @@ namespace Bonsai.Framework.Animation
                 Origin = Vector2.Zero;
         }
 
+        public string ID { get; set; }
         public string Name { get; set; }
         Rectangle drawingRect;
         public int FrameCellIndex

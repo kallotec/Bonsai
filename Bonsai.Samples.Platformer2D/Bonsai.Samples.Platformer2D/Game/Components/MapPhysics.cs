@@ -30,20 +30,6 @@ namespace Bonsai.Samples.Platformer.Components
             var allCollisions = new Dictionary<CollisionDirection, TileCollision>();
             var lastEdges = getEdges(props);
 
-            // [ Gravity ]
-
-            if (_level.HasGravity && props.Velocity.Y > 0)
-            {
-                props.Velocity.Y = MathHelper.Clamp(
-                    props.Velocity.Y + _level.Gravity,
-                    -_level.TerminalVelocity,
-                    _level.TerminalVelocity);
-            }
-            else
-            {
-                props.Velocity.Y = (props.Velocity.Y + _level.Gravity);
-            }
-
             // [ Y ]
 
             // Move
@@ -92,12 +78,37 @@ namespace Bonsai.Samples.Platformer.Components
             }
 
 
+            // [ Floor check ]
+
+            if (!allCollisions.ContainsKey(CollisionDirection.Bottom))
+            {
+                if (floorCollisionCheck(props) == TileCollision.Impassable)
+                    allCollisions.Add(CollisionDirection.Bottom, TileCollision.Impassable);
+            }
+
+
+            // [ Gravity ]
+            if (!allCollisions.ContainsKey(CollisionDirection.Bottom))
+            {
+                if (_level.HasGravity)
+                {
+                    props.Velocity.Y = MathHelper.Clamp(
+                        props.Velocity.Y + _level.Gravity,
+                        -_level.TerminalVelocity,
+                        _level.TerminalVelocity);
+                }
+                else
+                {
+                    props.Velocity.Y = (props.Velocity.Y + _level.Gravity);
+                }
+            }
+
 
             // [ Friction ]
 
             if (_level.HasGravity &&
-                _level.HasFriction && 
-                props.Grounded && 
+                _level.HasFriction &&
+                props.Grounded &&
                 props.Velocity.X != 0)
             {
                 var lerped = MathHelper.Lerp(props.Velocity.X, 0, _level.Friction);
@@ -168,6 +179,25 @@ namespace Bonsai.Samples.Platformer.Components
             return collisions;
         }
 
+        TileCollision floorCollisionCheck(PhysicalProperties props)
+        {
+            props.Position.Y += 1;
+            var edges2 = getEdges(props);
+            props.Position.Y -= 1;
+
+            var leftBottomCollisionType = getCollision(edges2.LeftIndex, edges2.BottomIndex);
+            var rightBottomCollisionType = getCollision(edges2.RightIndex, edges2.BottomIndex);
+
+            var hitFloor = (leftBottomCollisionType == TileCollision.Impassable || rightBottomCollisionType == TileCollision.Impassable);
+            var isDeath = (leftBottomCollisionType == TileCollision.Death || rightBottomCollisionType == TileCollision.Death);
+
+            if (hitFloor || isDeath)
+                return isDeath ? TileCollision.Death : TileCollision.Impassable;
+            else
+                return TileCollision.Passable;
+
+        }
+
         Map.TileEdges getEdges(PhysicalProperties props)
         {
             return _level.Map.GetEdges(props.Position, props.CollisionRect.Width, props.CollisionRect.Height);
@@ -180,7 +210,7 @@ namespace Bonsai.Samples.Platformer.Components
 
         void mergeCollisionDictionary(Dictionary<CollisionDirection, TileCollision> target, Dictionary<CollisionDirection, TileCollision> source)
         {
-            foreach(var kvp in source)
+            foreach (var kvp in source)
             {
                 if (target.ContainsKey(kvp.Key))
                     target[kvp.Key] = kvp.Value;
