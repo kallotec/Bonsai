@@ -12,11 +12,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD24DFE5-4924-4276-8E8D-6110C2F03FE8}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Sandbox", "Bonsai.Sandbox\Bonsai.Sandbox\Bonsai.Sandbox.csproj", "{B470997C-007D-44C8-9851-DB7360A8F5A3}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Bonsai.SandboxContent", "Bonsai.Sandbox\Bonsai.SandboxContent\Bonsai.SandboxContent.contentproj", "{1F8BCAB9-6854-42E1-8ACD-99CD83FECC9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.SandboxContent", "Bonsai.Sandbox\Bonsai.SandboxContent\Bonsai.SandboxContent.contentproj", "{1F8BCAB9-6854-42E1-8ACD-99CD83FECC9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{CB63B140-235F-4091-B29C-2538034CB77D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

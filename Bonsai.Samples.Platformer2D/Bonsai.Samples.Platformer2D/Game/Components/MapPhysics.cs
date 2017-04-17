@@ -30,7 +30,7 @@ namespace Bonsai.Samples.Platformer.Components
             var allCollisions = new Dictionary<CollisionDirection, TileCollision>();
             var lastEdges = getEdges(props);
 
-            // Apply gravity
+            // [ Gravity ]
 
             if (_level.HasGravity && props.Velocity.Y > 0)
             {
@@ -47,7 +47,6 @@ namespace Bonsai.Samples.Platformer.Components
             // [ Y ]
 
             // Move
-
             props.Position.Y = props.Position.Y + (props.Velocity.Y * delta);
 
             var newEdges = getEdges(props);
@@ -80,22 +79,32 @@ namespace Bonsai.Samples.Platformer.Components
             // Left movement - map collision
             if (collisionsX.ContainsKey(CollisionDirection.Left))
             {
-                //project out of collision
+                // Project out of collision
                 props.Position.X = (lastEdges.LeftIndex * tileWidth) + 1;
                 props.Velocity.X = 0;
             }
             // Right movement - map collision
             else if (collisionsX.ContainsKey(CollisionDirection.Right))
             {
-                //project out of collision
+                // Project out of collision
                 props.Position.X = (newEdges.RightIndex * tileWidth) - (props.CollisionRect.Width + 1);
                 props.Velocity.X = 0;
             }
-            
-            // Apply friction and slow horizontal movement
-            if (collisionsY.ContainsKey(CollisionDirection.Bottom) && _level.HasGravity && props.Velocity.X != 0)
+
+
+
+            // [ Friction ]
+
+            if (_level.HasGravity &&
+                _level.HasFriction && 
+                props.Grounded && 
+                props.Velocity.X != 0)
             {
-                // TODO:
+                var lerped = MathHelper.Lerp(props.Velocity.X, 0, _level.Friction);
+                if (Math.Abs(lerped) < 2)
+                    lerped = 0;
+
+                props.Velocity.X = lerped;
             }
 
             return allCollisions;
@@ -173,7 +182,7 @@ namespace Bonsai.Samples.Platformer.Components
         {
             foreach(var kvp in source)
             {
-                if (target.ContainsKey(kvp.Key) && target[kvp.Key] == TileCollision.Death)
+                if (target.ContainsKey(kvp.Key))
                     target[kvp.Key] = kvp.Value;
                 else
                     target.Add(kvp.Key, kvp.Value);

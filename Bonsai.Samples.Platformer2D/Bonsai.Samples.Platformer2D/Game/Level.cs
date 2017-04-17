@@ -52,9 +52,17 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsDisabled { get; set; }
         public ICamera Camera { get; set; }
         public Map Map { get; private set; }
+        /// <summary>
+        /// Intensity of gravity affecting player while not grounded
+        /// </summary>
         public float Gravity;
+        /// <summary>
+        /// 0f to 1f to represent intensity of friction when entity grounded
+        /// </summary>
+        public float Friction;
         public float TerminalVelocity;
         public bool HasGravity => Gravity != 0;
+        public bool HasFriction => Friction != 0;
 
 
         public void Load(IContentLoader loader)
@@ -64,6 +72,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Physics
             phys = new MapPhysics(this);
             Gravity = 5f;
+            Friction = 0.4f;
             TerminalVelocity = 200f;
 
             // Content
@@ -305,6 +314,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 grounded = (mapCollisions[CollisionDirection.Bottom] == TileCollision.Impassable);
 
             player.Props.Grounded = grounded;
+            
         }
 
         void onDeath()
