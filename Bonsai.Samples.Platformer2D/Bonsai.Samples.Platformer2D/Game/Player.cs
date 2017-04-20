@@ -50,7 +50,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         public void Load(IContentLoader loader)
         {
-            Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITE_MARIO);
+            Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITESHEET_MARIO);
 
             animStanding = new AnimationOverlay(
                 name: "standing",
@@ -184,7 +184,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         }
 
 
-        public void Overlapping(object actor)
+        public void OnOverlapping(object actor)
         {
             if (actor == null)
                 return;

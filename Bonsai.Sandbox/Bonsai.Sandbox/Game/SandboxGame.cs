@@ -22,14 +22,17 @@ namespace Bonsai.Sandbox.Game
 
         protected override void Init()
         {
-            // Set up the game window
-            base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
-
-            var gnat = new Gnat();
-
-            base.GameObjects.Add(gnat);
+            throw new NotImplementedException();
         }
 
+        protected override void Load(IContentLoader loader)
+        {
+            throw new NotImplementedException();
+        }
 
+        protected override void Unload()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

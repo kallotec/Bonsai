@@ -19,7 +19,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         {
             // Ensure HUD follows camera around
             base.IsAttachedToCamera = true;
-            base.DrawOrder = 99; // Ensure always on top
 
             this.level = level;
             fields = new List<IWidget>();
@@ -35,8 +34,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         int frame_count = 0;
         int screenMargin = 40;
 
-        public delegate void delExit();
-        public event delExit Exit;
+        public event EventHandler Exit;
         public bool IsDisabled { get; set; }
         public Rectangle ScreenBounds { get; set; }
 
@@ -122,7 +120,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch)
         {
-            for (var x = 0; x < fields.Count; x++)
+            for (var x = 0; x < fields.Count; x++) 
                 fields[x].Draw(time, batch);
         }
 
@@ -133,7 +131,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             keyListeners.Add(new KeyPressListener(Keys.Escape, () => 
             {
                 // Send game exit request
-                this.Exit?.Invoke();
+                this.Exit?.Invoke(this, null);
 
             }));
 

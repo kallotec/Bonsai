@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Map : Bonsai.Framework.IDrawable
+    public class Map : DrawableBase, Bonsai.Framework.IDrawable
     {
         public Map(int tileWidth, int tileHeight)
         {
@@ -25,11 +25,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         public Point TileSize => new Point(tileWidth, tileHeight);
         public int TilesWide => Tiles.GetLength(0);
         public int TilesHigh => Tiles.GetLength(1);
-        public bool IsHidden { get; set; }
-        public int DrawOrder => -1;
-        public bool IsAttachedToCamera => false;
-        public bool IsDisabled => false;
-
 
         public void Draw(GameTime time, SpriteBatch batch)
         {

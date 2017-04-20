@@ -13,6 +13,6 @@ namespace Bonsai.Framework
         bool IsCollisionEnabled { get; }
         Rectangle CollisionBox { get; }
 
-        void Overlapping(object actor);
+        void OnOverlapping(object actor);
     }
 }

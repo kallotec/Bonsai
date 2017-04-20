@@ -50,7 +50,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             batch.Draw(Props.Texture, Props.Position, Props.CollisionRect, Props.Tint);
         }
 
-        public void Overlapping(object actor)
+        public void OnOverlapping(object actor)
         {
             if (!IsCollisionEnabled)
                 return;

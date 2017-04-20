@@ -86,6 +86,10 @@ namespace Bonsai.Samples.Platformer.Components
                     allCollisions.Add(CollisionDirection.Bottom, TileCollision.Impassable);
             }
 
+            // Grounded flag
+            var grounded = (allCollisions.ContainsKey(CollisionDirection.Bottom) &&
+                            allCollisions[CollisionDirection.Bottom] == TileCollision.Impassable);
+            props.Grounded = grounded;
 
             // [ Gravity ]
             if (!allCollisions.ContainsKey(CollisionDirection.Bottom))

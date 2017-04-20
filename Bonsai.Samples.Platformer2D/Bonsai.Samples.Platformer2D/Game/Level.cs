@@ -8,6 +8,7 @@ using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.UI.Widgets.Popups;
 using Bonsai.Samples.Platformer.Components;
 using Bonsai.Samples.Platformer2D.Game.Actors;
+using Bonsai.Samples.Platformer2D.Game.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -22,11 +23,10 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Level : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable
+    public class Level : Screen
     {
-        public Level()
+        public Level(BonsaiGame game) : base(game)
         {
-            base.DrawOrder = 0;
             popupManager = new PopupManager();
             keyListeners = new List<KeyPressListener>();
 
@@ -34,6 +34,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         }
 
         Player player;
+        HUD hud;
         PopupManager popupManager;
         List<KeyPressListener> keyListeners;
         SpriteFont font;
@@ -47,10 +48,12 @@ namespace Bonsai.Samples.Platformer2D.Game
         IContentLoader _loader;
         string currentMapPath;
 
+        public event EventHandler Exit;
+        public event EventHandler GameOver;
+
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
         public bool IsDisabled { get; set; }
-        public ICamera Camera { get; set; }
         public Map Map { get; private set; }
         /// <summary>
         /// Intensity of gravity affecting player while not grounded
@@ -65,9 +68,41 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool HasFriction => Friction != 0;
 
 
-        public void Load(IContentLoader loader)
+        public override void Load(IContentLoader loader)
         {
             _loader = loader;
+
+            // Content
+            font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
+            pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
+            pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
+
+            // Map
+            Map = new Map(tileWidth: 22, tileHeight: 22);
+            Map.DrawOrder = -1;
+            GameObjects.Add(Map);
+
+            // Player
+            player = new Player(this);
+            player.DrawOrder = 0;
+            player.Load(loader);
+            GameObjects.Add(player);
+
+            // Game variables
+            Jumps = new GameVariable<int>();
+            Jumps.Load(loader);
+            GameObjects.Add(Jumps);
+            CoinsCount = new GameVariable<int>();
+            CoinsCount.Load(loader);
+            GameObjects.Add(CoinsCount);
+
+            // HUD
+            hud = new HUD(this);
+            hud.ScreenBounds = base.Game.GraphicsDevice.Viewport.Bounds;
+            hud.Exit += (s, e) => { Exit?.Invoke(s, e); };
+            hud.DrawOrder = 1;
+            hud.Load(loader);
+            GameObjects.Add(hud);
 
             // Physics
             phys = new MapPhysics(this);
@@ -75,27 +110,15 @@ namespace Bonsai.Samples.Platformer2D.Game
             Friction = 0.1f;
             TerminalVelocity = 200f;
 
-            // Content
-            font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
-            pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
-            pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
-
-            // Create player
-            player = new Player(this);
-            player.Load(loader);
-
-            // Focus camera on player
+            // Camera
             Camera.SetFocus(player);
+            GameObjects.Add(Camera);
 
-            // Setup game variables
-            Jumps = new GameVariable<int>();
-            CoinsCount = new GameVariable<int>();
-
+            // Services
             setupKeyListeners();
 
             // Load first map
             loadMap(ContentPaths.PATH_MAP_1, loader);
-
         }
 
         void setupKeyListeners()
@@ -115,7 +138,9 @@ namespace Bonsai.Samples.Platformer2D.Game
                             Font = font,
                             Position = player.Props.Position + new Vector2(0,-20)
                         });
-                })
+                }),
+                // [ESC] Exit
+                new KeyPressListener(Keys.Escape, () => Exit?.Invoke(this,null))
             };
         }
 
@@ -128,12 +153,11 @@ namespace Bonsai.Samples.Platformer2D.Game
             CoinsCount.Value = 0;
 
             // Reset game objects
+            var existingCoinGameObjects = GameObjects.Where(g => g is Coin);
+            GameObjects.RemoveAll(o => existingCoinGameObjects.Contains(o));
             coins.Clear();
             playerStart = null;
             playerExit = null;
-
-            // Create map
-            Map = new Map(tileWidth: 22, tileHeight: 22);
 
             // Create map tiles
             var mapData = getMapData(mapPath);
@@ -157,8 +181,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Read map data from file
             using (var stream = TitleContainer.OpenStream(mapPath))
-            using (var rdr = new StreamReader(stream))
-                mapData = rdr.ReadToEnd();
+                using (var rdr = new StreamReader(stream))
+                    mapData = rdr.ReadToEnd();
 
             return mapData;
         }
@@ -258,43 +282,31 @@ namespace Bonsai.Samples.Platformer2D.Game
             coin.Load(_loader);
             coin.Props.Position = position;
             coins.Add(coin);
+            GameObjects.Add(coin);
         }
 
         void addDoorToLevel(Vector2 position)
         {
+            if (door != null && GameObjects.Contains(door))
+                GameObjects.Remove(door);
+
             // Create door
             door = new Door();
             position.X -= door.CollisionBox.Center.X;
             position.Y -= door.CollisionBox.Center.Y;
             door.Props.Position = position;
             door.Load(_loader);
-        }
-
-        public void Unload()
-        {
-            Jumps.Unload();
-            popupManager.Clear();
+            GameObjects.Add(door);
         }
 
 
-        public void Update(GameTime time)
+        public override void Update(GameTime time)
         {
-            // Misc
+            // Update gameobjects
+            base.Update(time);
+
             foreach (var listener in keyListeners)
                 listener.Update(time);
-
-            // Game objects
-            updatePlayer(time);
-            updateCoins();
-            updateDoor();
-
-            // UI
-            popupManager.Update(time);
-        }
-
-        void updatePlayer(GameTime time)
-        {
-            player.Update(time);
 
             // Map collisions
             var mapCollisions = phys.ApplyPhysics(player.Props, time);
@@ -307,13 +319,36 @@ namespace Bonsai.Samples.Platformer2D.Game
                 return;
             }
 
-            // Handle grounded flag
-            var grounded = false;
+            checkPlayerCollisions();
+        }
 
-            if (mapCollisions.ContainsKey(CollisionDirection.Bottom))
-                grounded = (mapCollisions[CollisionDirection.Bottom] == TileCollision.Impassable);
+        void checkPlayerCollisions()
+        {
+            // Actor -> coin collision
+            foreach (var coin in coins.Where(c => c.IsCollisionEnabled))
+            {
+                if (coin.CollisionBox.Intersects(player.CollisionBox))
+                {
+                    player.OnOverlapping(coin);
+                    coin.OnOverlapping(player);
 
-            player.Props.Grounded = grounded;
+                    // Increment count
+                    CoinsCount.Value += 1;
+                }
+            }
+
+
+            if (door.IsCollisionEnabled)
+            {
+                // Actor -> door collision
+                if (door.CollisionBox.Intersects(player.CollisionBox))
+                {
+                    door.OnOverlapping(player);
+
+                    loadMap(ContentPaths.PATH_MAP_2, _loader);
+                }
+            }
+
 
         }
 
@@ -323,56 +358,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Reload current map
             loadMap(currentMapPath, _loader);
-        }
-
-        void updateCoins()
-        {
-            // Actor -> coins collisions
-            foreach (var coin in coins.Where(c => c.IsCollisionEnabled))
-            {
-                var overlapping = coin.CollisionBox.Intersects(player.CollisionBox);
-                if (overlapping)
-                {
-                    player.Overlapping(coin);
-                    coin.Overlapping(player);
-
-                    // Increment count
-                    CoinsCount.Value += 1;
-                }
-            }
-
-        }
-
-        void updateDoor()
-        {
-            if (!door.IsCollisionEnabled)
-                return;
-
-            // Collision
-            var overlapping = door.CollisionBox.Intersects(player.CollisionBox);
-            if (overlapping)
-            {
-                door.Overlapping(player);
-
-                loadMap(ContentPaths.PATH_MAP_2, _loader);
-            }
-
-        }
-
-
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            Map.Draw(time, batch);
-
-            foreach (var coin in coins.Where(c => !c.IsHidden))
-                coin.Draw(time, batch);
-
-            door.Draw(time, batch);
-
-            player.Draw(time, batch);
-
-            popupManager.Draw(time, batch);
-
         }
 
     }

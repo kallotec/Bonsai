@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Bonsai.Framework.Utility;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Bonsai.Framework.Animation
 {
@@ -29,8 +30,9 @@ namespace Bonsai.Framework.Animation
                 Origin = Vector2.Zero;
         }
 
-        public string ID { get; set; }
-        public string Name { get; set; }
+        public string ID { get; private set; }
+        public string Name { get; private set; }
+        public Texture2D Texture { get; private set; }
         Rectangle drawingRect;
         public int FrameCellIndex
         {
@@ -57,8 +59,8 @@ namespace Bonsai.Framework.Animation
                 drawingRect.Y = value;
             }
         }
-        public int FrameCount { get; set; }
-        public Vector2 Origin { get; set; }
+        public int FrameCount { get; private set; }
+        public Vector2 Origin { get; private set; }
         public int Width { get { return drawingRect.Width; } }
         public int Height { get { return drawingRect.Height; } }
         public Rectangle DrawingRectangle
@@ -66,8 +68,8 @@ namespace Bonsai.Framework.Animation
             get { return drawingRect; }
             private set { drawingRect = value; }
         }
-        public SpriteAnimationType AnimationType { get; set; }
-        public MillisecCounter FrameRateTimer { get; set; }
+        public SpriteAnimationType AnimationType { get; private set; }
+        public MillisecCounter FrameRateTimer { get; private set; }
         public bool Completed { get; private set; }
 
         public void Reset()
@@ -122,6 +124,7 @@ namespace Bonsai.Framework.Animation
             }
 
         }
+
     }
 
 

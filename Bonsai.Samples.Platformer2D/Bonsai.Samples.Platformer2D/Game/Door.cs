@@ -45,7 +45,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         }
 
 
-        public void Overlapping(object actor)
+        public void OnOverlapping(object actor)
         {
             if (actor is Player)
                 onDoorEnteredByPlayer();

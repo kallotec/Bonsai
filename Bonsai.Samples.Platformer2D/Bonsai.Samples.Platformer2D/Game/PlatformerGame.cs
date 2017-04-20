@@ -14,9 +14,12 @@ using System.Diagnostics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Bonsai.Samples.Platformer2D.Game;
 using Bonsai.Framework.Content;
+using Bonsai.Samples.Platformer2D.Game.Components;
 
 namespace Bonsai.Samples.Platformer2D
 {
+    public enum GameScreen { Menu, InGame, EndGame }
+
     public class PlatformerGame : BonsaiGame
     {
         public PlatformerGame()
@@ -25,7 +28,7 @@ namespace Bonsai.Samples.Platformer2D
         }
 
         Level level;
-        HUD hud;
+        Screen currentScreen;
 
 
         protected override void Init()
@@ -34,32 +37,30 @@ namespace Bonsai.Samples.Platformer2D
             base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
 
             // Create level
-            level = new Level();
-            level.Camera = base.Camera;
+            level = new Level(this);
+            level.Exit += (s, e) => this.Exit();
 
-            // Create HUD
-            hud = new HUD(level);
-            hud.ScreenBounds = base.GraphicsDevice.Viewport.Bounds;
-            hud.Exit += () => { this.Exit(); };
-
-            // Add objects to pipeline
-            base.GameObjects.Add(level);
-            base.GameObjects.Add(hud);
-
+            currentScreen = level;
         }
 
         protected override void Load(IContentLoader loader)
         {
-            // Enforce load sequence
             level.Load(loader);
-            hud.Load(loader);
         }
 
         protected override void Unload()
         {
-            // Enforce unload sequence
-            hud.Unload();
             level.Unload();
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            currentScreen.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            currentScreen.Draw(gameTime);
         }
 
     }

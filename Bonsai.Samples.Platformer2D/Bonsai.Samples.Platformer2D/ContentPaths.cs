@@ -15,7 +15,7 @@ namespace Bonsai.Samples.Platformer2D
         public static string FONT_UI_GENERAL = @"Fonts/ui-general";
 
         // Sprites
-        public static string SPRITE_MARIO = @"GameObjects/mario";
+        public static string SPRITESHEET_MARIO = @"GameObjects/mario";
         public static string SPRITE_COIN = @"GameObjects/coin";
         internal static string SPRITE_DOOR = @"GameObjects/door";
 
