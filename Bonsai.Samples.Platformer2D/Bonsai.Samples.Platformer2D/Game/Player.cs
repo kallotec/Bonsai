@@ -26,7 +26,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             // Physical properties
             Props.Direction = Direction.Right;
             Props.TopSpeed = 150f;
-            Props.CollisionRect = new Rectangle(0, 0, 15, 20);
+            Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
         }
 
         Level level;
@@ -44,9 +44,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         public bool IsAttachedToCamera { get; set; }
         public bool IsDisabled { get; set; }
         public bool IsCollisionEnabled { get; set; }
-        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.CollisionRect.Width, Props.CollisionRect.Height);
+        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsJetPacking { get; private set; }
 
+        public bool IsOverlappingEnabled => throw new NotImplementedException();
 
         public void Load(IContentLoader loader)
         {
@@ -56,8 +57,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 name: "standing",
                 animType: SpriteAnimationType.SingleFrame,
                 origin: SpriteOriginType.TopLeft,
-                width: Props.CollisionRect.Width,
-                height: Props.CollisionRect.Height,
+                width: Props.PhysicalRect.Width,
+                height: Props.PhysicalRect.Height,
                 frames: 1,
                 framerateMillisec: 1,
                 yOffset: 0);
@@ -66,8 +67,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 name: "walking",
                 animType: SpriteAnimationType.LoopingAnimation,
                 origin: SpriteOriginType.TopLeft,
-                width: Props.CollisionRect.Width,
-                height: Props.CollisionRect.Height,
+                width: Props.PhysicalRect.Width,
+                height: Props.PhysicalRect.Height,
                 frames: 2,
                 framerateMillisec: 100,
                 yOffset: 20);
@@ -76,8 +77,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 name: "jetting",
                 animType: SpriteAnimationType.SingleFrame,
                 origin: SpriteOriginType.TopLeft,
-                width: Props.CollisionRect.Width,
-                height: Props.CollisionRect.Height,
+                width: Props.PhysicalRect.Width,
+                height: Props.PhysicalRect.Height,
                 frames: 1,
                 framerateMillisec: 1,
                 yOffset: 40);

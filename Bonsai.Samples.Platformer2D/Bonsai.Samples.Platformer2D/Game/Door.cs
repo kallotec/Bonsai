@@ -16,7 +16,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public Door()
         {
             IsCollisionEnabled = true;
-            base.Props.CollisionRect = new Rectangle(0, 0, 14, 20);
+            base.Props.PhysicalRect = new Rectangle(0, 0, 14, 20);
         }
 
         SoundEffect sfxOpen;
@@ -25,8 +25,9 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsAttachedToCamera => false;
         public bool IsHidden { get; set; }
         public bool IsCollisionEnabled { get; set; }
-        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.CollisionRect.Width, Props.CollisionRect.Height);
+        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
 
+        public bool IsOverlappingEnabled => throw new NotImplementedException();
 
         public void Load(IContentLoader loader)
         {
@@ -41,7 +42,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch)
         {
-            batch.Draw(Props.Texture, Props.Position, Props.CollisionRect, Props.Tint);
+            batch.Draw(Props.Texture, Props.Position, Props.PhysicalRect, Props.Tint);
         }
 
 

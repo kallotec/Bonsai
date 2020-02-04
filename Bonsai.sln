@@ -15,12 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.Sandbox", "Bonsai.Sandbox\Bonsai.Sandbox\Bonsai.Sandbox.csproj", "{B470997C-007D-44C8-9851-DB7360A8F5A3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.SandboxContent", "Bonsai.Sandbox\Bonsai.SandboxContent\Bonsai.SandboxContent.contentproj", "{1F8BCAB9-6854-42E1-8ACD-99CD83FECC9A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Games", "Games", "{CB63B140-235F-4091-B29C-2538034CB77D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -37,12 +31,6 @@ Global
 		{EAD3A31E-D1AD-4057-ADF8-C8918B0E09C6}.Release|x86.Build.0 = Release|x86
 		{172663A6-32DC-4CA4-B3E2-3DAC190E3B6B}.Debug|x86.ActiveCfg = Debug|x86
 		{172663A6-32DC-4CA4-B3E2-3DAC190E3B6B}.Release|x86.ActiveCfg = Release|x86
-		{B470997C-007D-44C8-9851-DB7360A8F5A3}.Debug|x86.ActiveCfg = Debug|x86
-		{B470997C-007D-44C8-9851-DB7360A8F5A3}.Debug|x86.Build.0 = Debug|x86
-		{B470997C-007D-44C8-9851-DB7360A8F5A3}.Release|x86.ActiveCfg = Release|x86
-		{B470997C-007D-44C8-9851-DB7360A8F5A3}.Release|x86.Build.0 = Release|x86
-		{1F8BCAB9-6854-42E1-8ACD-99CD83FECC9A}.Debug|x86.ActiveCfg = Debug|x86
-		{1F8BCAB9-6854-42E1-8ACD-99CD83FECC9A}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -75,7 +75,6 @@
     <Compile Include="ContentPaths.cs" />
     <Compile Include="Game\Coin.cs" />
     <Compile Include="Game\Components\MapPhysics.cs" />
-    <Compile Include="Game\Components\Screen.cs" />
     <Compile Include="Game\Door.cs" />
     <Compile Include="Game\HUD.cs" />
     <Compile Include="Game\Player.cs" />

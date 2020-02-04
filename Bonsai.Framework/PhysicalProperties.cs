@@ -26,7 +26,7 @@ namespace Bonsai.Framework
         public float TopSpeed;
 
         // Object
-        public Rectangle CollisionRect;
+        public Rectangle PhysicalRect;
         public bool Grounded;
 
 

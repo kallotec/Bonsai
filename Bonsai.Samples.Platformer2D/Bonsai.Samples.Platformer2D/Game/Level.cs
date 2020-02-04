@@ -8,7 +8,6 @@ using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.UI.Widgets.Popups;
 using Bonsai.Samples.Platformer.Components;
 using Bonsai.Samples.Platformer2D.Game.Actors;
-using Bonsai.Samples.Platformer2D.Game.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;

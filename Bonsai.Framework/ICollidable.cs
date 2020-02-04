@@ -10,6 +10,7 @@ namespace Bonsai.Framework
 {
     public interface ICollidable
     {
+        bool IsOverlappingEnabled { get; }
         bool IsCollisionEnabled { get; }
         Rectangle CollisionBox { get; }
 

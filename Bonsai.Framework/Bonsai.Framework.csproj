@@ -63,13 +63,13 @@
     <Compile Include="BonsaiGame.cs" />
     <Compile Include="Animation\AnimationOverlay.cs" />
     <Compile Include="Actors\Actor.cs" />
-    <Compile Include="Collision\ActorCollider.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
     <Compile Include="GameVariable.cs" />
     <Compile Include="GameVariableChangedHandler.cs" />
     <Compile Include="Input\KeyPressListener.cs" />
+    <Compile Include="Screen.cs" />
     <Compile Include="Utility\MillisecTimer.cs" />
     <Compile Include="Collision\RectangleExtensions.cs" />
     <Compile Include="Collision\AABBNormals.cs" />

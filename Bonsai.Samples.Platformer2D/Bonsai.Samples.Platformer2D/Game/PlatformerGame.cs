@@ -14,7 +14,6 @@ using System.Diagnostics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Bonsai.Samples.Platformer2D.Game;
 using Bonsai.Framework.Content;
-using Bonsai.Samples.Platformer2D.Game.Components;
 
 namespace Bonsai.Samples.Platformer2D
 {

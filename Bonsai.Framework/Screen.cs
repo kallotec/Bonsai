@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using System.Threading.Tasks;
 using Bonsai.Framework;
 
-namespace Bonsai.Samples.Platformer2D.Game.Components
+namespace Bonsai.Framework
 {
     public abstract class Screen
     {
@@ -60,7 +60,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Components
         {
             var updateable = GameObjects.OfType<Framework.IUpdateable>();
 
-            foreach (var obj in updateable.Where(u => !u.IsDisabled))
+            foreach (var obj in updateable)
                 obj.Update(time);
         }
 
@@ -80,8 +80,31 @@ namespace Bonsai.Samples.Platformer2D.Game.Components
                                            .Where(d => !d.IsHidden)
                                            .OrderBy(d => d.DrawOrder);
 
-            // ------------- DRAW OBJS NOT ATTACHED TO CAMERA --------------
+            // < 0
+            var lessThanZero = objects.Where(o => o.DrawOrder < 0).ToList();
+            drawObjectsAttachedToCamera(lessThanZero, time);
+            drawObjectsNotAttachedToCamera(lessThanZero, time);
 
+            // > 0
+            var zeroOrGreater = objects.Where(o => o.DrawOrder >= 0).ToList();
+            drawObjectsNotAttachedToCamera(zeroOrGreater, time);
+            drawObjectsAttachedToCamera(zeroOrGreater, time);
+
+        }
+
+        void drawObjectsAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
+        {
+            Game.SpriteBatch.Begin();
+
+            // Draw all objs attached to camera
+            foreach (var obj in drawables.Where(o => o.IsAttachedToCamera))
+                obj.Draw(time, Game.SpriteBatch);
+
+            Game.SpriteBatch.End();
+        }
+
+        void drawObjectsNotAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
+        {
             // Apply camera transform
             Game.SpriteBatch.Begin(SpriteSortMode.Deferred,
                               BlendState.AlphaBlend,
@@ -89,22 +112,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Components
                               Camera.Transform);
 
             // Draw all objs not attached to camera
-            foreach (var obj in objects.Where(o => !o.IsAttachedToCamera))
+            foreach (var obj in drawables.Where(o => !o.IsAttachedToCamera))
                 obj.Draw(time, Game.SpriteBatch);
 
             Game.SpriteBatch.End();
-
-            // --------------- DRAW OBJS ATTACHED TO CAMERA ---------------
-
-            Game.SpriteBatch.Begin();
-
-            // Draw all objs attached to camera
-            foreach (var obj in objects.Where(o => o.IsAttachedToCamera))
-                obj.Draw(time, Game.SpriteBatch);
-
-            Game.SpriteBatch.End();
-
-            // ------------------------------------------------------------
         }
 
     }

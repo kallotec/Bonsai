@@ -50,7 +50,7 @@ namespace Bonsai.Samples.Platformer.Components
             else if (collisionsY.ContainsKey(CollisionDirection.Bottom))
             {
                 //project out of collision
-                props.Position.Y = (newEdges.BottomIndex * tileHeight) - (props.CollisionRect.Height + 1);
+                props.Position.Y = (newEdges.BottomIndex * tileHeight) - (props.PhysicalRect.Height + 1);
                 props.Velocity.Y = 0;
             }
 
@@ -73,7 +73,7 @@ namespace Bonsai.Samples.Platformer.Components
             else if (collisionsX.ContainsKey(CollisionDirection.Right))
             {
                 // Project out of collision
-                props.Position.X = (newEdges.RightIndex * tileWidth) - (props.CollisionRect.Width + 1);
+                props.Position.X = (newEdges.RightIndex * tileWidth) - (props.PhysicalRect.Width + 1);
                 props.Velocity.X = 0;
             }
 
@@ -204,7 +204,7 @@ namespace Bonsai.Samples.Platformer.Components
 
         Map.TileEdges getEdges(PhysicalProperties props)
         {
-            return _level.Map.GetEdges(props.Position, props.CollisionRect.Width, props.CollisionRect.Height);
+            return _level.Map.GetEdges(props.Position, props.PhysicalRect.Width, props.PhysicalRect.Height);
         }
 
         TileCollision getCollision(int xIndex, int yIndex)
