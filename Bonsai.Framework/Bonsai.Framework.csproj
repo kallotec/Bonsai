@@ -63,12 +63,17 @@
     <Compile Include="BonsaiGame.cs" />
     <Compile Include="Animation\AnimationOverlay.cs" />
     <Compile Include="Actors\Actor.cs" />
+    <Compile Include="Chunks\Chunk.cs" />
+    <Compile Include="Chunks\ChunkMap.cs" />
+    <Compile Include="Chunks\TileType.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
     <Compile Include="GameVariable.cs" />
     <Compile Include="GameVariableChangedHandler.cs" />
     <Compile Include="Input\KeyPressListener.cs" />
+    <Compile Include="Physics\MapPhysics.cs" />
+    <Compile Include="Physics\PhysicsSettings.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Utility\MillisecTimer.cs" />
     <Compile Include="Collision\RectangleExtensions.cs" />

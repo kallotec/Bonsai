@@ -103,6 +103,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                     Props.AddForceX(-acceleration);
                 else if (IsJetPacking)
                     Props.AddForceX(-jetAcceleration);
+                else
+                    Props.AddForceX(-(acceleration / 2));
             }
             else if (kbState.IsKeyDown(Keys.Right))
             {
@@ -110,6 +112,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                     Props.AddForceX(acceleration);
                 else if (IsJetPacking)
                     Props.AddForceX(jetAcceleration);
+                else
+                    Props.AddForceX((acceleration / 2));
             }
 
             // Anims

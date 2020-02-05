@@ -348,7 +348,6 @@ namespace Bonsai.Samples.Platformer2D.Game
                 }
             }
 
-
         }
 
         void onDeath()
