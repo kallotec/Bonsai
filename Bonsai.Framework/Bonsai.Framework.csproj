@@ -67,10 +67,15 @@
     <Compile Include="Chunks\ChunkMap.cs" />
     <Compile Include="Chunks\TileType.cs" />
     <Compile Include="Direction.cs" />
-    <Compile Include="PhysicalProperties.cs" />
+    <Compile Include="FrameworkGlobals.cs" />
+    <Compile Include="Graphics\TextureFormatter.cs" />
+    <Compile Include="Physics\PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
-    <Compile Include="GameVariable.cs" />
-    <Compile Include="GameVariableChangedHandler.cs" />
+    <Compile Include="UI\Text\FadeDirection.cs" />
+    <Compile Include="UI\Text\MessageType.cs" />
+    <Compile Include="UI\Text\StackingMethod.cs" />
+    <Compile Include="Variables\GameVariable.cs" />
+    <Compile Include="Variables\GameVariableChangedHandler.cs" />
     <Compile Include="Input\KeyPressListener.cs" />
     <Compile Include="Physics\MapPhysics.cs" />
     <Compile Include="Physics\PhysicsSettings.cs" />
@@ -91,8 +96,7 @@
     <Compile Include="Content\IContentLoader.cs" />
     <Compile Include="ICamera.cs" />
     <Compile Include="ICollidable.cs" />
-    <Compile Include="Maths\EntityMathHelper.cs" />
-    <Compile Include="Content\TextureFormatter.cs" />
+    <Compile Include="Maths\MathHelper.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="ILoadable.cs" />
@@ -104,12 +108,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\IHUD.cs" />
     <Compile Include="SimpleCamera.cs" />
-    <Compile Include="UI\Widgets\Popups\PopupSettings.cs" />
-    <Compile Include="UI\Widgets\TextWidget.cs" />
+    <Compile Include="UI\Text\TextElement.cs" />
     <Compile Include="UI\FieldDisplayMode.cs" />
     <Compile Include="UI\PulsingEnums.cs" />
-    <Compile Include="UI\Field.cs" />
-    <Compile Include="UI\Widgets\IWidget.cs" />
+    <Compile Include="UI\IWidget.cs" />
     <Compile Include="UI\ImageRegion.cs" />
     <Compile Include="UI\Menus\ImageRegionMenu.cs" />
     <Compile Include="UI\Menus\IMenuItem.cs" />
@@ -118,11 +120,8 @@
     <Compile Include="UI\Menus\SimpleMenu.cs" />
     <Compile Include="UI\Menus\SimpleMenuItem.cs" />
     <Compile Include="UI\FieldAlignmentMode.cs" />
-    <Compile Include="UI\Widgets\Popups\PopupTextWidget.cs" />
-    <Compile Include="UI\Widgets\Popups\PopupManager.cs" />
-    <Compile Include="UI\Widgets\Popups\UIMessageQueue.cs" />
-    <Compile Include="UI\Widgets\WidgetBase.cs" />
-    <Compile Include="UI\Widgets\WidgetSettings.cs" />
+    <Compile Include="UI\Text\UIMessageManager.cs" />
+    <Compile Include="UI\Text\WidgetSettings.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

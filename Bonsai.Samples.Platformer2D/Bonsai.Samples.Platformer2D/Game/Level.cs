@@ -4,8 +4,9 @@ using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.UI;
+using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.UI.Widgets;
-using Bonsai.Framework.UI.Widgets.Popups;
+using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer.Components;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
@@ -26,7 +27,6 @@ namespace Bonsai.Samples.Platformer2D.Game
     {
         public Level(BonsaiGame game) : base(game)
         {
-            popupManager = new PopupManager();
             keyListeners = new List<KeyPressListener>();
 
             coins = new List<Coin>();
@@ -34,7 +34,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         Player player;
         HUD hud;
-        PopupManager popupManager;
+        UIMessageManager msgManager;
         List<KeyPressListener> keyListeners;
         SpriteFont font;
         Texture2D pixel_half_trans;
@@ -95,6 +95,11 @@ namespace Bonsai.Samples.Platformer2D.Game
             CoinsCount.Load(loader);
             GameObjects.Add(CoinsCount);
 
+            // Message manager
+            msgManager = new UIMessageManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
+            msgManager.Load(loader);
+            GameObjects.Add(msgManager);
+
             // HUD
             hud = new HUD(this);
             hud.ScreenBounds = base.Game.GraphicsDevice.Viewport.Bounds;
@@ -128,15 +133,9 @@ namespace Bonsai.Samples.Platformer2D.Game
                 // [M] key generates a text popup at the players position
                 new KeyPressListener(Keys.M, () =>
                 {
-                    popupManager.AddMessage(
-                        "Hey!",
-                        new PopupSettings
-                        {
-                            LifeInMillisecs = 1000,
-                            Velocity = new Vector2(0, -10),
-                            Font = font,
-                            Position = player.Props.Position + new Vector2(0,-20)
-                        });
+                    msgManager.AddMessage("Hey!", 
+                        player.Props.Position + new Vector2(0,-20),
+                        MessageType.FadingText_Fast);
                 }),
                 // [ESC] Exit
                 new KeyPressListener(Keys.Escape, () => Exit?.Invoke(this,null))

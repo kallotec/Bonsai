@@ -1,24 +1,31 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Bonsai.Framework.Content
+namespace Bonsai.Framework.Graphics
 {
     public enum TextureFormatterOption { no_shine, low_shine, high_shine, shiny_top_border }
 
     public static class TextureFormatter
     {
-        /// <summary>
-        /// WHAT THE FUCK DOES THIS DO???? SRS
-        /// </summary>
+        public static Texture2D CreatePixel(GraphicsDevice device, byte transparency)
+        {
+            var tex = new Texture2D(device, 1, 1);
+            var array = new Color[1];
+            array[0] = Color.FromNonPremultiplied(255,255,255, transparency);
+            tex.SetData<Color>(array);
+            return tex;
+        }
+
         public static Texture2D Format(GraphicsDevice device, int width, int height, TextureFormatterOption format, Color color_bg, Color color_border, Color color_shine)
         {
             Texture2D tex = new Texture2D(device, width, height);
             Color[] array = new Color[width * height];
-            
+
             //bg
             for (int x = 0; x < array.Length; x++)
                 array[x] = color_bg;

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bonsai.Framework.Graphics;
 
 namespace Bonsai.Framework
 {
@@ -39,6 +40,9 @@ namespace Bonsai.Framework
             // Services
             this.Loader = new SimpleContentLoader(Content);
             this.SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            FrameworkGlobals.Pixel = TextureFormatter.CreatePixel(GraphicsDevice, 255);
+            FrameworkGlobals.PixelHalfTrans = TextureFormatter.CreatePixel(GraphicsDevice, 120);
 
             // Pass back to XNA. If not, then the LoadContent() chain doesn't get called!
             base.Initialize();

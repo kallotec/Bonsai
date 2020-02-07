@@ -8,7 +8,7 @@ using Bonsai.Framework.Collision;
 
 namespace Bonsai.Framework.Maths
 {
-    public class EntityMathHelper
+    public static class MathHelper
     {
         static Vector2 up = new Vector2(1, 0);
 
@@ -38,7 +38,7 @@ namespace Bonsai.Framework.Maths
         public static void LerpDirection(ref float currentDirection, float newDirection)
         {
             //capture the difference in current and new
-            float diff = MathHelper.WrapAngle(newDirection - currentDirection);
+            float diff = Microsoft.Xna.Framework.MathHelper.WrapAngle(newDirection - currentDirection);
             float step = 0.0625f;
             
             //if the difference is too small to matter, snap to new direction
@@ -49,7 +49,7 @@ namespace Bonsai.Framework.Maths
             }
 
             //calculate changes
-            float x = (MathHelper.WrapAngle(newDirection - currentDirection) * step);
+            float x = (Microsoft.Xna.Framework.MathHelper.WrapAngle(newDirection - currentDirection) * step);
             currentDirection += x;
         }
 

@@ -7,8 +7,9 @@ using System.Text;
 
 namespace Bonsai.Framework.UI.Widgets
 {
-    public interface IWidget : IDrawable, ILoadable
+    public interface IWidget : IDrawable, ILoadable, IUpdateable
     {
+        bool DeleteMe { get; }
     }
 
 }

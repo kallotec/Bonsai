@@ -12,14 +12,14 @@ namespace Bonsai.Framework.Utility
             max = millisecs;
             configuredMin = millisecs;
             configuredMax = millisecs;
-            r = new Random(millisecs);
+            r = new Random((int)DateTime.UtcNow.Ticks);
         }
         public MillisecCounter(int minMillisecs, int maxMillisecs)
         {
             max = minMillisecs;
             configuredMin = minMillisecs;
             configuredMax = maxMillisecs;
-            r = new Random(minMillisecs);
+            r = new Random((int)DateTime.UtcNow.Ticks);
         }
 
         int current;
@@ -29,20 +29,9 @@ namespace Bonsai.Framework.Utility
         int configuredMax;
         Random r;
 
-        public int Current
-        {
-            get { return current; }
-        }
-
-        public int Max 
-        { 
-            get { return max; } 
-        }
-
-        public bool Completed
-        {
-            get { return completed; }
-        }
+        public int Current => current;
+        public int Max => max;
+        public bool Completed => completed;
 
 
         public void Update(int millisecs)
@@ -84,7 +73,7 @@ namespace Bonsai.Framework.Utility
 
             this.Reset();
 
-            //manuall reset millisec limit
+            //manually reset millisec limit
             max = millisecs;
         }
 

@@ -2,7 +2,9 @@
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.UI;
+using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.UI.Widgets;
+using Bonsai.Framework.Variables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -52,7 +54,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // [Fields]
             // FPS variable
-            fields.Add(new TextWidget<int>(
+            fields.Add(new TextElement<int>(
                 variable: this.fps,
                 settings: new WidgetSettings
                 {
@@ -63,7 +65,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             ));
 
             // Jumps variable
-            fields.Add(new TextWidget<int>(
+            fields.Add(new TextElement<int>(
                 variable: level.Jumps,
                 settings: new WidgetSettings
                 {
@@ -76,7 +78,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             ));
 
             // Coins variable
-            fields.Add(new TextWidget<int>(
+            fields.Add(new TextElement<int>(
                 variable: level.CoinsCount,
                 settings: new WidgetSettings
                 {
