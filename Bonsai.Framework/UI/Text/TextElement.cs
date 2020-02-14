@@ -49,6 +49,16 @@ namespace Bonsai.Framework.UI.Text
         public Rectangle Box { get; private set; }
         public bool IsDisabled => false;
 
+        public FieldAlignmentMode Alignment
+        {
+            get => Settings.Alignment;
+            set
+            {
+                Settings.Alignment = value;
+                UpdateText(this.value);
+            }
+        }
+
 
         public void Load(IContentLoader loader)
         {

@@ -11,13 +11,20 @@ namespace Bonsai.Framework.Physics
 {
     public class MapPhysics
     {
-        public MapPhysics(ChunkMap tileMap, PhysicsSettings physSettings)
+        public MapPhysics(ChunkMap chunkMap, PhysicsSettings physSettings = null)
         {
-            this.tileMap = tileMap;
-            this.physSettings = physSettings;
+            this.chunkMap = chunkMap;
+            this.physSettings = physSettings ?? DefaultSettings;
         }
 
-        ChunkMap tileMap;
+        public static PhysicsSettings DefaultSettings = new PhysicsSettings
+        {
+            Gravity = 5f,
+            Friction = 0.1f,
+            TerminalVelocity = 200f,
+        };
+
+        ChunkMap chunkMap;
         PhysicsSettings physSettings;
 
 
@@ -33,7 +40,7 @@ namespace Bonsai.Framework.Physics
 
             if (entity.IsOverlappingEnabled)
             {
-                neighbours = tileMap.GetNearbyCollidables(entity);
+                neighbours = chunkMap.GetNearbyCollidables(entity);
                 var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
                 if (intersections.Any())
                 {
@@ -64,7 +71,7 @@ namespace Bonsai.Framework.Physics
 
             if (entity.IsOverlappingEnabled)
             {
-                neighbours = tileMap.GetNearbyCollidables(entity);
+                neighbours = chunkMap.GetNearbyCollidables(entity);
                 var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
                 if (intersections.Any())
                 {
@@ -122,9 +129,9 @@ namespace Bonsai.Framework.Physics
                 entityProps.Velocity.X = lerped;
             }
 
-            // [ Tile map update ]
+            // [ Chunk map update ]
 
-            tileMap.UpdateEntity(entity);
+            chunkMap.UpdateEntity(entity);
 
         }
 

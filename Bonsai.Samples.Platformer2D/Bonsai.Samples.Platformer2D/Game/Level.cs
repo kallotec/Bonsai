@@ -1,13 +1,14 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
+using Bonsai.Framework.Chunks;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
+using Bonsai.Framework.Physics;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Variables;
-using Bonsai.Samples.Platformer.Components;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -28,10 +29,11 @@ namespace Bonsai.Samples.Platformer2D.Game
         public Level(BonsaiGame game) : base(game)
         {
             keyListeners = new List<KeyPressListener>();
-
             coins = new List<Coin>();
+            eventBus = new EventBus();
         }
 
+        EventBus eventBus;
         Player player;
         HUD hud;
         UIMessageManager msgManager;
@@ -46,6 +48,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         Vector2? playerExit;
         IContentLoader _loader;
         string currentMapPath;
+        ChunkMap chunkMap;
 
         public event EventHandler Exit;
         public event EventHandler GameOver;
@@ -53,18 +56,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
         public bool IsDisabled { get; set; }
-        public Map Map { get; private set; }
-        /// <summary>
-        /// Intensity of gravity affecting player while not grounded
-        /// </summary>
-        public float Gravity;
-        /// <summary>
-        /// 0f to 1f to represent intensity of friction when entity grounded
-        /// </summary>
-        public float Friction;
-        public float TerminalVelocity;
-        public bool HasGravity => Gravity != 0;
-        public bool HasFriction => Friction != 0;
 
 
         public override void Load(IContentLoader loader)
@@ -76,13 +67,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
             pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
 
-            // Map
-            Map = new Map(tileWidth: 22, tileHeight: 22);
-            Map.DrawOrder = -1;
-            GameObjects.Add(Map);
-
             // Player
-            player = new Player(this);
+            player = new Player(eventBus);
             player.DrawOrder = 0;
             player.Load(loader);
             GameObjects.Add(player);
@@ -109,10 +95,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             GameObjects.Add(hud);
 
             // Physics
-            phys = new MapPhysics(this);
-            Gravity = 5f;
-            Friction = 0.1f;
-            TerminalVelocity = 200f;
+            phys = new MapPhysics(chunkMap);
 
             // Camera
             Camera.SetFocus(player);
@@ -121,8 +104,12 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Services
             setupKeyListeners();
 
+            // Event listeners
+            eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1);
+            eventBus.Subscribe("playerJumped", () => Jumps.Value += 1);
+
             // Load first map
-            loadMap(ContentPaths.PATH_MAP_1, loader);
+            loadMap(ContentPaths.PATH_MAP_1);
         }
 
         void setupKeyListeners()
@@ -142,7 +129,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             };
         }
 
-        void loadMap(string mapPath, IContentLoader loader)
+        void loadMap(string mapPath)
         {
             currentMapPath = mapPath;
 
@@ -161,6 +148,10 @@ namespace Bonsai.Samples.Platformer2D.Game
             var mapData = getMapData(mapPath);
             var tileGrid = generateTileGrid(mapData);
             Map.Tiles = tileGrid;
+
+            // Setup chunks
+            chunkMap = new ChunkMap(chunkWidth: 100, chunkHeight: 100, mapWidth: 1000, mapHeight: 1000);
+
 
             // Set player position for new map
             player.Props.Position = playerStart.Value;
@@ -183,95 +174,6 @@ namespace Bonsai.Samples.Platformer2D.Game
                     mapData = rdr.ReadToEnd();
 
             return mapData;
-        }
-
-        Tile[,] generateTileGrid(string mapData)
-        {
-            // Load the level and ensure all of the lines are the same length.
-            int width = 0;
-
-            var lines = new List<string>();
-
-            using (var sr = new StringReader(mapData))
-            {
-                var line = string.Empty;
-
-                while ((line = sr.ReadLine()) != null)
-                {
-                    width = Math.Max(width, line.Length);
-                    lines.Add(line);
-                }
-            }
-
-            var tileGrid = new Tile[width, lines.Count];
-
-            // Loop over every tile position
-            for (var y = 0; y < tileGrid.GetLength(1); ++y)
-            {
-                for (var x = 0; x < tileGrid.GetLength(0); ++x)
-                {
-                    // to load each tile
-                    var tileType = ' ';
-                    var line = lines[y];
-
-                    if (line.Length > x)
-                        tileType = line[x];
-
-                    tileGrid[x, y] = createTileData(tileType, x, y);
-                }
-            }
-
-            return tileGrid;
-        }
-
-        Tile createTileData(char tileType, int x, int y)
-        {
-            var tileRect = new Rectangle(x * Map.TileSize.X, y * Map.TileSize.Y, Map.TileSize.X, Map.TileSize.Y);
-            var tileCenter = new Vector2(tileRect.Center.X, tileRect.Center.Y);
-
-            switch (tileType)
-            {
-                // Player 1 start point
-                case '1':
-                    if (playerStart != null)
-                        throw new NotSupportedException("A level may only have one starting point.");
-
-                    playerStart = tileCenter;
-
-                    return new Tile(null, TileCollision.Passable, Color.Transparent);
-
-                // Blank space
-                case ' ':
-                    return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
-
-                // Coin
-                case 'c':
-                    addCoinToLevel(tileCenter);
-                    return new Tile(pixel_half_trans, TileCollision.Passable, Color.Gray);
-
-                // Death
-                case '^':
-                    return new Tile(pixel_half_trans, TileCollision.Death, Color.Red);
-
-                // Exit
-                case 'X':
-                    if (playerExit != null)
-                        throw new NotSupportedException("A level may only have one exit.");
-
-                    playerExit = tileCenter;
-
-                    addDoorToLevel(playerExit.Value);
-
-                    return new Tile(pixel, TileCollision.Passable, Color.Gray);
-
-                // Impassable block
-                case '#':
-                    return new Tile(pixel, TileCollision.Impassable, Color.Gray);
-
-                // Unknown tile type character
-                default:
-                    throw new NotSupportedException(String.Format("Unsupported tile type character '{0}' at position [{1},{2}].", tileType, x, y));
-            }
         }
 
         void addCoinToLevel(Vector2 position)
@@ -307,7 +209,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 listener.Update(time);
 
             // Map collisions
-            var mapCollisions = phys.ApplyPhysics(player.Props, time);
+            phys.ApplyPhysics(player.Props, player, time);
 
             // Handle death tiles
             var death = mapCollisions.ContainsValue(TileCollision.Death);
@@ -315,36 +217,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 onDeath();
                 return;
-            }
-
-            checkPlayerCollisions();
-        }
-
-        void checkPlayerCollisions()
-        {
-            // Actor -> coin collision
-            foreach (var coin in coins.Where(c => c.IsCollisionEnabled))
-            {
-                if (coin.CollisionBox.Intersects(player.CollisionBox))
-                {
-                    player.OnOverlapping(coin);
-                    coin.OnOverlapping(player);
-
-                    // Increment count
-                    CoinsCount.Value += 1;
-                }
-            }
-
-
-            if (door.IsCollisionEnabled)
-            {
-                // Actor -> door collision
-                if (door.CollisionBox.Intersects(player.CollisionBox))
-                {
-                    door.OnOverlapping(player);
-
-                    loadMap(ContentPaths.PATH_MAP_2, _loader);
-                }
             }
 
         }

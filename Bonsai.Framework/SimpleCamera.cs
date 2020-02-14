@@ -42,6 +42,8 @@ namespace Bonsai.Framework
             // Decide what to focus on
             var focus = Focus;
 
+            // TODO: elastic mode based on settings
+
             // TODO: offset by viewport size, I think?
             center = new Vector2(focus.X - viewport.Width / 2, focus.Y - viewport.Height / 2);
 

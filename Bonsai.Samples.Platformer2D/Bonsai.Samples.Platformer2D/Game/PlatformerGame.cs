@@ -27,6 +27,7 @@ namespace Bonsai.Samples.Platformer2D
         }
 
         Level level;
+        Level menu;
         Screen currentScreen;
 
 

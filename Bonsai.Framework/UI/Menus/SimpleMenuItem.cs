@@ -2,6 +2,7 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Text;
+//using Bonsai.Framework.UI.Text;
 //using Microsoft.Xna.Framework;
 //using Microsoft.Xna.Framework.Graphics;
 
@@ -27,14 +28,14 @@
 //        public SimpleMenuItem(SpriteFont font, string label)
 //        {
 //            this.font = font;
-//            this.label = new Field<string>(font, label, label, eDisplayMode.LabelOnly);
-//            this.label.Alignment = eTextAlignment.Right;
+//            this.label = new TextElement<string>(font, label, label, eDisplayMode.LabelOnly);
+//            this.label.Alignment = FieldAlignmentMode.Right;
 //            this.rectangle = new Rectangle(0, 0, (int)font.MeasureString(label).X, (int)font.MeasureString(label).Y);
 //        }
 
 //        SpriteFont font;
-//        Field<string> label;
-//        List<Field<T>> items = new List<Field<T>>();
+//        TextElement<string> label;
+//        List<TextElement<T>> items = new List<TextElement<T>>();
 //        Rectangle rec_selection = new Rectangle();
 //        int selected_index;
 //        Rectangle rectangle;
@@ -69,14 +70,14 @@
 //                        else
 //                        {
 //                            IField last = items[i - 1];
-//                            items[i].Position = new Vector2(last.Position.X + last.Rectangle.Width + (gap_labelandvalue / 2), 
+//                            items[i].Position = new Vector2(last.Position.X + last.Rectangle.Width + (gap_labelandvalue / 2),
 //                                                             last.Position.Y);
 //                        }
 //                    }
 
 //                    //value selection box
 //                    rec_selection = items[selected_index].Rectangle;
-//                    rec_selection.Inflate(2,0);
+//                    rec_selection.Inflate(2, 0);
 
 //                    //bounding box
 //                    rectangle = Rectangle.Union(label.Rectangle, items[items.Count - 1].Rectangle);
@@ -113,13 +114,13 @@
 //                items.Add(f);
 
 //                rec_selection = f.Rectangle;
-//                rec_selection.Inflate(2,0);
+//                rec_selection.Inflate(2, 0);
 //            }
 //            else
 //            {
 //                Field<T> f = new Field<T>(font, label, value, eDisplayMode.LabelOnly);
 //                Field<T> last = items[items.Count - 1];
-//                f.Position = new Vector2(last.Position.X + last.Rectangle.Width + gap_interitem, 
+//                f.Position = new Vector2(last.Position.X + last.Rectangle.Width + gap_interitem,
 //                                         last.Position.Y);
 //                items.Add(f);
 //            }
@@ -136,7 +137,7 @@
 //                selected_index--;
 
 //                rec_selection = items[selected_index].Rectangle;
-//                rec_selection.Inflate(2,0);
+//                rec_selection.Inflate(2, 0);
 
 //                //raise selection changed event
 //                if (SelectionChanged != null)
@@ -151,7 +152,7 @@
 //                selected_index++;
 
 //                rec_selection = items[selected_index].Rectangle;
-//                rec_selection.Inflate(2,0);
+//                rec_selection.Inflate(2, 0);
 
 //                //raise selection changed event
 //                if (SelectionChanged != null)

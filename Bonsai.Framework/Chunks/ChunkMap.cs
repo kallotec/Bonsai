@@ -40,7 +40,7 @@ namespace Bonsai.Framework.Chunks
             // Create chunk data
             for (var y = 0; y < grid.GetLength(1); ++y)
                 for (var x = 0; x < grid.GetLength(0); ++x)
-                    grid[x, y] = new Chunk();
+                    grid[x, y] = new Chunk(this, x, y);
         }
 
         public ICollidable[] GetNearbyCollidables(ICollidable actor)
@@ -148,3 +148,27 @@ namespace Bonsai.Framework.Chunks
     }
 
 }
+
+//public struct TileEdges
+//{
+//    public TileEdges(Vector2 position, int objWidth, int objHeight, int tileWidth, int tileHeight)
+//    {
+//        this.position = position;
+//        this.objWidth = objWidth;
+//        this.objHeight = objHeight;
+//        this.tileWidth = tileWidth;
+//        this.tileHeight = tileHeight;
+//    }
+
+//    Vector2 position;
+//    int objWidth;
+//    int objHeight;
+//    int tileWidth;
+//    int tileHeight;
+
+//    public int LeftIndex { get { return (int)Math.Round(position.X) / tileWidth; } }
+//    public int RightIndex { get { return (int)(Math.Round(position.X) + objWidth) / tileWidth; } }
+//    public int TopIndex { get { return (int)Math.Round(position.Y) / tileHeight; } }
+//    public int BottomIndex { get { return (int)(Math.Round(position.Y) + objHeight) / tileHeight; } }
+
+//}

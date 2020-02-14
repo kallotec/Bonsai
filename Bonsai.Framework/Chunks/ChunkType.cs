@@ -8,7 +8,7 @@ namespace Bonsai.Framework.Chunks
     /// <summary>
     /// Controls the collision detection and response behavior of a tile.
     /// </summary>
-    public enum TileType
+    public enum ChunkType
     {
         /// <summary>
         /// A passable tile is one which does not hinder player motion at all.

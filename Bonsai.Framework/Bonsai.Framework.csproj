@@ -65,9 +65,11 @@
     <Compile Include="Actors\Actor.cs" />
     <Compile Include="Chunks\Chunk.cs" />
     <Compile Include="Chunks\ChunkMap.cs" />
-    <Compile Include="Chunks\TileType.cs" />
+    <Compile Include="Chunks\ChunkType.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="EventBus.cs" />
     <Compile Include="FrameworkGlobals.cs" />
+    <Compile Include="Graphics\PolyShape.cs" />
     <Compile Include="Graphics\TextureFormatter.cs" />
     <Compile Include="Physics\PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
@@ -123,7 +125,9 @@
     <Compile Include="UI\Text\UIMessageManager.cs" />
     <Compile Include="UI\Text\WidgetSettings.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Events\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

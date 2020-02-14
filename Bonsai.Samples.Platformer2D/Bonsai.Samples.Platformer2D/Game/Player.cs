@@ -11,17 +11,17 @@ using System.Text;
 using System.Diagnostics;
 using Bonsai.Framework.Collision;
 using Bonsai.Framework.Content;
-using Bonsai.Samples.Platformer.Components;
 using Bonsai.Framework.Animation;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
     public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
     {
-        public Player(Level Level)
+        public Player(EventBus eventBus)
         {
+            this.eventBus = eventBus;
+
             DrawOrder = 1;
-            level = Level;
 
             // Physical properties
             Props.Direction = Direction.Right;
@@ -29,7 +29,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
         }
 
-        Level level;
+        EventBus eventBus;
         float jumpPower = 130f;
         float jetPower = 10f;
         float jetAcceleration = 10f;
@@ -85,6 +85,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
             // Default anim
             animCurrent = animWalking;
+
         }
 
         public void Unload()
@@ -150,8 +151,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             {
                 Props.AddForceY(-jumpPower, overrideTopSpeed: true);
 
-                // Update level variable
-                level.Jumps.Value++;
+                // raise event
+                eventBus.Notify("playerJumped");
             }
 
             // Jetpack
@@ -191,6 +192,12 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         public void OnOverlapping(object actor)
         {
+            if (actor is Coin)
+            {
+                eventBus.Notify("playerPickedUpCoin");
+                return;
+            }
+
             if (actor == null)
                 return;
 
