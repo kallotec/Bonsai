@@ -26,5 +26,6 @@ namespace Bonsai.Samples.Platformer2D
         public static string SFX_COIN_COLLECT = @"Sound/coinCollect";
         internal static string SFX_DOOR_OPEN = @"Sound/openDoor";
         internal static string SFX_CHECKPOINT = @"Sound/sonar";
+        internal static string SFX_DEATH = @"Sound/death";
     }
 }

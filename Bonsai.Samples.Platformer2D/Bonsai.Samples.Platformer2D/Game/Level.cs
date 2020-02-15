@@ -110,6 +110,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1);
             eventBus.Subscribe("playerJumped", () => Jumps.Value += 1);
             eventBus.Subscribe("playerEnteredDoor", () => playerTouchedDoor());
+            eventBus.Subscribe("playerDied", () => playerDied());
 
             // Load first map
             loadMap(ContentPaths.PATH_MAP_1);
@@ -280,6 +281,15 @@ namespace Bonsai.Samples.Platformer2D.Game
         }
 
         void playerTouchedDoor()
+        {
+            IsDisabled = true;
+            // play victory sfx
+
+            // load map again
+            loadMap(currentMapPath);
+        }
+
+        void playerDied()
         {
             IsDisabled = true;
             // play victory sfx

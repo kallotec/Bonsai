@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Bonsai.Framework.Collision;
 using Bonsai.Framework.Content;
 using Bonsai.Framework.Animation;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
@@ -38,6 +39,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         AnimationOverlay animStanding;
         AnimationOverlay animWalking;
         AnimationOverlay animJetting;
+        SoundEffect sfxDie;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
@@ -52,6 +54,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         public void Load(IContentLoader loader)
         {
             Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITESHEET_MARIO);
+
+            sfxDie = loader.Load<SoundEffect>(ContentPaths.SFX_DEATH);
 
             animStanding = new AnimationOverlay(
                 name: "standing",
@@ -98,7 +102,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             var kbState = Keyboard.GetState();
 
             // Movement
-            if (kbState.IsKeyDown(Keys.Left))
+            if (kbState.IsKeyDown(Keys.A))
             {
                 if (Props.Grounded)
                     Props.AddForceX(-acceleration);
@@ -107,7 +111,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 else
                     Props.AddForceX(-(acceleration / 2));
             }
-            else if (kbState.IsKeyDown(Keys.Right))
+            else if (kbState.IsKeyDown(Keys.D))
             {
                 if (Props.Grounded)
                     Props.AddForceX(acceleration);
@@ -147,7 +151,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             // Jump action
             var canJump = (Props.Grounded && Props.Velocity.Y == 0);
 
-            if (kbState.IsKeyDown(Keys.Up) && canJump)
+            if (kbState.IsKeyDown(Keys.Space) && canJump)
             {
                 Props.AddForceY(-jumpPower, overrideTopSpeed: true);
 
@@ -156,7 +160,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             }
 
             // Jetpack
-            if (kbState.IsKeyDown(Keys.Space))
+            if (kbState.IsKeyDown(Keys.W))
             {
                 IsJetPacking = true;
                 Props.AddForceY(-jetPower, overrideTopSpeed: true);
@@ -216,9 +220,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         void die()
         {
+            // stop any residual movement
+            Props.Velocity = Vector2.Zero;
+
             // play sfx
+            sfxDie.Play(1f, 0f, 0f);
+
             // notify
-            //eventBus.Notify("playerDied");
+            eventBus.QueueNotification("playerDied");
         }
 
     }
