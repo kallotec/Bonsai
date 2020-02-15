@@ -7,9 +7,9 @@ namespace Bonsai.Framework
 {
     public enum DrawOrderPosition
     {
+        Background = -1,
         Foreground = 0,
-        Background = 1,
-        ForegroundGUI = 2,
-        HUD = 3
+        ForegroundGUI = 1,
+        HUD = 2
     }
 }
