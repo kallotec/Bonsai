@@ -8,20 +8,24 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework.Audio;
+using Bonsai.Framework;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
     public class Door : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
     {
-        public Door()
+        public Door(EventBus eventBus)
         {
+            this.eventBus = eventBus;
+
             IsCollisionEnabled = true;
             base.Props.PhysicalRect = new Rectangle(0, 0, 14, 20);
         }
 
+        EventBus eventBus;
         SoundEffect sfxOpen;
 
-        public int DrawOrder { get; set; }
+        public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera => false;
         public bool IsHidden { get; set; }
         public bool IsCollisionEnabled { get; set; }
@@ -59,6 +63,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Play sfx - 50% vol
             sfxOpen.Play(0.5f, 0f, 0f);
+
+            eventBus.QueueNotification("playerEnteredDoor");
 
         }
 

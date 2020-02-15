@@ -14,7 +14,7 @@ namespace Bonsai.Framework
     public abstract class DrawableBase : GameComponentBase
     {
         public bool IsHidden { get; set; }
-        public int DrawOrder { get; set; }
+        public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera { get; set; }
     }
 }

@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
@@ -44,11 +45,12 @@ namespace Bonsai.Samples.Platformer2D.Game
         MapPhysics phys;
         List<Coin> coins;
         Door door;
-        Vector2? playerStart;
-        Vector2? playerExit;
+        Vector2 playerStart;
+        Vector2 playerExit;
         IContentLoader _loader;
         string currentMapPath;
         ChunkMap chunkMap;
+        int map_yoffset_correction;
 
         public event EventHandler Exit;
         public event EventHandler GameOver;
@@ -69,7 +71,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Player
             player = new Player(eventBus);
-            player.DrawOrder = 0;
+            player.DrawOrder = DrawOrderPosition.Foreground;
             player.Load(loader);
             GameObjects.Add(player);
 
@@ -90,7 +92,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             hud = new HUD(this);
             hud.ScreenBounds = base.Game.GraphicsDevice.Viewport.Bounds;
             hud.Exit += (s, e) => { Exit?.Invoke(s, e); };
-            hud.DrawOrder = 1;
+            hud.DrawOrder = DrawOrderPosition.HUD;
             hud.Load(loader);
             GameObjects.Add(hud);
 
@@ -107,6 +109,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Event listeners
             eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1);
             eventBus.Subscribe("playerJumped", () => Jumps.Value += 1);
+            eventBus.Subscribe("playerEnteredDoor", () => playerTouchedDoor());
 
             // Load first map
             loadMap(ContentPaths.PATH_MAP_1);
@@ -138,30 +141,105 @@ namespace Bonsai.Samples.Platformer2D.Game
             CoinsCount.Value = 0;
 
             // Reset game objects
-            var existingCoinGameObjects = GameObjects.Where(g => g is Coin);
-            GameObjects.RemoveAll(o => existingCoinGameObjects.Contains(o));
+            GameObjects.RemoveAll(o => o is Coin || o is Platform || o is Door);
             coins.Clear();
-            playerStart = null;
-            playerExit = null;
 
             // Create map tiles
-            var mapData = getMapData(mapPath);
-            var tileGrid = generateTileGrid(mapData);
-            Map.Tiles = tileGrid;
+            var mapSvgXml = getMapData(mapPath);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(mapSvgXml);
+
+            // Load new platforms
+            var elements = xmlDoc.SelectNodes("//*[local-name()='path']");
+            var platformsToLoad = new List<Platform>();
+
+            var maxMapX = 0;
+            var maxMapY = 0;
+            playerStart = new Vector2(0, 0);
+            playerExit = new Vector2(0, 0);
+
+            foreach (XmlElement elem in elements)
+            {
+                // Color
+                var style = elem.Attributes["style"];
+                var fillColor = style.Value.Substring(style.Value.IndexOf("fill:") + 5, 7).Trim();
+                string strokeColor = null;
+                if (style.Value.IndexOf("stroke:") >= 0)
+                {
+                    var parsedStrokeColor = style.Value.Substring(style.Value.IndexOf("stroke:") + 7, 7).Trim();
+                    if (parsedStrokeColor.StartsWith("#"))
+                        strokeColor = parsedStrokeColor;
+                }
+
+                // Shape
+                var data = elem.Attributes["d"].Value;
+                var geometry = System.Windows.Media.Geometry.Parse(data);
+                //var pathGeos = System.Windows.Media.PathGeometry.CreateFromGeometry(geometry);
+
+                var x = (int)Math.Round(geometry.Bounds.X, 1);
+                var y = (int)Math.Round(geometry.Bounds.Y - map_yoffset_correction, 1);
+                var w = (int)Math.Round(geometry.Bounds.Width, 1);
+                var h = (int)Math.Round(geometry.Bounds.Height, 1);
+
+                Debug.WriteLine($"{x} {y} - {w} x {h}");
+
+                if (fillColor == "#000001")
+                {
+                    playerStart.X = x;
+                    playerStart.Y = y + map_yoffset_correction;
+                }
+                else if (fillColor == "#000002")
+                {
+                    // Door
+                    playerExit.X = x;
+                    playerExit.Y = y + map_yoffset_correction;
+                }
+                else
+                {
+                    // Platform
+                    var platform = new Platform(x, y, w, h, fillColor, strokeColor);
+                    platform.Load(_loader);
+                    platformsToLoad.Add(platform);
+                }
+
+                maxMapX = Math.Max(maxMapX, x + w);
+                maxMapY = Math.Max(maxMapY, y + h);
+            }
+
+            Debug.WriteLine($"Map size in px: {maxMapX} x {maxMapY}");
 
             // Setup chunks
-            chunkMap = new ChunkMap(chunkWidth: 100, chunkHeight: 100, mapWidth: 1000, mapHeight: 1000);
+            chunkMap = new ChunkMap(chunkWidth: 100, chunkHeight: 100, mapWidth: maxMapX, mapHeight: maxMapY);
 
+            // Physics reset
+            var physSettings = new PhysicsSettings
+            {
+                Gravity = 5f,
+                Friction = 0.1f,
+                TerminalVelocity = 200f,
+            };
+            phys = new MapPhysics(chunkMap, physSettings);
 
-            // Set player position for new map
-            player.Props.Position = playerStart.Value;
+            foreach (var platform in platformsToLoad)
+            {
+                if (!GameObjects.Contains(platform))
+                    GameObjects.Add(platform);
+
+                chunkMap.UpdateEntity(platform);
+            }
 
             // Verify that the level has a beginning and an end.
-            if (playerStart == null)
+            if (playerStart == Vector2.Zero)
                 throw new NotSupportedException("A level must have a starting point.");
-            if (playerExit == null)
+            if (playerExit == Vector2.Zero)
                 throw new NotSupportedException("A level must have an exit.");
 
+            // Set player position for new map
+            player.Props.Position = playerStart;
+
+            // Add end point
+            addDoorToLevel(playerExit);
         }
 
         string getMapData(string mapPath)
@@ -191,17 +269,30 @@ namespace Bonsai.Samples.Platformer2D.Game
                 GameObjects.Remove(door);
 
             // Create door
-            door = new Door();
+            door = new Door(eventBus);
             position.X -= door.CollisionBox.Center.X;
             position.Y -= door.CollisionBox.Center.Y;
             door.Props.Position = position;
             door.Load(_loader);
             GameObjects.Add(door);
+
+            chunkMap.UpdateEntity(door);
+        }
+
+        void playerTouchedDoor()
+        {
+            IsDisabled = true;
+            // play victory sfx
+
+            // load map again
+            loadMap(currentMapPath);
         }
 
 
         public override void Update(GameTime time)
         {
+            eventBus.FlushNotifications();
+
             // Update gameobjects
             base.Update(time);
 
@@ -210,23 +301,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Map collisions
             phys.ApplyPhysics(player.Props, player, time);
-
-            // Handle death tiles
-            var death = mapCollisions.ContainsValue(TileCollision.Death);
-            if (death)
-            {
-                onDeath();
-                return;
-            }
-
-        }
-
-        void onDeath()
-        {
-            // TODO: Play sfx, etc
-
-            // Reload current map
-            loadMap(currentMapPath, _loader);
         }
 
     }

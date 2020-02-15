@@ -67,6 +67,7 @@
     <Compile Include="Chunks\ChunkMap.cs" />
     <Compile Include="Chunks\ChunkType.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="DrawOrderPosition.cs" />
     <Compile Include="EventBus.cs" />
     <Compile Include="FrameworkGlobals.cs" />
     <Compile Include="Graphics\PolyShape.cs" />

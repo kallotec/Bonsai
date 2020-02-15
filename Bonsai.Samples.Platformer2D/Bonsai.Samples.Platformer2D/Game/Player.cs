@@ -21,7 +21,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
             this.eventBus = eventBus;
 
-            DrawOrder = 1;
+            DrawOrder = DrawOrderPosition.Foreground;
 
             // Physical properties
             Props.Direction = Direction.Right;
@@ -40,14 +40,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         AnimationOverlay animJetting;
 
         public bool IsHidden { get; set; }
-        public int DrawOrder { get; set; }
+        public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera { get; set; }
         public bool IsDisabled { get; set; }
-        public bool IsCollisionEnabled { get; set; }
+        public bool IsCollisionEnabled => true;
         public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsJetPacking { get; private set; }
 
-        public bool IsOverlappingEnabled => throw new NotImplementedException();
+        public bool IsOverlappingEnabled => true;
 
         public void Load(IContentLoader loader)
         {
@@ -152,7 +152,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 Props.AddForceY(-jumpPower, overrideTopSpeed: true);
 
                 // raise event
-                eventBus.Notify("playerJumped");
+                eventBus.QueueNotification("playerJumped");
             }
 
             // Jetpack
@@ -194,7 +194,17 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
             if (actor is Coin)
             {
-                eventBus.Notify("playerPickedUpCoin");
+                // play sfx
+                // notify
+                eventBus.QueueNotification("playerPickedUpCoin");
+                return;
+            }
+
+            if (actor is Platform)
+            {
+                if ((actor as Platform).IsHazardTile)
+                    die();
+
                 return;
             }
 
@@ -202,6 +212,13 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 return;
 
             Debug.WriteLine("Player Overlapping: " + actor.GetType().Name);
+        }
+
+        void die()
+        {
+            // play sfx
+            // notify
+            //eventBus.Notify("playerDied");
         }
 
     }

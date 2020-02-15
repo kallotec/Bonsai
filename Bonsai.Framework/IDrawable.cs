@@ -10,7 +10,7 @@ namespace Bonsai.Framework
     public interface IDrawable
     {
         bool IsHidden { get; set; }
-        int DrawOrder { get; }
+        DrawOrderPosition DrawOrder { get; }
         bool IsAttachedToCamera { get; }
 
         void Draw(GameTime time, SpriteBatch batch);

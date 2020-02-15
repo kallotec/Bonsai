@@ -23,7 +23,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         SoundEffect sfxCollect;
 
-        public int DrawOrder { get; set; }
+        public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera => false;
         public bool IsDisabled => false;
         public bool IsHidden { get; set; }

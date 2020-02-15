@@ -21,7 +21,7 @@ namespace Bonsai.Framework.Graphics
         VertexPositionColor[] vertexes;
 
         public bool IsHidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int DrawOrder => throw new NotImplementedException();
+        public DrawOrderPosition DrawOrder => throw new NotImplementedException();
         public bool IsAttachedToCamera => throw new NotImplementedException();
 
         public void Load(IContentLoader loader)

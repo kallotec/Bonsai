@@ -65,17 +65,20 @@
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Net" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContentPaths.cs" />
     <Compile Include="Game\Coin.cs" />
     <Compile Include="Game\Door.cs" />
     <Compile Include="Game\HUD.cs" />
+    <Compile Include="Game\Platform.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />
     <Compile Include="Game\PlatformerGame.cs">
@@ -85,6 +88,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\map1.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\map2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

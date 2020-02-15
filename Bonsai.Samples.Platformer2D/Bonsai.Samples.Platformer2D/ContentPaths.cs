@@ -20,11 +20,11 @@ namespace Bonsai.Samples.Platformer2D
         internal static string SPRITE_DOOR = @"GameObjects/door";
 
         // Maps
-        public static string PATH_MAP_1 = @"Content/map1.txt";
-        public static string PATH_MAP_2 = @"Content/map2.txt";
+        public static string PATH_MAP_1 = @"Content/map1.svg";
 
         // Sfx
         public static string SFX_COIN_COLLECT = @"Sound/coinCollect";
         internal static string SFX_DOOR_OPEN = @"Sound/openDoor";
+        internal static string SFX_CHECKPOINT = @"Sound/sonar";
     }
 }

@@ -10,10 +10,11 @@ namespace Bonsai.Framework
         public EventBus()
         {
             subscriptions = new Dictionary<string, List<Action>>();
+            notifications = new Queue<string>();
         }
 
         Dictionary<string, List<Action>> subscriptions;
-
+        Queue<string> notifications;
 
         public void Subscribe(string eventName, Action action)
         {
@@ -32,15 +33,33 @@ namespace Bonsai.Framework
             actions.Add(action);
         }
 
-        public void Notify(string eventName)
+        public void QueueNotification(string eventName)
         {
             if (!subscriptions.ContainsKey(eventName))
                 return;
 
-            var actions = subscriptions[eventName];
+            notifications.Enqueue(eventName);
+        }
 
-            foreach (var action in actions)
-                action();
+        public void FlushNotifications()
+        {
+            if (!notifications.Any())
+                return;
+
+            while (notifications.Any())
+            {
+                var eventName = notifications.Dequeue();
+
+                if (!subscriptions.ContainsKey(eventName))
+                    continue;
+
+                var actions = subscriptions[eventName];
+
+                foreach (var action in actions)
+                    action();
+            }
+
+
         }
 
     }
