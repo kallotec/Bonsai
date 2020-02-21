@@ -15,6 +15,7 @@ namespace Bonsai.Framework.UI.Text
             BackgroundColor = Color.Black;
         }
 
+        public bool IsAttachedToCamera { get; set; }
         public Color ForegroundColor { get; set; }
         public Color BackgroundColor { get; set; }
         public SpriteFont Font { get; set; }

@@ -78,6 +78,7 @@
     <Compile Include="Game\Coin.cs" />
     <Compile Include="Game\Door.cs" />
     <Compile Include="Game\HUD.cs" />
+    <Compile Include="Game\StartScreen.cs" />
     <Compile Include="Game\Platform.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Level.cs" />

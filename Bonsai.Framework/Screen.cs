@@ -24,6 +24,8 @@ namespace Bonsai.Framework
         public Framework.BonsaiGame Game { get; private set; }
         protected List<object> GameObjects { get; private set; }
 
+        public Rectangle ScreenBounds => new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
+        public Vector2 ScreenCenter => new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
 
         /// <summary>
         /// Calls .Load() on all ILoadable objects found in the GameObjects collection in parallel
@@ -85,7 +87,7 @@ namespace Bonsai.Framework
             drawObjectsAttachedToCamera(lessThanZero, time);
             drawObjectsNotAttachedToCamera(lessThanZero, time);
 
-            // > 0
+            // >= 0
             var zeroOrGreater = objects.Where(o => o.DrawOrder >= 0).ToList();
             drawObjectsNotAttachedToCamera(zeroOrGreater, time);
             drawObjectsAttachedToCamera(zeroOrGreater, time);

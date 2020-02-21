@@ -20,6 +20,8 @@ namespace Bonsai.Framework.UI.Text
             this.Settings = settings;
             this.value = value;
 
+            base.IsAttachedToCamera = settings.IsAttachedToCamera;
+
             if (settings.FadesInMillisecs != null)
                 fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
@@ -34,6 +36,8 @@ namespace Bonsai.Framework.UI.Text
             this.Settings = settings;
             this.variable = variable;
 
+            base.IsAttachedToCamera = settings.IsAttachedToCamera;
+
             if (settings.FadesInMillisecs != null)
                 fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
@@ -43,7 +47,7 @@ namespace Bonsai.Framework.UI.Text
         MillisecCounter fadeOutCounter;
         float yMovementSpeed = 20f;
 
-        public WidgetSettings Settings;
+        public readonly WidgetSettings Settings;
         public Vector2 Origin;
         public string Text;
         public Rectangle Box { get; private set; }
@@ -56,6 +60,17 @@ namespace Bonsai.Framework.UI.Text
             {
                 Settings.Alignment = value;
                 UpdateText(this.value);
+            }
+        }
+
+        public T Value
+        {
+            get
+            {
+                if (variable != null)
+                    return variable.Value;
+                else
+                    return value;
             }
         }
 

@@ -8,7 +8,7 @@ using Bonsai.Framework.Utility;
 
 namespace Bonsai.Framework.Input
 {
-    public class KeyPressListener
+    public class KeyPressListener : IUpdateable
     {
         public KeyPressListener(Keys key, delKeyPressed target)
         {
@@ -29,6 +29,9 @@ namespace Bonsai.Framework.Input
         }
 
         public Keys Key { get; private set; }
+
+        public bool IsDisabled => false;
+
         delKeyPressed signal;
         public delegate void delKeyPressed();
         bool rapidFire;

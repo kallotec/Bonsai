@@ -47,6 +47,7 @@
 //        {
 //            get { return rectangle; }
 //        }
+
 //        public Vector2 Position
 //        {
 //            get { return position; }
@@ -55,7 +56,7 @@
 //                position = value;
 
 //                //we want to make sure the menu items are aligned right in the middle of the gap_labelandvalue
-//                label.Position = new Vector2(position.X - (gap_labelandvalue / 2), position.Y);
+//                label.Settings.Position = new Vector2(position.X - (gap_labelandvalue / 2), position.Y);
 
 //                //reposition items
 //                if (items.Count > 0)
@@ -65,13 +66,13 @@
 //                    {
 //                        if (i == 0)
 //                        {
-//                            items[i].Position = new Vector2(position.X + (gap_labelandvalue / 2), position.Y);
+//                            items[i].Settings.Position = new Vector2(position.X + (gap_labelandvalue / 2), position.Y);
 //                        }
 //                        else
 //                        {
-//                            IField last = items[i - 1];
-//                            items[i].Position = new Vector2(last.Position.X + last.Rectangle.Width + (gap_labelandvalue / 2),
-//                                                             last.Position.Y);
+//                            var last = items[i - 1];
+//                            items[i].Settings.Position = new Vector2(last.Settings.Position.X + last.Rectangle.Width + (gap_labelandvalue / 2),
+//                                                             last.Settings.Position.Y);
 //                        }
 //                    }
 
@@ -109,8 +110,8 @@
 //        {
 //            if (items.Count == 0)
 //            {
-//                Field<T> f = new Field<T>(font, label, value, eDisplayMode.LabelOnly);
-//                f.Position = new Vector2(position.X + (gap_labelandvalue / 2), position.Y);
+//                var f = new TextElement<T>(font, label, value, eDisplayMode.LabelOnly);
+//                f.Settings.Position = new Vector2(position.X + (gap_labelandvalue / 2), position.Y);
 //                items.Add(f);
 
 //                rec_selection = f.Rectangle;
@@ -118,10 +119,10 @@
 //            }
 //            else
 //            {
-//                Field<T> f = new Field<T>(font, label, value, eDisplayMode.LabelOnly);
-//                Field<T> last = items[items.Count - 1];
-//                f.Position = new Vector2(last.Position.X + last.Rectangle.Width + gap_interitem,
-//                                         last.Position.Y);
+//                var f = new TextElement<T>(font, label, value, eDisplayMode.LabelOnly);
+//                var last = items[items.Count - 1];
+//                f.Settings.Position = new Vector2(last.Settings.Position.X + last.Rectangle.Width + gap_interitem,
+//                                         last.Settings.Position.Y);
 //                items.Add(f);
 //            }
 
@@ -169,7 +170,7 @@
 //            label.Draw(batch, Color_Label, false);
 
 //            //selection box
-//            batch.Draw(Globals.Pixel, rec_selection, Color_Selection);
+//            batch.Draw(FrameworkGlobals.Pixel, rec_selection, Color_Selection);
 
 //            //values
 //            for (int i = 0; i < items.Count; i++)

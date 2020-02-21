@@ -27,7 +27,7 @@ namespace Bonsai.Samples.Platformer2D
         }
 
         Level level;
-        Level menu;
+        StartScreen startScreen;
         Screen currentScreen;
 
 
@@ -36,21 +36,30 @@ namespace Bonsai.Samples.Platformer2D
             // Set up the game window
             base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
 
-            // Create level
+            startScreen = new StartScreen(this);
+            startScreen.StartGame += (s, e) => startGame();
+
             level = new Level(this);
             level.Exit += (s, e) => this.Exit();
 
+            currentScreen = startScreen;
+        }
+
+        private void startGame()
+        {
             currentScreen = level;
         }
 
         protected override void Load(IContentLoader loader)
         {
+            startScreen.Load(loader);
             level.Load(loader);
         }
 
         protected override void Unload()
         {
             level.Unload();
+            startScreen.Unload();
         }
 
         protected override void Update(GameTime gameTime)

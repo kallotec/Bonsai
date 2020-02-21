@@ -70,7 +70,7 @@
 //                return (int)i.Position.Y + i.Rectangle.Height;
 //            }
 //        }
-        
+
 //        public void Add(ISimpleMenuItem item)
 //        {
 //            item.Color_Label = color_label;
@@ -84,7 +84,7 @@
 //            else
 //            {
 //                ISimpleMenuItem last = items[items.Count - 1];
-//                item.Position = new Vector2(position.X, 
+//                item.Position = new Vector2(position.X,
 //                                            last.Position.Y + last.Rectangle.Height + gap_row);
 //            }
 
