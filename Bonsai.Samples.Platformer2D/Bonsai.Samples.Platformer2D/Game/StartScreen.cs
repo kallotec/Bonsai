@@ -40,22 +40,20 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public override void Load(IContentLoader loader)
         {
-            base.Load(loader);
-
             // Content
             font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
 
             lblStartMessage = new TextElement<string>("Press <enter> to start!", new WidgetSettings
             {
-                IsAttachedToCamera = true,
                 Alignment = FieldAlignmentMode.Center,
                 DisplayMode = FieldDisplayMode.ValueOnly,
                 Font = font,
                 ForegroundColor = Color.White,
-                Position = base.ScreenCenter
+                BackgroundColor = Color.FromNonPremultiplied(33,33,33,255),
+                Padding = new Vector2(15, 10),
+                Position = base.ScreenCenter,
             });
             lblStartMessage.Load(loader);
-            base.GameObjects.Add(lblStartMessage);
 
             // Key listeners
             keyListeners = new List<KeyPressListener>
@@ -68,8 +66,17 @@ namespace Bonsai.Samples.Platformer2D.Game
             };
             base.GameObjects.AddRange(keyListeners);
 
-            base.Camera.SetFocus(base.ScreenCenter);
-            base.GameObjects.Add(Camera);
+        }
+
+        public override void Draw(GameTime time)
+        {
+            base.Draw(time);
+
+            using (var drawer = base.StartDrawing())
+            {
+                lblStartMessage.Draw(time, drawer.Value);
+            }
+
         }
 
     }

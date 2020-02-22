@@ -104,7 +104,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             // Movement
             if (kbState.IsKeyDown(Keys.A))
             {
-                if (Props.Grounded)
+                if (Props.IsGrounded)
                     Props.AddForceX(-acceleration);
                 else if (IsJetPacking)
                     Props.AddForceX(-jetAcceleration);
@@ -113,7 +113,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             }
             else if (kbState.IsKeyDown(Keys.D))
             {
-                if (Props.Grounded)
+                if (Props.IsGrounded)
                     Props.AddForceX(acceleration);
                 else if (IsJetPacking)
                     Props.AddForceX(jetAcceleration);
@@ -130,7 +130,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 if (animCurrent.Name != animJetting.Name)
                     animCurrent = animJetting;
             }
-            else if (Props.Grounded)
+            else if (Props.IsGrounded)
             {
                 if (Props.Velocity.X != 0 && animCurrent.Name != animWalking.Name)
                 {
@@ -149,7 +149,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             
 
             // Jump action
-            var canJump = (Props.Grounded && Props.Velocity.Y == 0);
+            var canJump = (Props.IsGrounded && Props.Velocity.Y == 0);
 
             if (kbState.IsKeyDown(Keys.Space) && canJump)
             {

@@ -46,11 +46,26 @@ namespace Bonsai.Framework.UI.Text
         T value;
         MillisecCounter fadeOutCounter;
         float yMovementSpeed = 20f;
+        Vector2 textMeasurements;
 
         public readonly WidgetSettings Settings;
         public Vector2 Origin;
         public string Text;
-        public Rectangle Box { get; private set; }
+        public Rectangle BackgroundBox
+        {
+            get
+            {
+                var positionedBox = new Rectangle(
+                    (int)Settings.Position.X - (int)Origin.X, 
+                    (int)Settings.Position.Y - (int)Origin.Y, 
+                    (int)textMeasurements.X, 
+                    (int)textMeasurements.Y);
+
+                positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
+
+                return positionedBox;
+            }
+        }
         public bool IsDisabled => false;
 
         public FieldAlignmentMode Alignment
@@ -125,9 +140,11 @@ namespace Bonsai.Framework.UI.Text
             if (DeleteMe)
                 return;
 
-            //var positionedBox = new Rectangle((int)Settings.Position.X, (int)Settings.Position.Y, Box.Width, Box.Height);
             // background
-            //batch.Draw(FrameworkGlobals.Pixel, positionedBox, Settings.BackgroundColor);
+            if (Settings.BackgroundColor != null)
+            {
+                batch.Draw(FrameworkGlobals.Pixel, BackgroundBox, Settings.BackgroundColor.Value);
+            }
 
             // foreground
             batch.DrawString(Settings.Font, Text, Settings.Position, Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
@@ -136,7 +153,6 @@ namespace Bonsai.Framework.UI.Text
         public void UpdateText(T newValue)
         {
             // Compile new value into a string based on options
-
             if (Settings.HasFormat)
             {
                 Text = string.Format(Settings.Format, Settings.Label, newValue);
@@ -151,19 +167,9 @@ namespace Bonsai.Framework.UI.Text
             }
 
             // Rebuild box
-
-            var measurement = Settings.Font.MeasureString(Text);
-
-            Box = new Rectangle(
-                (int)-2, 
-                (int)-2, 
-                (int)measurement.X, 
-                (int)measurement.Y);
-
-            Box.Inflate(2, 2);
+            textMeasurements = Settings.Font.MeasureString(Text);
 
             // Calculate origin based on parameters
-
             var dimensions = Settings.Font.MeasureString(Text);
 
             switch (Settings.Alignment)

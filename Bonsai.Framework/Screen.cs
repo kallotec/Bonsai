@@ -15,7 +15,9 @@ namespace Bonsai.Framework
         public Screen(Framework.BonsaiGame game)
         {
             Game = game;
+
             Camera = new SimpleCamera(Game.GraphicsDevice.Viewport);
+            Camera.SetFocus(ScreenCenter);
 
             GameObjects = new List<object>();
         }
@@ -94,15 +96,24 @@ namespace Bonsai.Framework
 
         }
 
+        protected Ephemeral<SpriteBatch> StartDrawing()
+        {
+            return new Ephemeral<SpriteBatch>(() => 
+            {
+                Game.SpriteBatch.Begin();
+                return Game.SpriteBatch;
+            }, 
+            (b) => b.End());
+        }
+
         void drawObjectsAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
         {
-            Game.SpriteBatch.Begin();
-
-            // Draw all objs attached to camera
-            foreach (var obj in drawables.Where(o => o.IsAttachedToCamera))
-                obj.Draw(time, Game.SpriteBatch);
-
-            Game.SpriteBatch.End();
+            using (var drawer = StartDrawing())
+            {
+                // Draw all objs attached to camera
+                foreach (var obj in drawables.Where(o => o.IsAttachedToCamera))
+                    obj.Draw(time, drawer.Value);
+            }
         }
 
         void drawObjectsNotAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
@@ -120,5 +131,25 @@ namespace Bonsai.Framework
             Game.SpriteBatch.End();
         }
 
+    }
+
+    public class Ephemeral<T> : IDisposable
+    {
+        public Ephemeral(Func<T> init, Action<T> dispose)
+        {
+            value = init();
+
+            this.dispose = dispose;
+        }
+
+        T value;
+        Action<T> dispose;
+
+        public T Value => value;
+
+        public void Dispose()
+        {
+            dispose(value);
+        }
     }
 }

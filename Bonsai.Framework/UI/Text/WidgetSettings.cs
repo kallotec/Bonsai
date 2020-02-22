@@ -12,19 +12,18 @@ namespace Bonsai.Framework.UI.Text
         public WidgetSettings()
         {
             ForegroundColor = Color.White;
-            BackgroundColor = Color.Black;
         }
 
         public bool IsAttachedToCamera { get; set; }
         public Color ForegroundColor { get; set; }
-        public Color BackgroundColor { get; set; }
+        public Color? BackgroundColor { get; set; }
         public SpriteFont Font { get; set; }
         public Vector2 Position;
         public FieldAlignmentMode Alignment { get; set; }
         public FieldDisplayMode DisplayMode { get; set; }
         public string Label { get; set; }
         public string Format { get; set; }
-        //public bool Pulses { get; set; }
+        public Vector2 Padding { get; set; }
 
         public int? FadesInMillisecs { get; set; }
         public FadeDirection? FadeDirection { get; set; }

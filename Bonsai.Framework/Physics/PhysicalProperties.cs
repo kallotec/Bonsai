@@ -27,7 +27,7 @@ namespace Bonsai.Framework.Physics
 
         // Object
         public Rectangle PhysicalRect;
-        public bool Grounded;
+        public bool IsGrounded;
 
 
         public void AddForceX(float power, bool overrideTopSpeed = false)

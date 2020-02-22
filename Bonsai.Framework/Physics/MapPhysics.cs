@@ -93,14 +93,25 @@ namespace Bonsai.Framework.Physics
 
             if (entity.IsCollisionEnabled)
             {
-                var groundedArea = new Rectangle(entity.CollisionBox.X, entity.CollisionBox.Y + entity.CollisionBox.Height, entity.CollisionBox.Width, 1);
-                var groundingIntersections = neighbours.Any(n => groundedArea.Intersects(n.CollisionBox));
-                entityProps.Grounded = groundingIntersections;
+                var groundedArea = new Rectangle(
+                    entity.CollisionBox.X + (entity.CollisionBox.Width / 2), 
+                    entity.CollisionBox.Y + entity.CollisionBox.Height, 
+                    1, 1);
+
+                var groundingIntersections = neighbours.Where(n => groundedArea.Intersects(n.CollisionBox));
+
+                foreach (var groundings in groundingIntersections)
+                {
+                    groundings.OnOverlapping(entity);
+                    entity.OnOverlapping(groundings);
+                }
+
+                entityProps.IsGrounded = groundingIntersections.Any();
             }
 
             // [ Gravity ]
 
-            if (!entityProps.Grounded)
+            if (!entityProps.IsGrounded)
             {
                 if (physSettings.HasGravity)
                 {
@@ -119,7 +130,7 @@ namespace Bonsai.Framework.Physics
 
             if (physSettings.HasGravity &&
                 physSettings.HasFriction &&
-                entityProps.Grounded &&
+                entityProps.IsGrounded &&
                 entityProps.Velocity.X != 0)
             {
                 var lerped = MathHelper.Lerp(entityProps.Velocity.X, 0, physSettings.Friction);
