@@ -147,13 +147,10 @@ namespace Bonsai.Samples.Platformer2D.Game
             coins.Clear();
 
             // Create map tiles
-            var mapSvgXml = getMapData(mapPath);
-
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(mapSvgXml);
+            var doc = SvgDocument.Open(mapPath);
+            var elements = doc.Children.FindSvgElementsOf<SvgPath>();
 
             // Load new platforms
-            var elements = xmlDoc.SelectNodes("//*[local-name()='path']");
             var platformsToLoad = new List<Platform>();
 
             var maxMapX = 0;
@@ -161,36 +158,22 @@ namespace Bonsai.Samples.Platformer2D.Game
             playerStart = new Vector2(0, 0);
             playerExit = new Vector2(0, 0);
 
-            foreach (XmlElement elem in elements)
+            foreach (var elem in elements)
             {
-                // Color
-                var style = elem.Attributes["style"];
-                var fillColor = style.Value.Substring(style.Value.IndexOf("fill:") + 5, 7).Trim();
-                string strokeColor = null;
-                if (style.Value.IndexOf("stroke:") >= 0)
-                {
-                    var parsedStrokeColor = style.Value.Substring(style.Value.IndexOf("stroke:") + 7, 7).Trim();
-                    if (parsedStrokeColor.StartsWith("#"))
-                        strokeColor = parsedStrokeColor;
-                }
+                //// Color
+                var fillColor = elem.Fill?.ToString() ?? "#FF0000";
+                var strokeColor = elem.Stroke?.ToString();
+
+                if (fillColor == null || !fillColor.StartsWith("#"))
+                    fillColor = "#FF0000";
+                if (strokeColor == null || !strokeColor.StartsWith("#"))
+                    strokeColor = null;
 
                 // Shape
-                var data = elem.Attributes["d"].Value;
-
-                var geometry = new Rectangle();
-                //var geometry = Geometry.Parse(data);
-                ////var pathGeos = System.Windows.Media.PathGeometry.CreateFromGeometry(geometry);
-
-                var x = (int)Math.Round((decimal)geometry.X, 1);
-                var y = (int)Math.Round((decimal)geometry.Y - map_yoffset_correction, 1);
-                var w = (int)Math.Round((decimal)geometry.Width, 1);
-                var h = (int)Math.Round((decimal)geometry.Height, 1);
-                /*
-                var x = (int)Math.Round(geometry.Bounds.X, 1);
-                var y = (int)Math.Round(geometry.Bounds.Y - map_yoffset_correction, 1);
-                var w = (int)Math.Round(geometry.Bounds.Width, 1);
-                var h = (int)Math.Round(geometry.Bounds.Height, 1);
-                */
+                var x = (int)Math.Round(elem.Bounds.X, 1);
+                var y = (int)Math.Round(elem.Bounds.Y - map_yoffset_correction, 1);
+                var w = (int)Math.Round(elem.Bounds.Width, 1);
+                var h = (int)Math.Round(elem.Bounds.Height, 1);
 
                 Debug.WriteLine($"{x} {y} - {w} x {h}");
 

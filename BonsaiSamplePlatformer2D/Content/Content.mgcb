@@ -82,7 +82,7 @@
 
 #begin Sound/coinCollect.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sound/coinCollect.mp3
 
@@ -94,7 +94,7 @@
 
 #begin Sound/openDoor.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sound/openDoor.mp3
 
