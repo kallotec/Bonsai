@@ -10,9 +10,9 @@ using Bonsai.Framework.UI.Widgets;
 
 namespace Bonsai.Framework.UI.Text
 {
-    public class UIMessageManager : DrawableBase, ILoadable, IUpdateable, IDrawable
+    public class SpeechBubbleManager : DrawableBase, ILoadable, IUpdateable, IDrawable
     {
-        public UIMessageManager(string fontContentPath, StackingMethod stackingMethod)
+        public SpeechBubbleManager(string fontContentPath, StackingMethod stackingMethod)
         {
             this.fontContentPath = fontContentPath;
             this.stackingMethod = stackingMethod;
@@ -50,9 +50,8 @@ namespace Bonsai.Framework.UI.Text
             {
                 case MessageType.FadingText_Fast:
                     newText = new TextElement<string>(msg,
-                        new WidgetSettings
+                        new TextElementSettings(font)
                         {
-                            Font = font,
                             Position = position,
                             ForegroundColor = Color.Orange,
                             FadesInMillisecs = 500,
@@ -62,9 +61,8 @@ namespace Bonsai.Framework.UI.Text
 
                 case MessageType.FadingText_Slow:
                     newText = new TextElement<string>(msg,
-                        new WidgetSettings
+                        new TextElementSettings(font)
                         {
-                            Font = font,
                             Position = position,
                             ForegroundColor = Color.Orange,
                             FadesInMillisecs = 1000,
@@ -74,16 +72,13 @@ namespace Bonsai.Framework.UI.Text
 
                 case MessageType.StaticText:
                     newText = new TextElement<string>(msg,
-                        new WidgetSettings
+                        new TextElementSettings(font)
                         {
-                            Font = font,
                             Position = position,
                             ForegroundColor = Color.GreenYellow,
                         });
                     break;
 
-                //case eMessageType.SpeechBubble:
-                //    throw new NotImplementedException();
             }
 
             if (newText != null)

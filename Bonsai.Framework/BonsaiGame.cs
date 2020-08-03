@@ -18,14 +18,18 @@ namespace Bonsai.Framework
         public BonsaiGame()
         {
             Graphics = new GraphicsDeviceManager(this);
+            Current = this;
         }
 
+        public static BonsaiGame Current { get; private set; }
         public GraphicsDeviceManager Graphics { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
         public IContentLoader Loader { get; set; }
         bool isWindowSet;
         Color backgroundColor = Color.Black;
 
+        public Rectangle ScreenBounds => new Rectangle(0, 0, base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
+        public Vector2 ScreenCenter => new Vector2(base.GraphicsDevice.Viewport.Width / 2, base.GraphicsDevice.Viewport.Height / 2);
 
         protected abstract void Init();
         protected abstract void Load(IContentLoader loader);

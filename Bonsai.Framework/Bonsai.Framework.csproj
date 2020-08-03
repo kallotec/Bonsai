@@ -74,6 +74,7 @@
     <Compile Include="Graphics\TextureFormatter.cs" />
     <Compile Include="Physics\PhysicalProperties.cs" />
     <Compile Include="DrawableBase.cs" />
+    <Compile Include="UI\Menus\SimpleMenu.cs" />
     <Compile Include="UI\Text\FadeDirection.cs" />
     <Compile Include="UI\Text\MessageType.cs" />
     <Compile Include="UI\Text\StackingMethod.cs" />
@@ -120,11 +121,10 @@
     <Compile Include="UI\Menus\IMenuItem.cs" />
     <Compile Include="UI\Menus\MenuGroup.cs" />
     <Compile Include="UI\Menus\MenuItem.cs" />
-    <Compile Include="UI\Menus\SimpleMenu.cs" />
-    <Compile Include="UI\Menus\SimpleMenuItem.cs" />
+    <Compile Include="UI\Menus\SimpleShiftingMenu.cs" />
     <Compile Include="UI\FieldAlignmentMode.cs" />
-    <Compile Include="UI\Text\UIMessageManager.cs" />
-    <Compile Include="UI\Text\WidgetSettings.cs" />
+    <Compile Include="UI\Text\SpeechBubbleManager.cs" />
+    <Compile Include="UI\Text\TextElementSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Events\" />

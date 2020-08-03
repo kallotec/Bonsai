@@ -17,7 +17,7 @@ namespace Bonsai.Framework
             Game = game;
 
             Camera = new SimpleCamera(Game.GraphicsDevice.Viewport);
-            Camera.SetFocus(ScreenCenter);
+            Camera.SetFocus(game.ScreenCenter);
 
             GameObjects = new List<object>();
         }
@@ -25,9 +25,6 @@ namespace Bonsai.Framework
         public Framework.ICamera Camera { get; set; }
         public Framework.BonsaiGame Game { get; private set; }
         protected List<object> GameObjects { get; private set; }
-
-        public Rectangle ScreenBounds => new Rectangle(0, 0, Game.GraphicsDevice.Viewport.Width, Game.GraphicsDevice.Viewport.Height);
-        public Vector2 ScreenCenter => new Vector2(Game.GraphicsDevice.Viewport.Width / 2, Game.GraphicsDevice.Viewport.Height / 2);
 
         /// <summary>
         /// Calls .Load() on all ILoadable objects found in the GameObjects collection in parallel

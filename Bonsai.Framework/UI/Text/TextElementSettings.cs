@@ -7,10 +7,11 @@ using System.Text;
 
 namespace Bonsai.Framework.UI.Text
 {
-    public class WidgetSettings
+    public class TextElementSettings
     {
-        public WidgetSettings()
+        public TextElementSettings(SpriteFont font)
         {
+            Font = font;
             ForegroundColor = Color.White;
         }
 

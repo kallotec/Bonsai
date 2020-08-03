@@ -6,6 +6,7 @@ using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
 using Bonsai.Framework.UI;
+using Bonsai.Framework.UI.Menus;
 using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Variables;
@@ -31,41 +32,23 @@ namespace Bonsai.Samples.Platformer2D.Game
         {
         }
 
-        List<KeyPressListener> keyListeners;
-        SpriteFont font;
-        TextElement<string> lblStartMessage;
+        SimpleMenu menu;
 
         public event EventHandler StartGame;
+        public event EventHandler ExitGame;
 
 
         public override void Load(IContentLoader loader)
         {
-            // Content
-            font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
+            var menuStart = base.Game.ScreenCenter;
 
-            lblStartMessage = new TextElement<string>("Press <enter> to start!", new WidgetSettings
+            menu = new SimpleMenu(ContentPaths.FONT_UI_GENERAL, new Dictionary<string, Action>()
             {
-                Alignment = FieldAlignmentMode.Center,
-                DisplayMode = FieldDisplayMode.ValueOnly,
-                Font = font,
-                ForegroundColor = Color.White,
-                BackgroundColor = Color.FromNonPremultiplied(33,33,33,255),
-                Padding = new Vector2(15, 10),
-                Position = base.ScreenCenter,
+                { "Start Game", () => StartGame?.Invoke(this, null) },
+                { "Exit Game", () => ExitGame?.Invoke(this, null) }
             });
-            lblStartMessage.Load(loader);
 
-            // Key listeners
-            keyListeners = new List<KeyPressListener>
-            {
-                // [Enter] Starts game
-                new KeyPressListener(Keys.Enter, () => StartGame?.Invoke(this, null)),
-
-                // [ESC] Exit
-                new KeyPressListener(Keys.Escape, () => this.Game.Exit())
-            };
-            base.GameObjects.AddRange(keyListeners);
-
+            menu.Load(loader);
         }
 
         public override void Draw(GameTime time)
@@ -74,10 +57,15 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             using (var drawer = base.StartDrawing())
             {
-                lblStartMessage.Draw(time, drawer.Value);
+                menu.Draw(time, drawer.Value);
             }
 
         }
 
+        public override void Update(GameTime time)
+        {
+            base.Update(time);
+            menu.Update(time);
+        }
     }
 }

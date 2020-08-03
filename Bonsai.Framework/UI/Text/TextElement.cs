@@ -10,7 +10,7 @@ namespace Bonsai.Framework.UI.Text
 {
     public class TextElement<T> : DrawableBase, IWidget
     {
-        public TextElement(T value, WidgetSettings settings)
+        public TextElement(T value, TextElementSettings settings)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
@@ -26,7 +26,7 @@ namespace Bonsai.Framework.UI.Text
                 fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
 
-        public TextElement(GameVariable<T> variable, WidgetSettings settings)
+        public TextElement(GameVariable<T> variable, TextElementSettings settings)
         {
             if (variable == null)
                 throw new ArgumentNullException("variable");
@@ -47,8 +47,9 @@ namespace Bonsai.Framework.UI.Text
         MillisecCounter fadeOutCounter;
         float yMovementSpeed = 20f;
         Vector2 textMeasurements;
+        int valueCount;
 
-        public readonly WidgetSettings Settings;
+        public readonly TextElementSettings Settings;
         public Vector2 Origin;
         public string Text;
         public Rectangle BackgroundBox
@@ -95,9 +96,8 @@ namespace Bonsai.Framework.UI.Text
             // Initialize text field based on the type of field supplied
             if (variable != null)
             {
-                UpdateText(variable.Value);
-
                 variable.Changed += handleVariableChanged;
+                UpdateText(variable.Value);
             }
             else
             {

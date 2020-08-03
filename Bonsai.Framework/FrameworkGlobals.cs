@@ -10,5 +10,6 @@ namespace Bonsai.Framework
     {
         public static Texture2D Pixel { get; set; }
         public static Texture2D PixelHalfTrans { get; set; }
+
     }
 }

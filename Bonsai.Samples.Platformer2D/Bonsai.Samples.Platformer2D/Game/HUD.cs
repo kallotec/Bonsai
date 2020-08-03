@@ -56,9 +56,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             // FPS variable
             fields.Add(new TextElement<int>(
                 variable: this.fps,
-                settings: new WidgetSettings
+                settings: new TextElementSettings(fontGeneral)
                 {
-                    Font = fontGeneral,
                     Label = "FPS: ",
                     Position = new Vector2(10, 10),
                 }
@@ -67,9 +66,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Jumps variable
             fields.Add(new TextElement<int>(
                 variable: level.Jumps,
-                settings: new WidgetSettings
+                settings: new TextElementSettings(fontGeneral)
                 {
-                    Font = fontGeneral,
                     Label = "Jumps: ",
                     Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
                     Alignment = FieldAlignmentMode.Center,
@@ -80,9 +78,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Coins variable
             fields.Add(new TextElement<int>(
                 variable: level.CoinsCount,
-                settings: new WidgetSettings
+                settings: new TextElementSettings(fontGeneral)
                 {
-                    Font = fontGeneral,
                     Label = "Coins: ",
                     Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
                     Alignment = FieldAlignmentMode.Right,
@@ -134,7 +131,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 // Send game exit request
                 this.Exit?.Invoke(this, null);
-
             }));
 
             // [P] key
@@ -142,7 +138,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 // Pause/unpause
                 level.IsDisabled = !level.IsDisabled;
-
             }));
 
         }

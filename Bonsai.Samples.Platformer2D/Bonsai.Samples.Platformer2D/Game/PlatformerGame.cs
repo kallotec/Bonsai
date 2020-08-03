@@ -38,6 +38,7 @@ namespace Bonsai.Samples.Platformer2D
 
             startScreen = new StartScreen(this);
             startScreen.StartGame += (s, e) => startGame();
+            startScreen.ExitGame += (s, e) => this.Exit();
 
             level = new Level(this);
             level.Exit += (s, e) => this.Exit();
