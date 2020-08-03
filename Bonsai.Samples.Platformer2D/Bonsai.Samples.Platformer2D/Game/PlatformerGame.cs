@@ -13,7 +13,7 @@ using Bonsai.Framework.Actors;
 using System.Diagnostics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Bonsai.Samples.Platformer2D.Game;
-using Bonsai.Framework.Content;
+using Bonsai.Framework.ContentLoading;
 
 namespace Bonsai.Samples.Platformer2D
 {

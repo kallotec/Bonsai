@@ -1,7 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Chunks;
-using Bonsai.Framework.Content;
+using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;

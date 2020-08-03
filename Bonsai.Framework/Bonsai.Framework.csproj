@@ -96,8 +96,8 @@
     <Compile Include="Actors\Weapons\IWeapon.cs" />
     <Compile Include="Actors\Weapons\SimpleWeapon.cs" />
     <Compile Include="Actors\Projectiles\BasicProjectile.cs" />
-    <Compile Include="Content\SimpleContentLoader.cs" />
-    <Compile Include="Content\IContentLoader.cs" />
+    <Compile Include="ContentLoading\SimpleContentLoader.cs" />
+    <Compile Include="ContentLoading\IContentLoader.cs" />
     <Compile Include="ICamera.cs" />
     <Compile Include="ICollidable.cs" />
     <Compile Include="Maths\MathHelper.cs" />
