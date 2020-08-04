@@ -1,9 +1,9 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
+using Bonsai.Framework.Text;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Text;
-using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Variables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,13 +23,13 @@ namespace Bonsai.Samples.Platformer2D.Game
             base.IsAttachedToCamera = true;
 
             this.level = level;
-            fields = new List<IWidget>();
+            fields = new List<ITextElement>();
             keyListeners = new List<KeyPressListener>();
         }
 
         Level level;
         SpriteFont fontGeneral;
-        List<IWidget> fields;
+        List<ITextElement> fields;
         GameVariable<int> fps;
         List<KeyPressListener> keyListeners;
         double fps_ms = 0;
@@ -70,7 +70,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 {
                     Label = "Jumps: ",
                     Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
-                    Alignment = FieldAlignmentMode.Center,
+                    HorizontalAlignment = TextHorizontalAlignment.Center,
                     ForegroundColor = Color.Green,
                 }
             ));
@@ -82,7 +82,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 {
                     Label = "Coins: ",
                     Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
-                    Alignment = FieldAlignmentMode.Right,
+                    HorizontalAlignment = TextHorizontalAlignment.Right,
                     ForegroundColor = Color.Yellow,
                 }
             ));

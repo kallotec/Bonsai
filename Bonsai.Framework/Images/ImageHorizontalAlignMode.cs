@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bonsai.Framework.UI
+namespace Bonsai.Framework.Images
 {
-    public enum FieldAlignmentMode
+    public enum ImageHorizontalAlignMode
     { 
         Left, 
         Right,

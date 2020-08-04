@@ -1,6 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
+using Bonsai.Framework.Text;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Text;
 using Microsoft.Xna.Framework;
@@ -13,16 +14,18 @@ namespace Bonsai.Framework.UI.Menus
 {
     public class SimpleMenu : Framework.IDrawable, Framework.ILoadable, Framework.IUpdateable
     {
-        public SimpleMenu(string fontPath, Dictionary<string, Action> actionsMap)
+        public SimpleMenu(string fontPath, Dictionary<string, Action> itemsActionMap)
         {
             this.fontPath = fontPath;
-            this.actionsMap = actionsMap;
-            menuElements = new List<TextElement<string>>();
+            this.itemsMap = itemsActionMap;
+            menuElements = new List<ITextElement>();
+            actions = new List<Action>();
         }
 
         string fontPath;
-        Dictionary<string, Action> actionsMap;
-        List<TextElement<string>> menuElements;
+        Dictionary<string, Action> itemsMap;
+        List<Action> actions;
+        List<ITextElement> menuElements;
         List<KeyPressListener> keyListeners;
         SpriteFont font;
         int selectedMenuItemIndex = 0;
@@ -43,16 +46,18 @@ namespace Bonsai.Framework.UI.Menus
             var screenCenter = BonsaiGame.Current.ScreenCenter + new Vector2(0, -100);
             bool isFirst = true;
 
-            foreach (var item in actionsMap)
+            foreach (var item in itemsMap)
             {
                 menuElements.Add(new TextElement<string>(item.Key, new TextElementSettings(font)
                 {
-                    Alignment = FieldAlignmentMode.Center,
-                    DisplayMode = FieldDisplayMode.ValueOnly,
+                    HorizontalAlignment = TextHorizontalAlignment.Center,
+                    DisplayMode = TextDisplayMode.ValueOnly,
                     ForegroundColor = isFirst ? selectedMenuItemForegroundColor : menuItemForegroundColor,
                     Padding = new Vector2(15, 10),
                     Position = screenCenter,
                 }));
+
+                actions.Add(item.Value);
 
                 screenCenter += new Vector2(0, 50);
                 isFirst = false;
@@ -99,19 +104,19 @@ namespace Bonsai.Framework.UI.Menus
             selectedMenuItemIndex = newIndex;
 
             menuElements.ForEach(i => {
-                i.Settings.BackgroundColor = null;
-                i.Settings.ForegroundColor = menuItemForegroundColor;
+                i.BackgroundColor = null;
+                i.ForegroundColor = menuItemForegroundColor;
             });
 
             var item = menuElements[selectedMenuItemIndex];
-            item.Settings.BackgroundColor = selectedMenuItemBackgroundColor;
-            item.Settings.ForegroundColor = selectedMenuItemForegroundColor;
+            item.BackgroundColor = selectedMenuItemBackgroundColor;
+            item.ForegroundColor = selectedMenuItemForegroundColor;
         }
 
         void chooseSelectedMenuItem()
         {
             var selectedElement = menuElements[selectedMenuItemIndex];
-            var selectedAction = actionsMap[selectedElement.Value];
+            var selectedAction = actions[selectedMenuItemIndex];
             selectedAction.Invoke();
         }
 

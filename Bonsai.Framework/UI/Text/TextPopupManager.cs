@@ -6,24 +6,24 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using Bonsai.Framework.ContentLoading;
-using Bonsai.Framework.UI.Widgets;
+using Bonsai.Framework.Text;
 
 namespace Bonsai.Framework.UI.Text
 {
-    public class SpeechBubbleManager : DrawableBase, ILoadable, IUpdateable, IDrawable
+    public class TextPopupManager : DrawableBase, ILoadable, IUpdateable, IDrawable
     {
-        public SpeechBubbleManager(string fontContentPath, StackingMethod stackingMethod)
+        public TextPopupManager(string fontContentPath, StackingMethod stackingMethod)
         {
             this.fontContentPath = fontContentPath;
             this.stackingMethod = stackingMethod;
 
-            messages = new List<IWidget>();
+            messages = new List<ITextElement>();
         }
 
         StackingMethod stackingMethod;
         string fontContentPath;
         SpriteFont font;
-        List<IWidget> messages;
+        List<ITextElement> messages;
         IContentLoader loader;
         public bool IsDisabled => false;
 
@@ -54,8 +54,8 @@ namespace Bonsai.Framework.UI.Text
                         {
                             Position = position,
                             ForegroundColor = Color.Orange,
-                            FadesInMillisecs = 500,
-                            FadeDirection = FadeDirection.Up,
+                            //FadesInMillisecs = 500,
+                            //FadeDirection = FadeDirection.Up,
                         });
                     break;
 
@@ -65,8 +65,8 @@ namespace Bonsai.Framework.UI.Text
                         {
                             Position = position,
                             ForegroundColor = Color.Orange,
-                            FadesInMillisecs = 1000,
-                            FadeDirection = FadeDirection.Up,
+                            //FadesInMillisecs = 1000,
+                            //FadeDirection = FadeDirection.Up,
                         });
                     break;
 

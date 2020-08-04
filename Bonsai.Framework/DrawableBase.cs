@@ -8,9 +8,6 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    /// <summary>
-    ///  Convenience base class that implements the properties required by IDrawable
-    /// </summary>
     public abstract class DrawableBase : GameComponentBase
     {
         public bool IsHidden { get; set; }

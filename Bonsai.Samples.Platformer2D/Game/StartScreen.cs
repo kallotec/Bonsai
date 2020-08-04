@@ -8,7 +8,6 @@ using Bonsai.Framework.Physics;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Menus;
 using Bonsai.Framework.UI.Text;
-using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;

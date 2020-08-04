@@ -1,14 +1,13 @@
 ﻿using Bonsai.Framework.ContentLoading;
-using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Utility;
 using Bonsai.Framework.Variables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Bonsai.Framework.UI.Text
+namespace Bonsai.Framework.Text
 {
-    public class TextElement<T> : DrawableBase, IWidget
+    public class TextElement<T> : DrawableBase, ITextElement
     {
         public TextElement(T value, TextElementSettings settings)
         {
@@ -22,8 +21,8 @@ namespace Bonsai.Framework.UI.Text
 
             base.IsAttachedToCamera = settings.IsAttachedToCamera;
 
-            if (settings.FadesInMillisecs != null)
-                fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
+            //if (settings.FadesInMillisecs != null)
+            //    fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
 
         public TextElement(GameVariable<T> variable, TextElementSettings settings)
@@ -38,17 +37,15 @@ namespace Bonsai.Framework.UI.Text
 
             base.IsAttachedToCamera = settings.IsAttachedToCamera;
 
-            if (settings.FadesInMillisecs != null)
-                fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
+            //if (settings.FadesInMillisecs != null)
+            //    fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
 
-        GameVariable<T> variable;
         T value;
-        MillisecCounter fadeOutCounter;
-        float yMovementSpeed = 20f;
+        GameVariable<T> variable;
+        //MillisecCounter fadeOutCounter;
+        //float yMovementSpeed = 20f;
         Vector2 textMeasurements;
-        int valueCount;
-
         public readonly TextElementSettings Settings;
         public Vector2 Origin;
         public string Text;
@@ -57,9 +54,9 @@ namespace Bonsai.Framework.UI.Text
             get
             {
                 var positionedBox = new Rectangle(
-                    (int)Settings.Position.X - (int)Origin.X, 
-                    (int)Settings.Position.Y - (int)Origin.Y, 
-                    (int)textMeasurements.X, 
+                    (int)Settings.Position.X - (int)Origin.X,
+                    (int)Settings.Position.Y - (int)Origin.Y,
+                    (int)textMeasurements.X,
                     (int)textMeasurements.Y);
 
                 positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
@@ -69,31 +66,19 @@ namespace Bonsai.Framework.UI.Text
         }
         public bool IsDisabled => false;
 
-        public FieldAlignmentMode Alignment
+        public Color ForegroundColor
         {
-            get => Settings.Alignment;
-            set
-            {
-                Settings.Alignment = value;
-                UpdateText(this.value);
-            }
+            get => Settings.ForegroundColor;
+            set => Settings.ForegroundColor = value;
         }
-
-        public T Value
+        public Color? BackgroundColor
         {
-            get
-            {
-                if (variable != null)
-                    return variable.Value;
-                else
-                    return value;
-            }
+            get => Settings.BackgroundColor;
+            set => Settings.BackgroundColor = value;
         }
-
 
         public void Load(IContentLoader loader)
         {
-            // Initialize text field based on the type of field supplied
             if (variable != null)
             {
                 variable.Changed += handleVariableChanged;
@@ -101,7 +86,6 @@ namespace Bonsai.Framework.UI.Text
             }
             else
             {
-                // Static text field
                 UpdateText(value);
             }
         }
@@ -116,23 +100,23 @@ namespace Bonsai.Framework.UI.Text
         {
             if (DeleteMe || IsDisabled)
                 return;
-            if (Settings.FadesInMillisecs == null)
-                return;
+            //if (Settings.FadesInMillisecs == null)
+            //    return;
 
-            if (Settings.FadeDirection != null)
-            {
-                if (fadeOutCounter.Completed)
-                {
-                    DeleteMe = true;
-                    return;
-                }
+            //if (Settings.FadeDirection != null)
+            //{
+            //    if (fadeOutCounter.Completed)
+            //    {
+            //        DeleteMe = true;
+            //        return;
+            //    }
 
-                // float upwards slowly
-                if (Settings.FadeDirection == FadeDirection.Up)
-                    Settings.Position.Y -= (float)(yMovementSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+            //    // float upwards slowly
+            //    if (Settings.FadeDirection == FadeDirection.Up)
+            //        Settings.Position.Y -= (float)(yMovementSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
-                fadeOutCounter.Update(gameTime.ElapsedGameTime.Milliseconds);
-            }
+            //    fadeOutCounter.Update(gameTime.ElapsedGameTime.Milliseconds);
+            //}
         }
 
         public void Draw(GameTime time, SpriteBatch batch)
@@ -152,41 +136,71 @@ namespace Bonsai.Framework.UI.Text
 
         public void UpdateText(T newValue)
         {
-            // Compile new value into a string based on options
+            // compile new value into a string based on options
             if (Settings.HasFormat)
             {
+                // ignore display mode setting and use supplied format
                 Text = string.Format(Settings.Format, Settings.Label, newValue);
-            }
-            else if (Settings.HasLabel)
-            {
-                Text = string.Concat(Settings.Label, newValue);
             }
             else
             {
-                Text = newValue.ToString();
+                switch (Settings.DisplayMode)
+                {
+                    case TextDisplayMode.LabelAndValue:
+                        Text = string.Concat(Settings.Label, newValue);
+                        break;
+
+                    case TextDisplayMode.LabelOnly:
+                        Text = Settings.HasLabel ? Settings.Label : string.Empty;
+                        break;
+
+                    case TextDisplayMode.ValueOnly:
+                        Text = newValue?.ToString() ?? string.Empty;
+                        break;
+                }
+
             }
 
-            // Rebuild box
+            // rebuild box
             textMeasurements = Settings.Font.MeasureString(Text);
 
-            // Calculate origin based on parameters
+            // calculate origin based on text
             var dimensions = Settings.Font.MeasureString(Text);
 
-            switch (Settings.Alignment)
+            var originX = 0f;
+            var originY = 0f;
+
+            switch (Settings.HorizontalAlignment)
             {
-                case FieldAlignmentMode.Left:
-                    Origin = Vector2.Zero;
+                case TextHorizontalAlignment.Left:
+                    originX = 0;
                     break;
 
-                case FieldAlignmentMode.Right:
-                    Origin = new Vector2(dimensions.X, 0);
+                case TextHorizontalAlignment.Center:
+                    originX = dimensions.X / 2;
                     break;
 
-                case FieldAlignmentMode.Center:
-                    Origin = new Vector2(dimensions.X / 2, 0);
+                case TextHorizontalAlignment.Right:
+                    originX = dimensions.X;
                     break;
             }
 
+            switch (Settings.VerticalAlignment)
+            {
+                case TextVerticalAlignment.Top:
+                    originY = 0;
+                    break;
+
+                case TextVerticalAlignment.Center:
+                    originY = dimensions.Y / 2;
+                    break;
+
+                case TextVerticalAlignment.Bottom:
+                    originY = dimensions.Y;
+                    break;
+            }
+
+            Origin = new Vector2(originX, originY);
         }
 
         void handleVariableChanged(T newValue)

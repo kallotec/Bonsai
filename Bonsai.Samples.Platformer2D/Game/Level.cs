@@ -7,7 +7,6 @@ using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Text;
-using Bonsai.Framework.UI.Widgets;
 using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
@@ -38,7 +37,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         EventBus eventBus;
         Player player;
         HUD hud;
-        SpeechBubbleManager speechBubbleManager;
+        TextPopupManager speechBubbleManager;
         List<KeyPressListener> keyListeners;
         SpriteFont font;
         Texture2D pixel_half_trans;
@@ -85,7 +84,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             GameObjects.Add(CoinsCount);
 
             // Message manager
-            speechBubbleManager = new SpeechBubbleManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
+            speechBubbleManager = new TextPopupManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
             speechBubbleManager.Load(loader);
             GameObjects.Add(speechBubbleManager);
 
