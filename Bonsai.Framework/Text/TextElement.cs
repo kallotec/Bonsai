@@ -43,8 +43,6 @@ namespace Bonsai.Framework.Text
 
         T value;
         GameVariable<T> variable;
-        //MillisecCounter fadeOutCounter;
-        //float yMovementSpeed = 20f;
         Vector2 textMeasurements;
         public readonly TextElementSettings Settings;
         public Vector2 Origin;
@@ -66,6 +64,11 @@ namespace Bonsai.Framework.Text
         }
         public bool IsDisabled => false;
 
+        public Vector2 Position 
+        {
+            get => Settings.Position;
+            set => Settings.Position = value;
+        }
         public Color ForegroundColor
         {
             get => Settings.ForegroundColor;
@@ -98,25 +101,6 @@ namespace Bonsai.Framework.Text
 
         public void Update(GameTime gameTime)
         {
-            if (DeleteMe || IsDisabled)
-                return;
-            //if (Settings.FadesInMillisecs == null)
-            //    return;
-
-            //if (Settings.FadeDirection != null)
-            //{
-            //    if (fadeOutCounter.Completed)
-            //    {
-            //        DeleteMe = true;
-            //        return;
-            //    }
-
-            //    // float upwards slowly
-            //    if (Settings.FadeDirection == FadeDirection.Up)
-            //        Settings.Position.Y -= (float)(yMovementSpeed * gameTime.ElapsedGameTime.TotalSeconds);
-
-            //    fadeOutCounter.Update(gameTime.ElapsedGameTime.Milliseconds);
-            //}
         }
 
         public void Draw(GameTime time, SpriteBatch batch)
@@ -208,7 +192,6 @@ namespace Bonsai.Framework.Text
             // Update text field with new value
             UpdateText(newValue);
         }
-
 
         //        //void update_pulsing(GameTime gameTime)
         //        //{

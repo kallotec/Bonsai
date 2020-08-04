@@ -22,14 +22,10 @@ namespace Bonsai.Framework.Text
         public Vector2 Position;
         public TextHorizontalAlignment HorizontalAlignment { get; set; }
         public TextVerticalAlignment VerticalAlignment { get; set; }
-        public TextDisplayMode DisplayMode { get; set; }
+        public TextDisplayMode DisplayMode { get; set; } = TextDisplayMode.ValueOnly;
         public string Label { get; set; }
         public string Format { get; set; }
         public Vector2 Padding { get; set; }
-
-        //public int? FadesInMillisecs { get; set; }
-        //public FadeDirection? FadeDirection { get; set; }
-
         public bool HasLabel => !string.IsNullOrWhiteSpace(Label);
         public bool HasFormat => !string.IsNullOrWhiteSpace(Format);
 

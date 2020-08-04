@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bonsai.Framework.UI.Text
+namespace Bonsai.Framework.Text.Managers
 {
     public enum MessageType
     {

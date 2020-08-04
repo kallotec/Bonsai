@@ -5,8 +5,8 @@ using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
+using Bonsai.Framework.Text.Managers;
 using Bonsai.Framework.UI;
-using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
@@ -37,7 +37,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         EventBus eventBus;
         Player player;
         HUD hud;
-        TextPopupManager speechBubbleManager;
+        TextPopupManager textPopupManager;
         List<KeyPressListener> keyListeners;
         SpriteFont font;
         Texture2D pixel_half_trans;
@@ -84,9 +84,9 @@ namespace Bonsai.Samples.Platformer2D.Game
             GameObjects.Add(CoinsCount);
 
             // Message manager
-            speechBubbleManager = new TextPopupManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
-            speechBubbleManager.Load(loader);
-            GameObjects.Add(speechBubbleManager);
+            textPopupManager = new TextPopupManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
+            textPopupManager.Load(loader);
+            GameObjects.Add(textPopupManager);
 
             // HUD
             hud = new HUD(this);
@@ -124,7 +124,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 // [M] key generates a text popup at the players position
                 new KeyPressListener(Keys.M, () =>
                 {
-                    speechBubbleManager.AddMessage("Hey!", 
+                    textPopupManager.AddMessage("Hey!", 
                         player.Props.Position + new Vector2(0,-20),
                         MessageType.FadingText_Fast);
                 }),

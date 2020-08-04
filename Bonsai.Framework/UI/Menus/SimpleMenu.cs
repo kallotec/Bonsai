@@ -2,8 +2,6 @@
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Text;
-using Bonsai.Framework.UI;
-using Bonsai.Framework.UI.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

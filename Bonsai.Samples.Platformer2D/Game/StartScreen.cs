@@ -7,7 +7,6 @@ using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.UI.Menus;
-using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
@@ -35,7 +34,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public event EventHandler StartGame;
         public event EventHandler ExitGame;
-
 
         public override void Load(IContentLoader loader)
         {

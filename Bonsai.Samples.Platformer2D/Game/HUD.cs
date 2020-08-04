@@ -3,7 +3,6 @@ using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Text;
 using Bonsai.Framework.UI;
-using Bonsai.Framework.UI.Text;
 using Bonsai.Framework.Variables;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -59,6 +58,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 settings: new TextElementSettings(fontGeneral)
                 {
                     Label = "FPS: ",
+                    DisplayMode = TextDisplayMode.LabelAndValue,
                     Position = new Vector2(10, 10),
                 }
             ));
@@ -69,6 +69,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 settings: new TextElementSettings(fontGeneral)
                 {
                     Label = "Jumps: ",
+                    DisplayMode = TextDisplayMode.LabelAndValue,
                     Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
                     HorizontalAlignment = TextHorizontalAlignment.Center,
                     ForegroundColor = Color.Green,
@@ -81,6 +82,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 settings: new TextElementSettings(fontGeneral)
                 {
                     Label = "Coins: ",
+                    DisplayMode = TextDisplayMode.LabelAndValue,
                     Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
                     HorizontalAlignment = TextHorizontalAlignment.Right,
                     ForegroundColor = Color.Yellow,

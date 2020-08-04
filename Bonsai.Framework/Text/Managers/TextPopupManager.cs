@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Text;
 
-namespace Bonsai.Framework.UI.Text
+namespace Bonsai.Framework.Text.Managers
 {
     public class TextPopupManager : DrawableBase, ILoadable, IUpdateable, IDrawable
     {
@@ -17,13 +17,13 @@ namespace Bonsai.Framework.UI.Text
             this.fontContentPath = fontContentPath;
             this.stackingMethod = stackingMethod;
 
-            messages = new List<ITextElement>();
+            messages = new List<PopupTextElement>();
         }
 
         StackingMethod stackingMethod;
         string fontContentPath;
         SpriteFont font;
-        List<ITextElement> messages;
+        List<PopupTextElement> messages;
         IContentLoader loader;
         public bool IsDisabled => false;
 
@@ -37,54 +37,58 @@ namespace Bonsai.Framework.UI.Text
         public void Unload()
         {
             foreach (var message in messages)
-                message.Unload();
+                message.TextElement.Unload();
 
             messages.Clear();
         }
 
         public void AddMessage(string msg, Vector2 position, MessageType type)
         {
-            TextElement<string> newText = null;
+            PopupTextElement newPopup = null;
 
             switch (type)
             {
                 case MessageType.FadingText_Fast:
-                    newText = new TextElement<string>(msg,
+                    newPopup = new PopupTextElement(new TextElement<string>(msg,
                         new TextElementSettings(font)
                         {
                             Position = position,
                             ForegroundColor = Color.Orange,
-                            //FadesInMillisecs = 500,
-                            //FadeDirection = FadeDirection.Up,
-                        });
+                        }))
+                    {
+                        FadeTimeTotalMs = 500,
+                        FadeDirection = FadeDirection.Up,
+                    };
                     break;
 
                 case MessageType.FadingText_Slow:
-                    newText = new TextElement<string>(msg,
+                    newPopup = new PopupTextElement(new TextElement<string>(msg,
                         new TextElementSettings(font)
                         {
                             Position = position,
                             ForegroundColor = Color.Orange,
-                            //FadesInMillisecs = 1000,
-                            //FadeDirection = FadeDirection.Up,
-                        });
+                        }))
+                    {
+                        FadeTimeTotalMs = 1000,
+                        FadeDirection = FadeDirection.Up,
+                    };
                     break;
 
                 case MessageType.StaticText:
-                    newText = new TextElement<string>(msg,
+                    newPopup = new PopupTextElement(new TextElement<string>(msg,
                         new TextElementSettings(font)
                         {
                             Position = position,
                             ForegroundColor = Color.GreenYellow,
-                        });
+                        }));
                     break;
 
             }
 
-            if (newText != null)
+            if (newPopup != null)
             {
-                newText.Load(loader);
-                messages.Add(newText);
+                newPopup.TextElement.Load(loader);
+                messages.Add(newPopup);
             }
 
         }
@@ -111,16 +115,15 @@ namespace Bonsai.Framework.UI.Text
 
             if (stackingMethod == StackingMethod.Queue)
             {
-                messages[0].Draw(gameTime, spriteBatch);
+                messages[0].TextElement.Draw(gameTime, spriteBatch);
             }
             else if (stackingMethod == StackingMethod.Parallel)
             {
                 foreach (var msg in messages)
-                    msg.Draw(gameTime, spriteBatch);
+                    msg.TextElement.Draw(gameTime, spriteBatch);
             }
 
         }
-
 
         void updateQueue(GameTime gameTime)
         {
@@ -129,7 +132,7 @@ namespace Bonsai.Framework.UI.Text
 
             var first = messages[0];
 
-            first.Update(gameTime);
+            updateElement(gameTime, first);
 
             if (first.DeleteMe)
                 messages.RemoveAt(0);
@@ -140,7 +143,7 @@ namespace Bonsai.Framework.UI.Text
             for (var x = 0; x < messages.Count; x++)
             {
                 var current = messages[x];
-                current.Update(gameTime);
+                updateElement(gameTime, current);
 
                 if (current.DeleteMe)
                 {
@@ -149,6 +152,23 @@ namespace Bonsai.Framework.UI.Text
                 }
 
             }
+        }
+
+        void updateElement(GameTime gameTime, PopupTextElement element)
+        {
+            if (element.FadeDirection == FadeDirection.Static)
+                return;
+
+            if (element.FadeOutCounter.Completed)
+            {
+                element.DeleteMe = true;
+                return;
+            }
+
+            // move element (up by default)
+            element.TextElement.Position -= new Vector2(0, (float)(element.MovementSpeed * gameTime.ElapsedGameTime.TotalSeconds));
+            element.FadeOutCounter.Update(gameTime.ElapsedGameTime.Milliseconds);
+
         }
 
     }
