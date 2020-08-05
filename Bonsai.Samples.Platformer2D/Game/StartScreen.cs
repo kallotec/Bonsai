@@ -2,6 +2,7 @@
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Chunks;
 using Bonsai.Framework.ContentLoading;
+using Bonsai.Framework.Images;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
@@ -30,6 +31,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         {
         }
 
+        ImageElement logo;
         SimpleMenu menu;
 
         public event EventHandler StartGame;
@@ -37,13 +39,25 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public override void Load(IContentLoader loader)
         {
-            var menuStart = base.Game.ScreenCenter;
+            var logoTexture = loader.Load<Texture2D>(ContentPaths.LOGO_START_SCREEN);
+
+            logo = new ImageElement(logoTexture, new ImageElementSettings
+            {
+                HorizontalAlignment = ImageHorizontalAlignment.Center,
+                VerticalAlignment = ImageVerticalAlignment.Center,
+            })
+            {
+                Position = base.Game.ScreenCenter + new Vector2(0, -100)
+            };
 
             menu = new SimpleMenu(ContentPaths.FONT_UI_GENERAL, new Dictionary<string, Action>()
             {
                 { "Start Game", () => StartGame?.Invoke(this, null) },
                 { "Exit Game", () => ExitGame?.Invoke(this, null) }
-            });
+            })
+            {
+                Position = base.Game.ScreenCenter
+            };
 
             menu.Load(loader);
         }
@@ -54,6 +68,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             using (var drawer = base.StartDrawing())
             {
+                logo.Draw(time, drawer.Value);
                 menu.Draw(time, drawer.Value);
             }
 
@@ -62,6 +77,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public override void Update(GameTime time)
         {
             base.Update(time);
+            logo.Update(time);
             menu.Update(time);
         }
     }

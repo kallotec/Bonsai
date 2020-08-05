@@ -15,11 +15,12 @@ namespace Bonsai.Framework.UI.Menus
         public SimpleMenu(string fontPath, Dictionary<string, Action> itemsActionMap)
         {
             this.fontPath = fontPath;
-            this.itemsMap = itemsActionMap;
+            itemsMap = itemsActionMap;
             menuElements = new List<ITextElement>();
             actions = new List<Action>();
         }
 
+        Vector2 position;
         string fontPath;
         Dictionary<string, Action> itemsMap;
         List<Action> actions;
@@ -30,18 +31,25 @@ namespace Bonsai.Framework.UI.Menus
         Color menuItemForegroundColor = Color.FromNonPremultiplied(190, 190, 190, 255);
         Color selectedMenuItemForegroundColor = Color.FromNonPremultiplied(255, 255, 255, 255);
         Color selectedMenuItemBackgroundColor = Color.FromNonPremultiplied(33, 33, 33, 255);
-
+        public Vector2 Position 
+        {
+            get => position;
+            set
+            {
+                position = value;
+            }
+        }
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder => DrawOrderPosition.HUD;
         public bool IsAttachedToCamera => true;
+        public bool IsDisabled => false;
 
-        public bool IsDisabled => throw new NotImplementedException();
 
         public void Load(IContentLoader loader)
         {
             font = loader.Load<SpriteFont>(fontPath);
 
-            var screenCenter = BonsaiGame.Current.ScreenCenter + new Vector2(0, -100);
+            var positionMarker = Position;
             bool isFirst = true;
 
             foreach (var item in itemsMap)
@@ -57,12 +65,12 @@ namespace Bonsai.Framework.UI.Menus
                         Padding = new Vector2(15, 10)
                     })
                 {
-                    Position = screenCenter
+                    Position = positionMarker
                 });
 
                 actions.Add(item.Value);
 
-                screenCenter += new Vector2(0, 50);
+                positionMarker += new Vector2(0, 50);
                 isFirst = false;
             }
 

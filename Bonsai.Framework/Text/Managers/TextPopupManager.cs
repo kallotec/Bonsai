@@ -10,7 +10,7 @@ using Bonsai.Framework.Text;
 
 namespace Bonsai.Framework.Text.Managers
 {
-    public class TextPopupManager : DrawableBase, ILoadable, IUpdateable, IDrawable
+    public class TextPopupManager : DrawableBase, ILoadable, IUpdateable
     {
         public TextPopupManager(string fontContentPath, StackingMethod stackingMethod)
         {

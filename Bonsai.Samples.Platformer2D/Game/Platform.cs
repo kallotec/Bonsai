@@ -15,7 +15,7 @@ namespace Bonsai.Samples.Platformer2D.Game
     {
         public Platform(int x, int y, int w, int h, string fillHex, string strokeHex)
         {
-            this.position = new Vector2(x, y);
+            this.Position = new Vector2(x, y);
             this.width = w;
             this.height = h;
 
@@ -37,14 +37,14 @@ namespace Bonsai.Samples.Platformer2D.Game
         Color drawingColor;
         Color fillColor;
         Color strokeColor;
-        Vector2 position;
+        public Vector2 Position { get; set; }
         int width;
         int height;
         Texture2D texture;
         public bool IsHazardTile => fillHex == "#ff0000";
         SoundEffect sfxCheckpoint;
 
-        public Rectangle CollisionBox => new Rectangle((int)position.X, (int)position.Y, width, height);
+        public Rectangle CollisionBox => new Rectangle((int)Position.X, (int)Position.Y, width, height);
         public bool IsCollisionEnabled => true;
         public bool IsOverlappingEnabled => true;
         public bool IsDisabled => false;

@@ -1,4 +1,5 @@
 ﻿using Bonsai.Framework.Physics;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,13 @@ namespace Bonsai.Framework.Actors
     {
         public bool DeleteMe;
         public PhysicalProperties Props = new PhysicalProperties();
+        public Vector2 Position
+        {
+            get => Props.Position;
+            set
+            {
+                Props.Position = value;
+            }
+        }
     }
 }

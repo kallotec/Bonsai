@@ -35,6 +35,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         int frame_count = 0;
         int screenMargin = 40;
 
+        public Vector2 Position { get; set; } = new Vector2(0, 0);
         public event EventHandler Exit;
         public bool IsDisabled { get; set; }
         public Rectangle ScreenBounds { get; set; }

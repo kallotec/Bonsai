@@ -18,6 +18,8 @@ namespace Bonsai.Framework.Images
 
             this.Settings = settings;
             this.image = image;
+
+            calculate();
         }
 
         Texture2D image;
@@ -25,6 +27,14 @@ namespace Bonsai.Framework.Images
         public readonly ImageElementSettings Settings;
         public Vector2 Origin;
         public string Text;
+        public Vector2 Position
+        {
+            get => position;
+            set
+            {
+                position = value;
+            }
+        }
         public Rectangle BoundingBox
         {
             get
@@ -32,8 +42,8 @@ namespace Bonsai.Framework.Images
                 var positionedBox = new Rectangle(
                     (int)position.X - (int)Origin.X, 
                     (int)position.Y - (int)Origin.Y, 
-                    (int)image.Width, 
-                    (int)image.Height);
+                    image.Width, 
+                    image.Height);
 
                 positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
 
@@ -43,7 +53,38 @@ namespace Bonsai.Framework.Images
         public bool IsDisabled => false;
 
 
-        public void Load(IContentLoader loader)
+
+        public void Unload()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            if (DeleteMe || IsDisabled)
+                return;
+        }
+
+        public void Draw(GameTime time, SpriteBatch batch)
+        {
+            if (DeleteMe)
+                return;
+            /*
+            batch.Draw(image, position, Color.White);
+             */
+            batch.Draw(texture: image,
+                    position: position, 
+                    sourceRectangle: null,
+                    color: Color.White,
+                    rotation: 0f,
+                    origin: this.Origin,
+                    scale: new Vector2(1,1),
+                    effects: SpriteEffects.None,
+                    layerDepth: 1f);
+                   
+        }
+
+        void calculate()
         {
             var dimensions = this.image.Bounds;
 
@@ -57,11 +98,11 @@ namespace Bonsai.Framework.Images
                     break;
 
                 case ImageHorizontalAlignment.Center:
-                    originX = dimensions.X / 2;
+                    originX = dimensions.Width / 2;
                     break;
 
                 case ImageHorizontalAlignment.Right:
-                    originX = dimensions.X;
+                    originX = dimensions.Width;
                     break;
             }
 
@@ -72,29 +113,15 @@ namespace Bonsai.Framework.Images
                     break;
 
                 case ImageVerticalAlignment.Center:
-                    originY = dimensions.Y / 2;
+                    originY = dimensions.Height / 2;
                     break;
 
                 case ImageVerticalAlignment.Bottom:
-                    originY = dimensions.Y;
+                    originY = dimensions.Height;
                     break;
             }
 
             Origin = new Vector2(originX, originY);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            if (DeleteMe || IsDisabled)
-                return;
-        }
-
-        public void Draw(GameTime time, SpriteBatch batch)
-        {
-            if (DeleteMe)
-                return;
-
-            batch.Draw(image, position, Color.White);
         }
 
     }

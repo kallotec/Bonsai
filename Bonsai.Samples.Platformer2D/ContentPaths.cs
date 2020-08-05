@@ -10,6 +10,7 @@ namespace Bonsai.Samples.Platformer2D
         // Basics
         public static string TEX_PIXEL = "pixel";
         public static string TEX_PIXEL_HALFTRANS = "pixel-halftrans";
+        public static string LOGO_START_SCREEN = @"logo";
 
         // Fonts
         public static string FONT_UI_GENERAL = @"Fonts/ui-general";

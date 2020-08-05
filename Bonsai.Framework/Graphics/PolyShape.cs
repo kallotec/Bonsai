@@ -23,6 +23,7 @@ namespace Bonsai.Framework.Graphics
         public bool IsHidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public DrawOrderPosition DrawOrder => throw new NotImplementedException();
         public bool IsAttachedToCamera => throw new NotImplementedException();
+        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void Load(IContentLoader loader)
         {
