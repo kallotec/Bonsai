@@ -9,13 +9,8 @@ namespace Bonsai.Framework.Images
 {
     public class ImageElementSettings
     {
-        public ImageElementSettings()
-        {
-        }
-
-        public bool IsAttachedToCamera { get; set; }
-        public Vector2 Position;
-        public ImageHorizontalAlignMode Alignment { get; set; }
+        public ImageHorizontalAlignment HorizontalAlignment { get; set; }
+        public ImageVerticalAlignment VerticalAlignment { get; set; }
         public Vector2 Padding { get; set; }
     }
 }

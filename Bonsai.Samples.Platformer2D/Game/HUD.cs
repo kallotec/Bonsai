@@ -55,39 +55,48 @@ namespace Bonsai.Samples.Platformer2D.Game
             // FPS variable
             fields.Add(new TextElement<int>(
                 variable: this.fps,
-                settings: new TextElementSettings(fontGeneral)
+                font: fontGeneral,
+                settings: new TextElementSettings()
                 {
                     Label = "FPS: ",
-                    DisplayMode = TextDisplayMode.LabelAndValue,
-                    Position = new Vector2(10, 10),
+                    DisplayMode = TextDisplayMode.LabelAndValue
                 }
-            ));
+            )
+            {
+                Position = new Vector2(10, 10)
+            });
 
             // Jumps variable
             fields.Add(new TextElement<int>(
                 variable: level.Jumps,
-                settings: new TextElementSettings(fontGeneral)
+                font: fontGeneral,
+                settings: new TextElementSettings()
                 {
                     Label = "Jumps: ",
                     DisplayMode = TextDisplayMode.LabelAndValue,
-                    Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
                     HorizontalAlignment = TextHorizontalAlignment.Center,
                     ForegroundColor = Color.Green,
                 }
-            ));
+            )
+            {
+                Position = new Vector2(ScreenBounds.Width / 2, screenMargin),
+            });
 
             // Coins variable
             fields.Add(new TextElement<int>(
                 variable: level.CoinsCount,
-                settings: new TextElementSettings(fontGeneral)
+                font: fontGeneral,
+                settings: new TextElementSettings
                 {
                     Label = "Coins: ",
                     DisplayMode = TextDisplayMode.LabelAndValue,
-                    Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
                     HorizontalAlignment = TextHorizontalAlignment.Right,
                     ForegroundColor = Color.Yellow,
                 }
-            ));
+            )
+            {
+                Position = new Vector2(ScreenBounds.Width - screenMargin, screenMargin),
+            });
 
             foreach (var field in fields)
                 field.Load(loader);

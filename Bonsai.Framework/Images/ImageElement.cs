@@ -18,31 +18,22 @@ namespace Bonsai.Framework.Images
 
             this.Settings = settings;
             this.image = image;
-
-            base.IsAttachedToCamera = settings.IsAttachedToCamera;
-
-            //if (settings.FadesInMillisecs != null)
-            //    fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
         }
 
         Texture2D image;
-        MillisecCounter fadeOutCounter;
-        float yMovementSpeed = 20f;
-        Vector2 textMeasurements;
-        int valueCount;
-
+        Vector2 position;
         public readonly ImageElementSettings Settings;
         public Vector2 Origin;
         public string Text;
-        public Rectangle BackgroundBox
+        public Rectangle BoundingBox
         {
             get
             {
                 var positionedBox = new Rectangle(
-                    (int)Settings.Position.X - (int)Origin.X, 
-                    (int)Settings.Position.Y - (int)Origin.Y, 
-                    (int)textMeasurements.X, 
-                    (int)textMeasurements.Y);
+                    (int)position.X - (int)Origin.X, 
+                    (int)position.Y - (int)Origin.Y, 
+                    (int)image.Width, 
+                    (int)image.Height);
 
                 positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
 
@@ -56,43 +47,46 @@ namespace Bonsai.Framework.Images
         {
             var dimensions = this.image.Bounds;
 
-            switch (Settings.Alignment)
+            var originX = 0f;
+            var originY = 0f;
+
+            switch (Settings.HorizontalAlignment)
             {
-                case ImageHorizontalAlignMode.Left:
-                    Origin = Vector2.Zero;
+                case ImageHorizontalAlignment.Left:
+                    originX = 0;
                     break;
 
-                case ImageHorizontalAlignMode.Right:
-                    Origin = new Vector2(dimensions.X, 0);
+                case ImageHorizontalAlignment.Center:
+                    originX = dimensions.X / 2;
                     break;
 
-                case ImageHorizontalAlignMode.Center:
-                    Origin = new Vector2(dimensions.X / 2, 0);
+                case ImageHorizontalAlignment.Right:
+                    originX = dimensions.X;
                     break;
             }
+
+            switch (Settings.VerticalAlignment)
+            {
+                case ImageVerticalAlignment.Top:
+                    originY = 0;
+                    break;
+
+                case ImageVerticalAlignment.Center:
+                    originY = dimensions.Y / 2;
+                    break;
+
+                case ImageVerticalAlignment.Bottom:
+                    originY = dimensions.Y;
+                    break;
+            }
+
+            Origin = new Vector2(originX, originY);
         }
 
         public void Update(GameTime gameTime)
         {
             if (DeleteMe || IsDisabled)
                 return;
-            //if (Settings.FadesInMillisecs == null)
-            //    return;
-
-            //if (Settings.FadeDirection != null)
-            //{
-            //    if (fadeOutCounter.Completed)
-            //    {
-            //        DeleteMe = true;
-            //        return;
-            //    }
-
-            //    // float upwards slowly
-            //    if (Settings.FadeDirection == FadeDirection.Up)
-            //        Settings.Position.Y -= (float)(yMovementSpeed * gameTime.ElapsedGameTime.TotalSeconds);
-
-            //    fadeOutCounter.Update(gameTime.ElapsedGameTime.Milliseconds);
-            //}
         }
 
         public void Draw(GameTime time, SpriteBatch batch)
@@ -100,7 +94,7 @@ namespace Bonsai.Framework.Images
             if (DeleteMe)
                 return;
 
-            batch.Draw(this.image, Settings.Position, Color.White);
+            batch.Draw(image, position, Color.White);
         }
 
     }

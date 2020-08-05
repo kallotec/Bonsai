@@ -9,51 +9,49 @@ namespace Bonsai.Framework.Text
 {
     public class TextElement<T> : DrawableBase, ITextElement
     {
-        public TextElement(T value, TextElementSettings settings)
+        public TextElement(T value, SpriteFont font, TextElementSettings settings)
         {
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
+            this.font = font;
             this.Settings = settings;
             this.value = value;
 
-            base.IsAttachedToCamera = settings.IsAttachedToCamera;
-
-            //if (settings.FadesInMillisecs != null)
-            //    fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
+            updateText(value);
         }
 
-        public TextElement(GameVariable<T> variable, TextElementSettings settings)
+        public TextElement(GameVariable<T> variable, SpriteFont font, TextElementSettings settings)
         {
             if (variable == null)
-                throw new ArgumentNullException("variable");
+                throw new ArgumentNullException(nameof(variable));
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
 
+            this.font = font;
             this.Settings = settings;
             this.variable = variable;
 
-            base.IsAttachedToCamera = settings.IsAttachedToCamera;
-
-            //if (settings.FadesInMillisecs != null)
-            //    fadeOutCounter = new MillisecCounter(settings.FadesInMillisecs.Value);
+            updateText(variable.Value);
         }
 
+        Vector2 position;
+        SpriteFont font;
         T value;
         GameVariable<T> variable;
         Vector2 textMeasurements;
         public readonly TextElementSettings Settings;
         public Vector2 Origin;
         public string Text;
-        public Rectangle BackgroundBox
+        public Rectangle BoundingBox
         {
             get
             {
                 var positionedBox = new Rectangle(
-                    (int)Settings.Position.X - (int)Origin.X,
-                    (int)Settings.Position.Y - (int)Origin.Y,
+                    (int)position.X - (int)Origin.X,
+                    (int)position.Y - (int)Origin.Y,
                     (int)textMeasurements.X,
                     (int)textMeasurements.Y);
 
@@ -63,11 +61,10 @@ namespace Bonsai.Framework.Text
             }
         }
         public bool IsDisabled => false;
-
         public Vector2 Position 
         {
-            get => Settings.Position;
-            set => Settings.Position = value;
+            get => position;
+            set => position = value;
         }
         public Color ForegroundColor
         {
@@ -83,14 +80,7 @@ namespace Bonsai.Framework.Text
         public void Load(IContentLoader loader)
         {
             if (variable != null)
-            {
                 variable.Changed += handleVariableChanged;
-                UpdateText(variable.Value);
-            }
-            else
-            {
-                UpdateText(value);
-            }
         }
 
         public void Unload()
@@ -111,14 +101,14 @@ namespace Bonsai.Framework.Text
             // background
             if (Settings.BackgroundColor != null)
             {
-                batch.Draw(FrameworkGlobals.Pixel, BackgroundBox, Settings.BackgroundColor.Value);
+                batch.Draw(FrameworkGlobals.Pixel, BoundingBox, Settings.BackgroundColor.Value);
             }
 
             // foreground
-            batch.DrawString(Settings.Font, Text, Settings.Position, Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
+            batch.DrawString(font, Text, position, Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
         }
 
-        public void UpdateText(T newValue)
+        void updateText(T newValue)
         {
             // compile new value into a string based on options
             if (Settings.HasFormat)
@@ -146,10 +136,10 @@ namespace Bonsai.Framework.Text
             }
 
             // rebuild box
-            textMeasurements = Settings.Font.MeasureString(Text);
+            textMeasurements = font.MeasureString(Text);
 
             // calculate origin based on text
-            var dimensions = Settings.Font.MeasureString(Text);
+            var dimensions = font.MeasureString(Text);
 
             var originX = 0f;
             var originY = 0f;
@@ -190,7 +180,7 @@ namespace Bonsai.Framework.Text
         void handleVariableChanged(T newValue)
         {
             // Update text field with new value
-            UpdateText(newValue);
+            updateText(newValue);
         }
 
         //        //void update_pulsing(GameTime gameTime)

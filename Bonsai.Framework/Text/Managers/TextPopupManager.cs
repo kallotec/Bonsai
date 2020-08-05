@@ -49,12 +49,15 @@ namespace Bonsai.Framework.Text.Managers
             switch (type)
             {
                 case MessageType.FadingText_Fast:
-                    newPopup = new PopupTextElement(new TextElement<string>(msg,
-                        new TextElementSettings(font)
+                    newPopup = new PopupTextElement(
+                        new TextElement<string>(
+                            msg,
+                            font,
+                            new TextElementSettings { ForegroundColor = Color.Orange }
+                            )
                         {
-                            Position = position,
-                            ForegroundColor = Color.Orange,
-                        }))
+                            Position = position
+                        })
                     {
                         FadeTimeTotalMs = 500,
                         FadeDirection = FadeDirection.Up,
@@ -62,12 +65,15 @@ namespace Bonsai.Framework.Text.Managers
                     break;
 
                 case MessageType.FadingText_Slow:
-                    newPopup = new PopupTextElement(new TextElement<string>(msg,
-                        new TextElementSettings(font)
+                    newPopup = new PopupTextElement(
+                        new TextElement<string>(
+                            msg,
+                            font,
+                            new TextElementSettings { ForegroundColor = Color.Orange }
+                            )
                         {
-                            Position = position,
-                            ForegroundColor = Color.Orange,
-                        }))
+                            Position = position
+                        })
                     {
                         FadeTimeTotalMs = 1000,
                         FadeDirection = FadeDirection.Up,
@@ -75,12 +81,15 @@ namespace Bonsai.Framework.Text.Managers
                     break;
 
                 case MessageType.StaticText:
-                    newPopup = new PopupTextElement(new TextElement<string>(msg,
-                        new TextElementSettings(font)
+                    newPopup = new PopupTextElement(
+                        new TextElement<string>(
+                            msg,
+                            font,
+                            new TextElementSettings { ForegroundColor = Color.GreenYellow  }
+                        )
                         {
-                            Position = position,
-                            ForegroundColor = Color.GreenYellow,
-                        }));
+                            Position = position
+                        });
                     break;
 
             }

@@ -46,14 +46,19 @@ namespace Bonsai.Framework.UI.Menus
 
             foreach (var item in itemsMap)
             {
-                menuElements.Add(new TextElement<string>(item.Key, new TextElementSettings(font)
+                menuElements.Add(new TextElement<string>(
+                    item.Key,
+                    font,
+                    new TextElementSettings
+                    {
+                        HorizontalAlignment = TextHorizontalAlignment.Center,
+                        DisplayMode = TextDisplayMode.ValueOnly,
+                        ForegroundColor = isFirst ? selectedMenuItemForegroundColor : menuItemForegroundColor,
+                        Padding = new Vector2(15, 10)
+                    })
                 {
-                    HorizontalAlignment = TextHorizontalAlignment.Center,
-                    DisplayMode = TextDisplayMode.ValueOnly,
-                    ForegroundColor = isFirst ? selectedMenuItemForegroundColor : menuItemForegroundColor,
-                    Padding = new Vector2(15, 10),
-                    Position = screenCenter,
-                }));
+                    Position = screenCenter
+                });
 
                 actions.Add(item.Value);
 

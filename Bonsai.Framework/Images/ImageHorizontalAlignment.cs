@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Bonsai.Framework.Images
 {
-    public enum ImageHorizontalAlignMode
+    public enum ImageHorizontalAlignment
     { 
-        Left, 
-        Right,
-        Center 
+        Left,
+        Center,
+        Right
     }
 }
