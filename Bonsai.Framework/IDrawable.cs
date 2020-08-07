@@ -14,6 +14,6 @@ namespace Bonsai.Framework
         DrawOrderPosition DrawOrder { get; }
         bool IsAttachedToCamera { get; }
 
-        void Draw(GameTime time, SpriteBatch batch);
+        void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition);
     }
 }

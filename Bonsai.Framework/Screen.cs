@@ -75,6 +75,8 @@ namespace Bonsai.Framework
             // Clear
             Game.GraphicsDevice.Clear(Color.Black);
 
+            var parentPosition = new Vector2();
+
             // Try get camera
             // Drawable objects
             var objects = GameObjects.OfType<Framework.IDrawable>()
@@ -83,13 +85,13 @@ namespace Bonsai.Framework
 
             // < 0
             var lessThanZero = objects.Where(o => o.DrawOrder < 0).ToList();
-            drawObjectsAttachedToCamera(lessThanZero, time);
-            drawObjectsNotAttachedToCamera(lessThanZero, time);
+            drawObjectsAttachedToCamera(lessThanZero, time, parentPosition);
+            drawObjectsNotAttachedToCamera(lessThanZero, time, parentPosition);
 
             // >= 0
             var zeroOrGreater = objects.Where(o => o.DrawOrder >= 0).ToList();
-            drawObjectsNotAttachedToCamera(zeroOrGreater, time);
-            drawObjectsAttachedToCamera(zeroOrGreater, time);
+            drawObjectsNotAttachedToCamera(zeroOrGreater, time, parentPosition);
+            drawObjectsAttachedToCamera(zeroOrGreater, time, parentPosition);
 
         }
 
@@ -103,17 +105,17 @@ namespace Bonsai.Framework
             (b) => b.End());
         }
 
-        void drawObjectsAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
+        void drawObjectsAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time, Vector2 parentPosition)
         {
             using (var drawer = StartDrawing())
             {
                 // Draw all objs attached to camera
                 foreach (var obj in drawables.Where(o => o.IsAttachedToCamera))
-                    obj.Draw(time, drawer.Value);
+                    obj.Draw(time, drawer.Value, parentPosition);
             }
         }
 
-        void drawObjectsNotAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time)
+        void drawObjectsNotAttachedToCamera(List<Framework.IDrawable> drawables, GameTime time, Vector2 parentPosition)
         {
             // Apply camera transform
             Game.SpriteBatch.Begin(SpriteSortMode.Deferred,
@@ -123,7 +125,7 @@ namespace Bonsai.Framework
 
             // Draw all objs not attached to camera
             foreach (var obj in drawables.Where(o => !o.IsAttachedToCamera))
-                obj.Draw(time, Game.SpriteBatch);
+                obj.Draw(time, Game.SpriteBatch, parentPosition);
 
             Game.SpriteBatch.End();
         }

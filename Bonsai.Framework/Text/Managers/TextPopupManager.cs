@@ -124,12 +124,12 @@ namespace Bonsai.Framework.Text.Managers
 
             if (stackingMethod == StackingMethod.Queue)
             {
-                messages[0].TextElement.Draw(gameTime, spriteBatch);
+                messages[0].TextElement.Draw(gameTime, spriteBatch, new Vector2());
             }
             else if (stackingMethod == StackingMethod.Parallel)
             {
                 foreach (var msg in messages)
-                    msg.TextElement.Draw(gameTime, spriteBatch);
+                    msg.TextElement.Draw(gameTime, spriteBatch, new Vector2());
             }
 
         }

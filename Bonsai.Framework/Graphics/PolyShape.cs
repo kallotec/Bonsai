@@ -35,7 +35,7 @@ namespace Bonsai.Framework.Graphics
             throw new NotImplementedException();
         }
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {

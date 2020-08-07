@@ -15,7 +15,7 @@
    fill-rule="evenodd"
    version="1.1"
    id="svg128"
-   sodipodi:docname="map.svg"
+   sodipodi:docname="map1.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <metadata
      id="metadata134">
@@ -44,16 +44,16 @@
      id="namedview130"
      showgrid="false"
      inkscape:zoom="1.189304"
-     inkscape:cx="352.54902"
+     inkscape:cx="272.43101"
      inkscape:cy="724.73272"
-     inkscape:window-x="1912"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg128" />
   <g
      id="g126">
     <path
-       style="stroke:#666666; stroke-width:1; stroke-linejoin:round; stroke-linecap:round; fill:#ff00ff"
+       style="stroke:#666666;stroke-width:1;stroke-linejoin:round;stroke-linecap:round;fill:#ff64ff;fill-opacity:1"
        d="M 50 197.89L 150 197.89L 150 297.89L 50 297.89L 50 197.89z"
        id="path2"
        data-type="1" />
@@ -74,7 +74,7 @@
        d="M 1930 146.89L 2030 146.89L 2030 246.89L 1930 246.89L 1930 146.89z"
        id="path10" />
     <path
-       style="stroke:none; fill:#ff00ff"
+       style="stroke:none;fill:#ff0000;fill-opacity:1"
        d="M 150 426.89L 450 426.89L 450 446.89L 150 446.89L 150 426.89z"
        id="path12" />
     <path

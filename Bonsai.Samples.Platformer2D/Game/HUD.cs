@@ -128,10 +128,10 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         }
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             for (var x = 0; x < fields.Count; x++) 
-                fields[x].Draw(time, batch);
+                fields[x].Draw(time, batch, parentPosition);
         }
 
 

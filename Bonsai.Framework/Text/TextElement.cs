@@ -45,21 +45,6 @@ namespace Bonsai.Framework.Text
         public readonly TextElementSettings Settings;
         public Vector2 Origin;
         public string Text;
-        public Rectangle BoundingBox
-        {
-            get
-            {
-                var positionedBox = new Rectangle(
-                    (int)position.X - (int)Origin.X,
-                    (int)position.Y - (int)Origin.Y,
-                    (int)textMeasurements.X,
-                    (int)textMeasurements.Y);
-
-                positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
-
-                return positionedBox;
-            }
-        }
         public bool IsDisabled => false;
         public Vector2 Position 
         {
@@ -77,6 +62,7 @@ namespace Bonsai.Framework.Text
             set => Settings.BackgroundColor = value;
         }
 
+
         public void Load(IContentLoader loader)
         {
             if (variable != null)
@@ -93,7 +79,7 @@ namespace Bonsai.Framework.Text
         {
         }
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             if (DeleteMe)
                 return;
@@ -101,11 +87,11 @@ namespace Bonsai.Framework.Text
             // background
             if (Settings.BackgroundColor != null)
             {
-                batch.Draw(FrameworkGlobals.Pixel, BoundingBox, Settings.BackgroundColor.Value);
+                batch.Draw(FrameworkGlobals.Pixel, getBoundingBox(parentPosition), Settings.BackgroundColor.Value);
             }
 
             // foreground
-            batch.DrawString(font, Text, position, Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
+            batch.DrawString(font, Text, parentPosition + position, Settings.ForegroundColor, 0f, this.Origin, 1f, SpriteEffects.None, 0f);
         }
 
         void updateText(T newValue)
@@ -181,6 +167,21 @@ namespace Bonsai.Framework.Text
         {
             // Update text field with new value
             updateText(newValue);
+        }
+
+        Rectangle getBoundingBox(Vector2 parentOffset)
+        {
+            var newPosition = parentOffset + position;
+
+            var positionedBox = new Rectangle(
+                    (int)newPosition.X - (int)Origin.X,
+                    (int)newPosition.Y - (int)Origin.Y,
+                    (int)textMeasurements.X,
+                    (int)textMeasurements.Y);
+
+            positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
+
+            return positionedBox;
         }
 
         //        //void update_pulsing(GameTime gameTime)

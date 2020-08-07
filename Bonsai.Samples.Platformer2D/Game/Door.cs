@@ -44,7 +44,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         }
 
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             batch.Draw(Props.Texture, Props.Position, Props.PhysicalRect, Props.Tint);
         }

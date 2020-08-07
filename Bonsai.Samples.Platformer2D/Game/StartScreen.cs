@@ -36,6 +36,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public event EventHandler StartGame;
         public event EventHandler ExitGame;
+        List<KeyPressListener> listeners;
 
         public override void Load(IContentLoader loader)
         {
@@ -60,6 +61,11 @@ namespace Bonsai.Samples.Platformer2D.Game
             };
 
             menu.Load(loader);
+
+            listeners = new List<KeyPressListener>
+            {
+                new KeyPressListener(Keys.Escape, () => this.ExitGame?.Invoke(this, null))
+            };
         }
 
         public override void Draw(GameTime time)
@@ -68,8 +74,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             using (var drawer = base.StartDrawing())
             {
-                logo.Draw(time, drawer.Value);
-                menu.Draw(time, drawer.Value);
+                logo.Draw(time, drawer.Value, new Vector2());
+                menu.Draw(time, drawer.Value, new Vector2());
             }
 
         }
@@ -79,6 +85,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             base.Update(time);
             logo.Update(time);
             menu.Update(time);
+            listeners.ForEach(l => l.Update(time));
         }
+
     }
 }

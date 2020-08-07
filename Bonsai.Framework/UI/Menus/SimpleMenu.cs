@@ -49,7 +49,7 @@ namespace Bonsai.Framework.UI.Menus
         {
             font = loader.Load<SpriteFont>(fontPath);
 
-            var positionMarker = Position;
+            var positionMarker = new Vector2();
             bool isFirst = true;
 
             foreach (var item in itemsMap)
@@ -101,10 +101,12 @@ namespace Bonsai.Framework.UI.Menus
                 item.Update(time);
         }
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
+            parentPosition += Position;
+
             foreach (var item in menuElements)
-                item.Draw(time, batch);
+                item.Draw(time, batch, parentPosition);
         }
 
         void updateSelectedMenuItem(int newIndex)

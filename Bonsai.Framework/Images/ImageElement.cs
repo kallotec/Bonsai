@@ -65,7 +65,7 @@ namespace Bonsai.Framework.Images
                 return;
         }
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             if (DeleteMe)
                 return;

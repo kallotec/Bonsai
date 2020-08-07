@@ -172,7 +172,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         }
 
 
-        public void Draw(GameTime time, SpriteBatch batch)
+        public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             // Default direction is Right
             var flip = (Props.Direction == Direction.Left);
