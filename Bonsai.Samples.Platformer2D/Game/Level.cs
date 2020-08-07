@@ -27,14 +27,17 @@ namespace Bonsai.Samples.Platformer2D.Game
 {
     public class Level : Screen
     {
-        public Level(BonsaiGame game) : base(game)
+        public Level(BonsaiGame game, EventBus eventBus) : base(game)
         {
             keyListeners = new List<KeyPressListener>();
             coins = new List<Coin>();
-            eventBus = new EventBus();
+
+            this.eventBus = eventBus;
+            this.eventBusSubscriptionIds = new List<string>();
         }
 
         EventBus eventBus;
+        List<string> eventBusSubscriptionIds;
         Player player;
         HUD hud;
         TextPopupManager textPopupManager;
@@ -50,10 +53,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         IContentLoader _loader;
         string currentMapPath;
         ChunkMap chunkMap;
-        int map_yoffset_correction;
-
-        public event EventHandler Exit;
-        public event EventHandler GameOver;
 
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
@@ -91,7 +90,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             // HUD
             hud = new HUD(this);
             hud.ScreenBounds = base.Game.GraphicsDevice.Viewport.Bounds;
-            hud.Exit += (s, e) => { Exit?.Invoke(s, e); };
             hud.DrawOrder = DrawOrderPosition.HUD;
             hud.Load(loader);
             GameObjects.Add(hud);
@@ -107,13 +105,34 @@ namespace Bonsai.Samples.Platformer2D.Game
             setupKeyListeners();
 
             // Event listeners
-            eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1);
-            eventBus.Subscribe("playerJumped", () => Jumps.Value += 1);
-            eventBus.Subscribe("playerEnteredDoor", () => playerTouchedDoor());
-            eventBus.Subscribe("playerDied", () => playerDied());
+            eventBusSubscriptionIds.AddRange(new[] {
+                eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1),
+                eventBus.Subscribe("playerJumped", () => Jumps.Value += 1),
+                eventBus.Subscribe("playerEnteredDoor", () => playerTouchedDoor()),
+                eventBus.Subscribe("playerDied", () => playerDied())
+            });
 
             // Load first map
             loadMap(ContentPaths.PATH_MAP_1);
+        }
+
+        public override void Unload()
+        {
+            base.Unload();
+            GameObjects.Clear();
+            eventBus.Unsubscribe(eventBusSubscriptionIds);
+        }
+
+        public override void Update(GameTime time)
+        {
+            // Update gameobjects
+            base.Update(time);
+
+            foreach (var listener in keyListeners)
+                listener.Update(time);
+
+            // Map collisions
+            phys.ApplyPhysics(player.Props, player, time);
         }
 
         void setupKeyListeners()
@@ -129,7 +148,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                         MessageType.FadingText_Fast);
                 }),
                 // [ESC] Exit
-                new KeyPressListener(Keys.Escape, () => Exit?.Invoke(this,null))
+                new KeyPressListener(Keys.Escape, () => eventBus.QueueNotification(Events.BackToStartScreen))
             };
         }
 
@@ -159,7 +178,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             foreach (var elem in elements)
             {
-                //// Color
+                // Color
                 var fillColor = elem.Fill?.ToString() ?? "#FF0000";
                 var strokeColor = elem.Stroke?.ToString();
 
@@ -170,7 +189,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
                 // Shape
                 var x = (int)Math.Round(elem.Bounds.X, 1);
-                var y = (int)Math.Round(elem.Bounds.Y - map_yoffset_correction, 1);
+                var y = (int)Math.Round(elem.Bounds.Y, 1);
                 var w = (int)Math.Round(elem.Bounds.Width, 1);
                 var h = (int)Math.Round(elem.Bounds.Height, 1);
 
@@ -179,13 +198,13 @@ namespace Bonsai.Samples.Platformer2D.Game
                 if (fillColor == "#000001")
                 {
                     playerStart.X = x;
-                    playerStart.Y = y + map_yoffset_correction;
+                    playerStart.Y = y;
                 }
                 else if (fillColor == "#000002")
                 {
                     // Door
                     playerExit.X = x;
-                    playerExit.Y = y + map_yoffset_correction;
+                    playerExit.Y = y;
                 }
                 else
                 {
@@ -234,18 +253,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             addDoorToLevel(playerExit);
         }
 
-        string getMapData(string mapPath)
-        {
-            var mapData = string.Empty;
-
-            // Read map data from file
-            using (var stream = TitleContainer.OpenStream(mapPath))
-                using (var rdr = new StreamReader(stream))
-                    mapData = rdr.ReadToEnd();
-
-            return mapData;
-        }
-
         void addCoinToLevel(Vector2 position)
         {
             var coin = new Coin();
@@ -289,20 +296,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             loadMap(currentMapPath);
         }
 
-
-        public override void Update(GameTime time)
-        {
-            eventBus.FlushNotifications();
-
-            // Update gameobjects
-            base.Update(time);
-
-            foreach (var listener in keyListeners)
-                listener.Update(time);
-
-            // Map collisions
-            phys.ApplyPhysics(player.Props, player, time);
-        }
 
     }
 }

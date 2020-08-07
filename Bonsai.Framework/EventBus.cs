@@ -5,37 +5,42 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
+    public class EventBusSubscription
+    {
+        public string SubscriptionId { get; set; }
+        public string EventName { get; set; }
+        public Action Action { get; set; }
+    }
+
     public class EventBus
     {
         public EventBus()
         {
-            subscriptions = new Dictionary<string, List<Action>>();
+            subscriptions = new List<EventBusSubscription>();
             notifications = new Queue<string>();
         }
 
-        Dictionary<string, List<Action>> subscriptions;
+        List<EventBusSubscription> subscriptions;
         Queue<string> notifications;
 
-        public void Subscribe(string eventName, Action action)
+
+        public string Subscribe(string eventName, Action action)
         {
-            List<Action> actions = null;
+            var subId = Guid.NewGuid().ToString();
 
-            if (subscriptions.ContainsKey(eventName))
+            subscriptions.Add(new EventBusSubscription
             {
-                actions = subscriptions[eventName];
-            }
-            else
-            { 
-                actions = new List<Action>();
-                subscriptions.Add(eventName, actions);
-            }
+                SubscriptionId = subId,
+                EventName = eventName,
+                Action = action,
+            });
 
-            actions.Add(action);
+            return subId;
         }
 
         public void QueueNotification(string eventName)
         {
-            if (!subscriptions.ContainsKey(eventName))
+            if (!subscriptions.Any(s => s.EventName == eventName))
                 return;
 
             notifications.Enqueue(eventName);
@@ -50,17 +55,31 @@ namespace Bonsai.Framework
             {
                 var eventName = notifications.Dequeue();
 
-                if (!subscriptions.ContainsKey(eventName))
-                    continue;
+                var subsForEvent = subscriptions.Where(s => s.EventName == eventName).ToArray();
 
-                var actions = subscriptions[eventName];
+                for (var x = 0; x < subsForEvent.Length; x++)
+                {
+                    try
+                    {
+                        subsForEvent[x].Action();
+                    }
+                    catch 
+                    {
+                        throw;
+                    }
+                }
 
-                foreach (var action in actions)
-                    action();
+                    
             }
 
-
         }
+
+        public void Unsubscribe(params string[] subscriptionIds)
+        {
+            subscriptions.RemoveAll(s => subscriptionIds.Contains(s.SubscriptionId));
+        }
+
+        public void Unsubscribe(List<string> subscriptionIds) => Unsubscribe(subscriptionIds.ToArray());
 
     }
 }

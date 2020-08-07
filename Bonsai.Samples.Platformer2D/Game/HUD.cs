@@ -36,7 +36,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         int screenMargin = 40;
 
         public Vector2 Position { get; set; } = new Vector2(0, 0);
-        public event EventHandler Exit;
         public bool IsDisabled { get; set; }
         public Rectangle ScreenBounds { get; set; }
 
@@ -141,8 +140,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             // [ESC] key
             keyListeners.Add(new KeyPressListener(Keys.Escape, () => 
             {
-                // Send game exit request
-                this.Exit?.Invoke(this, null);
             }));
 
             // [P] key

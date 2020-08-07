@@ -55,7 +55,8 @@
     <path
        style="stroke:#666666; stroke-width:1; stroke-linejoin:round; stroke-linecap:round; fill:#ff00ff"
        d="M 50 197.89L 150 197.89L 150 297.89L 50 297.89L 50 197.89z"
-       id="path2" />
+       id="path2"
+       data-type="1" />
     <path
        style="stroke:#666666; stroke-width:1; stroke-linejoin:round; stroke-linecap:round; fill:#33ff00"
        d="M 1950 740.89L 2050 740.89L 2050 840.89L 1950 840.89L 1950 740.89z"
@@ -73,7 +74,7 @@
        d="M 1930 146.89L 2030 146.89L 2030 246.89L 1930 246.89L 1930 146.89z"
        id="path10" />
     <path
-       style="stroke:none; fill:#ff0000"
+       style="stroke:none; fill:#ff00ff"
        d="M 150 426.89L 450 426.89L 450 446.89L 150 446.89L 150 426.89z"
        id="path12" />
     <path

@@ -48,8 +48,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         public bool IsCollisionEnabled => true;
         public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsJetPacking { get; private set; }
-
         public bool IsOverlappingEnabled => true;
+
 
         public void Load(IContentLoader loader)
         {
@@ -96,7 +96,6 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
         }
 
-
         public void Update(GameTime time)
         {
             var kbState = Keyboard.GetState();
@@ -122,7 +121,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             }
 
             // Anims
-            animWalking.Update(time.ElapsedGameTime.Milliseconds);
+            animCurrent.Update(time.ElapsedGameTime.Milliseconds);
 
             // Ensure correct anim is being used
             if (IsJetPacking)
@@ -189,13 +188,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                        0f);
 
-            // Draw tinted box
-            // batch.Draw(Props.Texture, Props.Position, , Props.DrawingTint.Value);
         }
 
 
         public void OnOverlapping(object actor)
         {
+            if (actor == null)
+                return;
+
             if (actor is Coin)
             {
                 // play sfx
@@ -211,9 +211,6 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
                 return;
             }
-
-            if (actor == null)
-                return;
 
             Debug.WriteLine("Player Overlapping: " + actor.GetType().Name);
         }

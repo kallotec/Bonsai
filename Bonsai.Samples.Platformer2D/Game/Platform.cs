@@ -41,7 +41,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         int width;
         int height;
         Texture2D texture;
-        public bool IsHazardTile => fillHex == "#ff0000";
+        public bool IsHazardTile => fillHex.ToLower() == "#ff0000";
         SoundEffect sfxCheckpoint;
 
         public Rectangle CollisionBox => new Rectangle((int)Position.X, (int)Position.Y, width, height);

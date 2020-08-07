@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Bonsai.Framework.Physics
@@ -100,13 +101,28 @@ namespace Bonsai.Framework.Physics
 
                 var groundingIntersections = neighbours.Where(n => groundedArea.Intersects(n.CollisionBox));
 
-                foreach (var groundings in groundingIntersections)
+                var triggerOverlapEvents = false;
+
+                if (!entityProps.IsGrounded && groundingIntersections.Any())
                 {
-                    groundings.OnOverlapping(entity);
-                    entity.OnOverlapping(groundings);
+                    entityProps.IsGrounded = true;
+                    triggerOverlapEvents = true;
+                }
+                else if (entityProps.IsGrounded && !groundingIntersections.Any())
+                {
+                    entityProps.IsGrounded = false;
+                    triggerOverlapEvents = true;
                 }
 
-                entityProps.IsGrounded = groundingIntersections.Any();
+                if (triggerOverlapEvents)
+                {
+                    foreach (var groundings in groundingIntersections)
+                    {
+                        groundings.OnOverlapping(entity);
+                        entity.OnOverlapping(groundings);
+                    }
+                }
+
             }
 
             // [ Gravity ]
