@@ -17,7 +17,7 @@ namespace Bonsai.Framework
             Game = game;
 
             Camera = new SimpleCamera(Game.GraphicsDevice.Viewport);
-            Camera.SetFocus(game.ScreenCenter);
+            Camera.SetFocus(game.ScreenCenter, immediateFocus: true);
 
             GameObjects = new List<object>();
         }

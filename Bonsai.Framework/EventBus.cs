@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Bonsai.Framework
         public Action Action { get; set; }
     }
 
-    public class EventBus
+    public class EventBus : IUpdateable
     {
         public EventBus()
         {
@@ -23,6 +24,7 @@ namespace Bonsai.Framework
         List<EventBusSubscription> subscriptions;
         Queue<string> notifications;
 
+        public bool IsDisabled => throw new NotImplementedException();
 
         public string Subscribe(string eventName, Action action)
         {
@@ -46,7 +48,19 @@ namespace Bonsai.Framework
             notifications.Enqueue(eventName);
         }
 
-        public void FlushNotifications()
+        public void Unsubscribe(params string[] subscriptionIds)
+        {
+            subscriptions.RemoveAll(s => subscriptionIds.Contains(s.SubscriptionId));
+        }
+
+        public void Unsubscribe(List<string> subscriptionIds) => Unsubscribe(subscriptionIds.ToArray());
+
+        public void Update(GameTime time)
+        {
+            flushNotifications();
+        }
+
+        void flushNotifications()
         {
             if (!notifications.Any())
                 return;
@@ -63,23 +77,13 @@ namespace Bonsai.Framework
                     {
                         subsForEvent[x].Action();
                     }
-                    catch 
+                    catch
                     {
                         throw;
                     }
                 }
-
-                    
             }
-
         }
-
-        public void Unsubscribe(params string[] subscriptionIds)
-        {
-            subscriptions.RemoveAll(s => subscriptionIds.Contains(s.SubscriptionId));
-        }
-
-        public void Unsubscribe(List<string> subscriptionIds) => Unsubscribe(subscriptionIds.ToArray());
 
     }
 }

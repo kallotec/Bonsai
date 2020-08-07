@@ -8,6 +8,8 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
+    public enum CameraElasticMode { Instant, Lerp, Cubic }
+
     public class SimpleCamera : Bonsai.Framework.ICamera
     {
         public SimpleCamera(Viewport viewport)
@@ -16,16 +18,19 @@ namespace Bonsai.Framework
         }
 
         Matrix transform;
-        Vector2 center;
         Viewport viewport;
         Actor focusedActor;
         Vector2? focusedPoint;
+
+        Vector2 current;
+        CameraElasticMode elasticMode = CameraElasticMode.Cubic;
 
         public Matrix Transform
         {
             get { return transform; }
         }
-        public Vector2 Focus
+        public Vector2 CurrentFocus => current;
+        public Vector2 TargetFocus
         {
             get
             {
@@ -39,33 +44,52 @@ namespace Bonsai.Framework
 
         public void Update(GameTime time)
         {
-            // Decide what to focus on
-            var focus = Focus;
+            // move current focus based on target and mode
+            switch (elasticMode)
+            {
+                case CameraElasticMode.Instant:
+                    current = TargetFocus;
+                    break;
 
-            // TODO: elastic mode based on settings
+                case CameraElasticMode.Lerp:
+                    current.X = MathHelper.Lerp(current.X, TargetFocus.X, 0.3f);
+                    current.Y = MathHelper.Lerp(current.Y, TargetFocus.Y, 0.3f);
+                    break;
 
-            // TODO: offset by viewport size, I think?
-            center = new Vector2(focus.X - viewport.Width / 2, focus.Y - viewport.Height / 2);
+                case CameraElasticMode.Cubic:
+                    current.X = MathHelper.SmoothStep(current.X, TargetFocus.X, 0.3f);
+                    current.Y = MathHelper.SmoothStep(current.Y, TargetFocus.Y, 0.3f);
+                    break;
+            }
 
-            // Stop camera going outside map left
-            if (center.X < focus.X - viewport.Width / 2)
-                center.X = focus.X - viewport.Width / 2;
+            // offset by viewport size
+            var center = new Vector2(current.X - viewport.Width / 2, current.Y - viewport.Height / 2);
+
+            // stop camera going outside map left
+            if (center.X < current.X - viewport.Width / 2)
+                center.X = current.X - viewport.Width / 2;
 
             transform = Matrix.CreateScale(new Vector3(1, 1, 0)) * 
                         Matrix.CreateTranslation(new Vector3(-center.X, -center.Y, 0));
 
         }
 
-        public void SetFocus(Actor focusedActor)
+        public void SetFocus(Actor focusedActor, bool immediateFocus)
         {
             this.focusedPoint = null;
             this.focusedActor = focusedActor;
+
+            if (immediateFocus)
+                current = TargetFocus;
         }
 
-        public void SetFocus(Vector2 focusedPoint)
+        public void SetFocus(Vector2 focusedPoint, bool immediateFocus)
         {
             this.focusedActor = null;
             this.focusedPoint = focusedPoint;
+
+            if (immediateFocus)
+                current = TargetFocus;
         }
 
     }

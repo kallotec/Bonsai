@@ -7,6 +7,7 @@ using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
 using Bonsai.Framework.Text.Managers;
 using Bonsai.Framework.UI;
+using Bonsai.Framework.Utility;
 using Bonsai.Framework.Variables;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
@@ -42,9 +43,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         HUD hud;
         TextPopupManager textPopupManager;
         List<KeyPressListener> keyListeners;
-        SpriteFont font;
-        Texture2D pixel_half_trans;
-        Texture2D pixel;
+        MillisecCounter startGameTimer;
         MapPhysics phys;
         List<Coin> coins;
         Door door;
@@ -53,6 +52,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         IContentLoader _loader;
         string currentMapPath;
         ChunkMap chunkMap;
+        bool isPlayerFocused;
 
         public GameVariable<int> Jumps;
         public GameVariable<int> CoinsCount;
@@ -62,11 +62,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         public override void Load(IContentLoader loader)
         {
             _loader = loader;
-
-            // Content
-            font = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
-            pixel = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
-            pixel_half_trans = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL_HALFTRANS);
 
             // Player
             player = new Player(eventBus);
@@ -98,7 +93,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             phys = new MapPhysics(chunkMap);
 
             // Camera
-            Camera.SetFocus(player);
             GameObjects.Add(Camera);
 
             // Services
@@ -114,6 +108,10 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Load first map
             loadMap(ContentPaths.PATH_MAP_1);
+
+            startGameTimer = new MillisecCounter(1500);
+            Camera.SetFocus(playerExit, immediateFocus: true);
+            isPlayerFocused = false;
         }
 
         public override void Unload()
@@ -128,11 +126,24 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Update gameobjects
             base.Update(time);
 
-            foreach (var listener in keyListeners)
-                listener.Update(time);
+            if (isPlayerFocused)
+            {
+                // key listeners
+                foreach (var listener in keyListeners)
+                    listener.Update(time);
 
-            // Map collisions
-            phys.ApplyPhysics(player.Props, player, time);
+                // physics
+                phys.ApplyPhysics(player.Props, player, time);
+            }
+
+            if (!startGameTimer.Completed)
+                startGameTimer.Update(time.ElapsedGameTime.Milliseconds);
+
+            if (!isPlayerFocused && startGameTimer.Completed)
+            {
+                isPlayerFocused = true;
+                Camera.SetFocus(player, immediateFocus: false);
+            }
         }
 
         void setupKeyListeners()
@@ -143,7 +154,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 // [M] key generates a text popup at the players position
                 new KeyPressListener(Keys.M, () =>
                 {
-                    textPopupManager.AddMessage("Hey!", 
+                    textPopupManager.AddMessage("Hey!",
                         player.Props.Position + new Vector2(0,-20),
                         MessageType.FadingText_Fast);
                 }),

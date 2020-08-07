@@ -48,19 +48,18 @@ namespace Bonsai.Samples.Platformer2D
             startScreen.ExitGame += (s, e) => this.Exit();
 
             level = new Level(this, eventBus);
-
+            
             currentScreen = startScreen;
         }
 
         protected override void Load(IContentLoader loader)
         {
             startScreen.Load(loader);
-            level.Load(loader);
         }
 
         protected override void Unload()
         {
-            level.Unload();
+            level?.Unload();
             startScreen.Unload();
             eventBus.Unsubscribe(eventBusSubscriptionIds);
         }
@@ -68,7 +67,7 @@ namespace Bonsai.Samples.Platformer2D
         protected override void Update(GameTime gameTime)
         {
             currentScreen.Update(gameTime);
-            eventBus.FlushNotifications();
+            eventBus.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
