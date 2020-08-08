@@ -31,7 +31,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         public Level(BonsaiGame game, EventBus eventBus) : base(game)
         {
             keyListeners = new List<KeyPressListener>();
-            coins = new List<Coin>();
 
             this.eventBus = eventBus;
             this.eventBusSubscriptionIds = new List<string>();
@@ -45,7 +44,6 @@ namespace Bonsai.Samples.Platformer2D.Game
         List<KeyPressListener> keyListeners;
         MillisecCounter startGameTimer;
         MapPhysics phys;
-        List<Coin> coins;
         Door door;
         Vector2 playerStart;
         Vector2 playerExit;
@@ -144,6 +142,8 @@ namespace Bonsai.Samples.Platformer2D.Game
                 isPlayerFocused = true;
                 Camera.SetFocus(player, immediateFocus: false);
             }
+
+            chunkMap.RemoveDeletedEntities();
         }
 
         void setupKeyListeners()
@@ -173,7 +173,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Reset game objects
             GameObjects.RemoveAll(o => o is Coin || o is Platform || o is Door);
-            coins.Clear();
 
             // Create map tiles
             var doc = SvgDocument.Open(mapPath);
@@ -260,6 +259,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Set player position for new map
             player.Props.Position = playerStart;
 
+            addCoinToLevel(new Vector2(300,0));
+
             // Add end point
             addDoorToLevel(playerExit);
         }
@@ -269,8 +270,8 @@ namespace Bonsai.Samples.Platformer2D.Game
             var coin = new Coin();
             coin.Load(_loader);
             coin.Props.Position = position;
-            coins.Add(coin);
             GameObjects.Add(coin);
+            chunkMap.UpdateEntity(coin);
         }
 
         void addDoorToLevel(Vector2 position)
@@ -306,7 +307,6 @@ namespace Bonsai.Samples.Platformer2D.Game
             // load map again
             loadMap(currentMapPath);
         }
-
 
     }
 }

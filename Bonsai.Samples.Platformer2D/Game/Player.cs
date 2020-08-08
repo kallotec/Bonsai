@@ -45,10 +45,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera { get; set; }
         public bool IsDisabled { get; set; }
-        public bool IsCollisionEnabled => true;
         public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsJetPacking { get; private set; }
         public bool IsOverlappingEnabled => true;
+        public bool IsCollisionEnabled => true;
 
 
         public void Load(IContentLoader loader)

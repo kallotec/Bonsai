@@ -67,7 +67,7 @@ namespace Bonsai.Framework.Chunks
             var collidables = chunks.Where(t => t != null)      // Ensure chunk was found
                                    .SelectMany(t => t.Entities) // Flatten
                                    .Distinct()                  // Remove dupes
-                                   .Where(e => e != actor && e.IsCollisionEnabled) // Ignore self, and only look at enableds
+                                   .Where(e => e != actor && (e.IsCollisionEnabled || e.IsOverlappingEnabled)) // Ignore self, and only look at enableds
                                    .ToArray();
 
             return collidables;
@@ -130,6 +130,14 @@ namespace Bonsai.Framework.Chunks
 
             chunk.Entities.Remove(entity);
 
+        }
+
+        public void RemoveDeletedEntities()
+        {
+            var removals = index.Keys.Where(k => (k as IDeletable)?.DeleteMe == true);
+
+            foreach (var removal in removals)
+                RemoveFromMap(removal);
         }
 
         Chunk tryGetChunk(int xIndex, int yIndex)

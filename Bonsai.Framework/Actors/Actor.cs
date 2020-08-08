@@ -9,7 +9,7 @@ namespace Bonsai.Framework.Actors
 {
     public abstract class Actor
     {
-        public bool DeleteMe;
+        public bool DeleteMe { get; set; }
         public PhysicalProperties Props = new PhysicalProperties();
         public Vector2 Position
         {

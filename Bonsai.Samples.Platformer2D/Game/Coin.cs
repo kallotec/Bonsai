@@ -13,11 +13,10 @@ using Bonsai.Samples.Platformer2D.Game.Actors;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
+    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable, Bonsai.Framework.IDeletable
     {
         public Coin()
         {
-            IsCollisionEnabled = true;
             base.Props.PhysicalRect = new Rectangle(0, 0, 10, 10);
         }
 
@@ -27,10 +26,10 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsAttachedToCamera => false;
         public bool IsDisabled => false;
         public bool IsHidden { get; set; }
-        public bool IsCollisionEnabled { get; set; }
         public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public bool IsOverlappingEnabled => true;
+        public bool IsCollisionEnabled => false;
 
-        public bool IsOverlappingEnabled => throw new NotImplementedException();
 
         public void Load(IContentLoader loader)
         {
@@ -53,9 +52,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void OnOverlapping(object actor)
         {
-            if (!IsCollisionEnabled)
-                return;
-            if (actor == null)
+            if (DeleteMe || actor == null)
                 return;
 
             if (actor is Player)
@@ -64,13 +61,9 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         void onCoinCollected()
         {
-            // Stop any further collisions
-            IsCollisionEnabled = false;
-
-            // Play at 50% vol
+            DeleteMe = true;
             sfxCollect.Play(0.5f, 0f, 0f);
-
-            IsHidden = true;
         }
+
     }
 }

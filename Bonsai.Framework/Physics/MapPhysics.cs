@@ -45,24 +45,30 @@ namespace Bonsai.Framework.Physics
                 var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
                 if (intersections.Any())
                 {
+                    var collided = false;
+
                     foreach (var intersection in intersections)
                     {
                         intersection.OnOverlapping(entity);
                         entity.OnOverlapping(intersection);
+
+                        if (!collided && entity.IsCollisionEnabled && intersection.IsCollisionEnabled)
+                        {
+                            collided = true;
+
+                            var up = entityProps.Velocity.Y < 0;
+                            entityProps.Velocity.Y = 0;
+
+                            var collision = intersections.First().CollisionBox;
+
+                            if (up)
+                                entityProps.Position.Y = collision.Bottom + 1;
+                            else
+                                entityProps.Position.Y = collision.Top - entity.CollisionBox.Height;
+
+                        }
                     }
 
-                    if (entity.IsCollisionEnabled)
-                    {
-                        var up = entityProps.Velocity.Y < 0;
-                        entityProps.Velocity.Y = 0;
-
-                        var collision = intersections.First().CollisionBox;
-
-                        if (up)
-                            entityProps.Position.Y = collision.Bottom + 1;
-                        else
-                            entityProps.Position.Y = collision.Top - entity.CollisionBox.Height;
-                    }
                 }
             }
 
@@ -73,20 +79,27 @@ namespace Bonsai.Framework.Physics
             if (entity.IsOverlappingEnabled)
             {
                 neighbours = chunkMap.GetNearbyCollidables(entity);
+                
                 var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
                 if (intersections.Any())
                 {
+                    var collided = false;
+
                     foreach (var intersection in intersections)
                     {
                         intersection.OnOverlapping(entity);
                         entity.OnOverlapping(intersection);
+
+                        if (!collided && entity.IsCollisionEnabled && intersection.IsCollisionEnabled)
+                        {
+                            collided = true;
+
+                            entityProps.Velocity.X = 0;
+                            entityProps.Position.X = lastPos.X;
+                        }
+
                     }
 
-                    if (entity.IsCollisionEnabled)
-                    {
-                        entityProps.Velocity.X = 0;
-                        entityProps.Position.X = lastPos.X;
-                    }
                 }
             }
 

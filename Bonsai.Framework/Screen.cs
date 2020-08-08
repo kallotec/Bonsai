@@ -62,7 +62,11 @@ namespace Bonsai.Framework
             var updateable = GameObjects.OfType<Framework.IUpdateable>();
 
             foreach (var obj in updateable)
+            {
                 obj.Update(time);
+            }
+
+            GameObjects.RemoveAll(d => (d as IDeletable)?.DeleteMe == true);
         }
 
         /// <summary>
