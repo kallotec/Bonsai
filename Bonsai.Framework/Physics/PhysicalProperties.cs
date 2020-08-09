@@ -24,11 +24,39 @@ namespace Bonsai.Framework.Physics
         // Movement
         public Vector2 Velocity;
         public float TopSpeed;
+        public float Weight;
+        public bool HasGravity;
 
         // Object
         public Rectangle PhysicalRect;
         public bool IsGrounded;
 
+
+        public void AddForce(Vector2 power, bool overrideTopSpeed = false)
+        {
+            if (overrideTopSpeed)
+            {
+                Velocity += power;
+            }
+            else
+            {
+                Velocity.X = MathHelper.Clamp(
+                    (Velocity.X + power.X),
+                    -TopSpeed,
+                    TopSpeed);
+
+                Velocity.Y = MathHelper.Clamp(
+                    (Velocity.Y + power.Y),
+                    -TopSpeed,
+                    TopSpeed);
+            }
+
+            // Set direction
+            if (Velocity.X > 0)
+                Direction = Direction.Right;
+            else if (Velocity.X < 0)
+                Direction = Direction.Left;
+        }
 
         public void AddForceX(float power, bool overrideTopSpeed = false)
         {

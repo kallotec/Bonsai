@@ -35,17 +35,17 @@ namespace Bonsai.Framework.Images
                 position = value;
             }
         }
-        public Rectangle BoundingBox
+        public RectangleF BoundingBox
         {
             get
             {
-                var positionedBox = new Rectangle(
-                    (int)position.X - (int)Origin.X, 
-                    (int)position.Y - (int)Origin.Y, 
+                var positionedBox = new RectangleF(
+                    position.X - Origin.X, 
+                    position.Y - Origin.Y, 
                     image.Width, 
                     image.Height);
 
-                positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
+                positionedBox.Inflate(Settings.Padding.X, Settings.Padding.Y);
 
                 return positionedBox;
             }

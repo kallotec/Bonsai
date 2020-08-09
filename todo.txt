@@ -2,3 +2,7 @@
 # todo
 
 - image popup manager (powerups?)
+
+
+https://community.monogame.net/t/useful-code-snippets-and-algorithms/10650/4
+

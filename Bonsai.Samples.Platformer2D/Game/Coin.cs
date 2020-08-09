@@ -26,7 +26,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsAttachedToCamera => false;
         public bool IsDisabled => false;
         public bool IsHidden { get; set; }
-        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsOverlappingEnabled => true;
         public bool IsCollisionEnabled => false;
 

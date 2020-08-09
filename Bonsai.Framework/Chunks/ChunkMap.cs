@@ -8,45 +8,33 @@ using System.Text;
 
 namespace Bonsai.Framework.Chunks
 {
-    public class ChunkMap
+    public class ChunkMap : IUpdateable
     {
-        public ChunkMap(int chunkWidth, int chunkHeight, double mapWidth, double mapHeight)
+        public ChunkMap(int chunkWidth, int chunkHeight, int mapWidth, int mapHeight)
         {
             index = new Dictionary<ICollidable, Point>();
 
-            this.chunkWidth = chunkWidth;
-            this.chunkHeight = chunkHeight;
-            MapWidth = mapWidth;
-            MapHeight = mapHeight;
-
-            initChunkMap();
+            Reset(chunkWidth, chunkHeight, mapWidth, mapHeight);
         }
 
-        int chunkWidth;
-        int chunkHeight;
-        public double MapWidth { get; private set; }
-        public double MapHeight { get; private set; }
+        public int ChunkWidth { get; private set; }
+        public int ChunkHeight { get; private set; }
+        public int MapWidth { get; private set; }
+        public int MapHeight { get; private set; }
         Chunk[,] grid { get; set; }
+        public bool IsDisabled => false;
         Dictionary<ICollidable, Point> index;
 
 
-        void initChunkMap()
+        public void Update(GameTime time)
         {
-            var chunksX = (int)(MapWidth / chunkWidth);
-            var chunksY = (int)(MapHeight / chunkHeight);
-
-            grid = new Chunk[chunksX + 1, chunksY + 1]; // +1 for safety incase objects are right up against the edge of map 
-
-            // Create chunk data
-            for (var y = 0; y < grid.GetLength(1); ++y)
-                for (var x = 0; x < grid.GetLength(0); ++x)
-                    grid[x, y] = new Chunk(this, x, y);
+            RemoveDeletedEntities();
         }
 
         public ICollidable[] GetNearbyCollidables(ICollidable actor)
         {
-            int chunkIndexX = (actor.CollisionBox.X / chunkWidth);
-            int chunkIndexY = (actor.CollisionBox.Y / chunkHeight);
+            int chunkIndexX = (int)(actor.CollisionBox.X / ChunkWidth);
+            int chunkIndexY = (int)(actor.CollisionBox.Y / ChunkHeight);
 
             var chunks = new Chunk[]
             {
@@ -76,8 +64,8 @@ namespace Bonsai.Framework.Chunks
         public bool UpdateEntity(ICollidable entity)
         {
             var center = entity.CollisionBox.Center;
-            var xIndex = (int)(center.X / chunkWidth);
-            var yIndex = (int)(center.Y / chunkHeight);
+            var xIndex = (int)(center.X / ChunkWidth);
+            var yIndex = (int)(center.Y / ChunkHeight);
 
             if (index.ContainsKey(entity))
             {
@@ -129,7 +117,6 @@ namespace Bonsai.Framework.Chunks
             var chunk = grid[indexes.X, indexes.Y];
 
             chunk.Entities.Remove(entity);
-
         }
 
         public void RemoveDeletedEntities()
@@ -138,6 +125,24 @@ namespace Bonsai.Framework.Chunks
 
             foreach (var removal in removals)
                 RemoveFromMap(removal);
+        }
+
+        public void Reset(int chunkWidth, int chunkHeight, int mapWidth, int mapHeight)
+        {
+            ChunkWidth = chunkWidth;
+            ChunkHeight = chunkHeight;
+            MapWidth = mapWidth;
+            MapHeight = mapHeight;
+
+            var chunksX = (int)(mapWidth / chunkWidth);
+            var chunksY = (int)(mapHeight / chunkHeight);
+
+            grid = new Chunk[chunksX + 1, chunksY + 1]; // +1 for safety incase objects are right up against the edge of map 
+
+            // create chunk data
+            for (var y = 0; y < grid.GetLength(1); ++y)
+                for (var x = 0; x < grid.GetLength(0); ++x)
+                    grid[x, y] = new Chunk(x, y);
         }
 
         Chunk tryGetChunk(int xIndex, int yIndex)

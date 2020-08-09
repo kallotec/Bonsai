@@ -40,7 +40,7 @@ namespace Bonsai.Samples.Platformer2D
             // events
             eventBus = new EventBus();
             eventBusSubscriptionIds.AddRange(new[] {
-                eventBus.Subscribe(Events.BackToStartScreen, action: () => goBackToStartMenu())
+                eventBus.Subscribe(Events.BackToStartScreen, action: (p) => goBackToStartMenu())
             });
 
             startScreen = new StartScreen(this);

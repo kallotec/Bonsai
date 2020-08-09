@@ -10,7 +10,13 @@ namespace Bonsai.Framework
     {
         public string SubscriptionId { get; set; }
         public string EventName { get; set; }
-        public Action Action { get; set; }
+        public Action<object> Action { get; set; }
+    }
+
+    public class QueuedNotification
+    {
+        public string EventName { get; set; }
+        public object Parameter { get; set; }
     }
 
     public class EventBus : IUpdateable
@@ -18,15 +24,15 @@ namespace Bonsai.Framework
         public EventBus()
         {
             subscriptions = new List<EventBusSubscription>();
-            notifications = new Queue<string>();
+            notifications = new Queue<QueuedNotification>();
         }
 
         List<EventBusSubscription> subscriptions;
-        Queue<string> notifications;
+        Queue<QueuedNotification> notifications;
+        public bool IsDisabled => false;
 
-        public bool IsDisabled => throw new NotImplementedException();
 
-        public string Subscribe(string eventName, Action action)
+        public string Subscribe(string eventName, Action<object> action)
         {
             var subId = Guid.NewGuid().ToString();
 
@@ -40,12 +46,16 @@ namespace Bonsai.Framework
             return subId;
         }
 
-        public void QueueNotification(string eventName)
+        public void QueueNotification(string eventName, object parameter = null)
         {
             if (!subscriptions.Any(s => s.EventName == eventName))
                 return;
 
-            notifications.Enqueue(eventName);
+            notifications.Enqueue(new QueuedNotification
+            {
+                EventName = eventName,
+                Parameter = parameter
+            });
         }
 
         public void Unsubscribe(params string[] subscriptionIds)
@@ -67,15 +77,15 @@ namespace Bonsai.Framework
 
             while (notifications.Any())
             {
-                var eventName = notifications.Dequeue();
+                var notif = notifications.Dequeue();
 
-                var subsForEvent = subscriptions.Where(s => s.EventName == eventName).ToArray();
+                var subsForEvent = subscriptions.Where(s => s.EventName == notif.EventName).ToArray();
 
                 for (var x = 0; x < subsForEvent.Length; x++)
                 {
                     try
                     {
-                        subsForEvent[x].Action();
+                        subsForEvent[x].Action(notif.Parameter);
                     }
                     catch
                     {

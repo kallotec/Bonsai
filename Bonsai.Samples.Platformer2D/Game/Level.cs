@@ -34,6 +34,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             this.eventBus = eventBus;
             this.eventBusSubscriptionIds = new List<string>();
+
+            chunkMap = new ChunkMap(10, 10, 10, 10);
         }
 
         EventBus eventBus;
@@ -89,6 +91,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Physics
             phys = new MapPhysics(chunkMap);
+            GameObjects.Add(chunkMap);
 
             // Camera
             GameObjects.Add(Camera);
@@ -98,10 +101,11 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Event listeners
             eventBusSubscriptionIds.AddRange(new[] {
-                eventBus.Subscribe("playerPickedUpCoin", () => CoinsCount.Value += 1),
-                eventBus.Subscribe("playerJumped", () => Jumps.Value += 1),
-                eventBus.Subscribe("playerEnteredDoor", () => playerTouchedDoor()),
-                eventBus.Subscribe("playerDied", () => playerDied())
+                eventBus.Subscribe(Events.PlayerPickedUpCoin, (p) => CoinsCount.Value += 1),
+                eventBus.Subscribe(Events.PlayerJumped, (p) => Jumps.Value += 1),
+                eventBus.Subscribe(Events.PlayerEnteredDoor, (p) => playerTouchedDoor()),
+                eventBus.Subscribe(Events.PlayerDied, (p) => playerDied()),
+                eventBus.Subscribe(Events.CreateProjectile, (p) => playerCreatedProjectile(p as Projectile)),
             });
 
             // Load first map
@@ -132,6 +136,11 @@ namespace Bonsai.Samples.Platformer2D.Game
 
                 // physics
                 phys.ApplyPhysics(player.Props, player, time);
+
+                foreach (var p in GameObjects.OfType<Projectile>())
+                {
+                    phys.ApplyPhysics(p.Props, p, time);
+                } 
             }
 
             if (!startGameTimer.Completed)
@@ -230,10 +239,10 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             Debug.WriteLine($"Map size in px: {maxMapX} x {maxMapY}");
 
-            // Setup chunks
-            chunkMap = new ChunkMap(chunkWidth: 100, chunkHeight: 100, mapWidth: maxMapX, mapHeight: maxMapY);
+            // setup chunks
+            chunkMap.Reset(chunkWidth: 100, chunkHeight: 100, mapWidth: maxMapX, mapHeight: maxMapY);
 
-            // Physics reset
+            // physics reset
             var physSettings = new PhysicsSettings
             {
                 Gravity = 5f,
@@ -306,6 +315,13 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // load map again
             loadMap(currentMapPath);
+        }
+
+        void playerCreatedProjectile(Projectile projectile)
+        {
+            projectile.Load(_loader);
+            GameObjects.Add(projectile);
+            chunkMap.UpdateEntity(projectile);
         }
 
     }

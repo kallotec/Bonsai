@@ -29,7 +29,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsAttachedToCamera => false;
         public bool IsHidden { get; set; }
         public bool IsCollisionEnabled { get; set; }
-        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
 
         public bool IsOverlappingEnabled => throw new NotImplementedException();
 
@@ -64,7 +64,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Play sfx - 50% vol
             sfxOpen.Play(0.5f, 0f, 0f);
 
-            eventBus.QueueNotification("playerEnteredDoor");
+            eventBus.QueueNotification(Events.PlayerEnteredDoor);
 
         }
 

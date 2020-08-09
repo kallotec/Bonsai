@@ -44,7 +44,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsHazardTile => fillHex.ToLower() == "#ff0000";
         SoundEffect sfxCheckpoint;
 
-        public Rectangle CollisionBox => new Rectangle((int)Position.X, (int)Position.Y, width, height);
+        public RectangleF CollisionBox => new RectangleF(Position.X, Position.Y, width, height);
         public bool IsCollisionEnabled => true;
         public bool IsOverlappingEnabled => true;
         public bool IsDisabled => false;
@@ -66,7 +66,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            batch.Draw(texture, CollisionBox, drawingColor);
+            batch.Draw(texture, (Rectangle)CollisionBox, drawingColor);
         }
 
 

@@ -87,7 +87,7 @@ namespace Bonsai.Framework.Text
             // background
             if (Settings.BackgroundColor != null)
             {
-                batch.Draw(FrameworkGlobals.Pixel, getBoundingBox(parentPosition), Settings.BackgroundColor.Value);
+                batch.Draw(FrameworkGlobals.Pixel, (Rectangle)getBoundingBox(parentPosition), Settings.BackgroundColor.Value);
             }
 
             // foreground
@@ -169,17 +169,17 @@ namespace Bonsai.Framework.Text
             updateText(newValue);
         }
 
-        Rectangle getBoundingBox(Vector2 parentOffset)
+        RectangleF getBoundingBox(Vector2 parentOffset)
         {
             var newPosition = parentOffset + position;
 
-            var positionedBox = new Rectangle(
-                    (int)newPosition.X - (int)Origin.X,
-                    (int)newPosition.Y - (int)Origin.Y,
-                    (int)textMeasurements.X,
-                    (int)textMeasurements.Y);
+            var positionedBox = new RectangleF(
+                    newPosition.X - Origin.X,
+                    newPosition.Y - Origin.Y,
+                    textMeasurements.X,
+                    textMeasurements.Y);
 
-            positionedBox.Inflate((int)Settings.Padding.X, (int)Settings.Padding.Y);
+            positionedBox.Inflate(Settings.Padding.X, Settings.Padding.Y);
 
             return positionedBox;
         }

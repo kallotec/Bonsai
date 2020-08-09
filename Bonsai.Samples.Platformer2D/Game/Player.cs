@@ -13,6 +13,7 @@ using Bonsai.Framework.Collision;
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Animation;
 using Microsoft.Xna.Framework.Audio;
+using Bonsai.Framework.Input;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
@@ -28,6 +29,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             Props.Direction = Direction.Right;
             Props.TopSpeed = 150f;
             Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
+            Props.Weight = 1f;
+            Props.HasGravity = true;
+
+            fireListener = new KeyPressListener(Keys.E, () => fireProjectile());
         }
 
         EventBus eventBus;
@@ -40,12 +45,13 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         AnimationOverlay animWalking;
         AnimationOverlay animJetting;
         SoundEffect sfxDie;
+        KeyPressListener fireListener;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
         public bool IsAttachedToCamera { get; set; }
         public bool IsDisabled { get; set; }
-        public Rectangle CollisionBox => new Rectangle((int)Props.Position.X, (int)Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsJetPacking { get; private set; }
         public bool IsOverlappingEnabled => true;
         public bool IsCollisionEnabled => true;
@@ -155,7 +161,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 Props.AddForceY(-jumpPower, overrideTopSpeed: true);
 
                 // raise event
-                eventBus.QueueNotification("playerJumped");
+                eventBus.QueueNotification(Events.PlayerJumped);
             }
 
             // Jetpack
@@ -169,8 +175,9 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                 IsJetPacking = false;
             }
 
+            // projectiles
+            fireListener.Update(time);
         }
-
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
@@ -187,9 +194,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                        1f,
                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                        0f);
-
         }
-
 
         public void OnOverlapping(object actor)
         {
@@ -200,7 +205,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             {
                 // play sfx
                 // notify
-                eventBus.QueueNotification("playerPickedUpCoin");
+                eventBus.QueueNotification(Events.PlayerPickedUpCoin);
                 return;
             }
 
@@ -215,6 +220,19 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             Debug.WriteLine("Player Overlapping: " + actor.GetType().Name);
         }
 
+        void fireProjectile()
+        {
+            // get direction
+            var direction = new Vector2(20, 0);
+            direction.Normalize();
+            // normalize
+            var force = direction * new Vector2(1000);
+            // create projectile
+            var projectile = new Projectile(base.Props.Position + new Vector2(30,0), force);
+
+            eventBus.QueueNotification(Events.CreateProjectile, projectile);
+        }
+
         void die()
         {
             // stop any residual movement
@@ -224,7 +242,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             sfxDie.Play(1f, 0f, 0f);
 
             // notify
-            eventBus.QueueNotification("playerDied");
+            eventBus.QueueNotification(Events.PlayerDied);
         }
 
     }

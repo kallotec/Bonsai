@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -42,7 +43,7 @@ namespace Bonsai.Framework.Physics
             if (entity.IsOverlappingEnabled)
             {
                 neighbours = chunkMap.GetNearbyCollidables(entity);
-                var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
+                var intersections = neighbours.Where(n => entity.CollisionBox.IntersectsWith(n.CollisionBox));
                 if (intersections.Any())
                 {
                     var collided = false;
@@ -79,8 +80,8 @@ namespace Bonsai.Framework.Physics
             if (entity.IsOverlappingEnabled)
             {
                 neighbours = chunkMap.GetNearbyCollidables(entity);
-                
-                var intersections = neighbours.Where(n => entity.CollisionBox.Intersects(n.CollisionBox));
+
+                var intersections = neighbours.Where(n => entity.CollisionBox.IntersectsWith(n.CollisionBox));
                 if (intersections.Any())
                 {
                     var collided = false;
@@ -107,12 +108,12 @@ namespace Bonsai.Framework.Physics
 
             if (entity.IsCollisionEnabled)
             {
-                var groundedArea = new Rectangle(
-                    entity.CollisionBox.X + (entity.CollisionBox.Width / 2), 
-                    entity.CollisionBox.Y + entity.CollisionBox.Height, 
+                var groundedArea = new RectangleF(
+                    entity.CollisionBox.X + (entity.CollisionBox.Width / 2),
+                    entity.CollisionBox.Y + entity.CollisionBox.Height,
                     1, 1);
 
-                var groundingIntersections = neighbours.Where(n => groundedArea.Intersects(n.CollisionBox));
+                var groundingIntersections = neighbours.Where(n => groundedArea.IntersectsWith(n.CollisionBox));
 
                 var triggerOverlapEvents = false;
 
@@ -142,17 +143,18 @@ namespace Bonsai.Framework.Physics
 
             if (!entityProps.IsGrounded)
             {
-                if (physSettings.HasGravity)
+                if (physSettings.HasGravity && entityProps.HasGravity)
                 {
+                    // TODO: factor weight into equation
                     entityProps.Velocity.Y = MathHelper.Clamp(
-                        entityProps.Velocity.Y + physSettings.Gravity,
+                        entityProps.Velocity.Y + (physSettings.Gravity * entityProps.Weight),
                         -physSettings.TerminalVelocity,
                         physSettings.TerminalVelocity);
                 }
-                else
-                {
-                    entityProps.Velocity.Y = (entityProps.Velocity.Y + physSettings.Gravity);
-                }
+                //else
+                //{
+                //    //entityProps.Velocity.Y = (entityProps.Velocity.Y + physSettings.Gravity);
+                //}
             }
 
             // [ Friction ]

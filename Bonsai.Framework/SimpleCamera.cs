@@ -44,6 +44,9 @@ namespace Bonsai.Framework
 
         public void Update(GameTime time)
         {
+            if (current == TargetFocus)
+                return;
+
             // move current focus based on target and mode
             switch (elasticMode)
             {
