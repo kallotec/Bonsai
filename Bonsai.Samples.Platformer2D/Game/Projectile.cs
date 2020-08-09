@@ -52,7 +52,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void OnOverlapping(object actor)
         {
-            return;
+            base.DeleteMe = true;
         }
 
     }
