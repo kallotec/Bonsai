@@ -19,14 +19,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
     public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
     {
-        public Player(EventBus eventBus)
+        public Player(EventBus eventBus, ICamera camera)
         {
             this.eventBus = eventBus;
+            this.camera = camera;
 
             DrawOrder = DrawOrderPosition.Foreground;
 
             // Physical properties
-            Props.Direction = Direction.Right;
             Props.TopSpeed = 150f;
             Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
             Props.Weight = 1f;
@@ -36,6 +36,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         }
 
         EventBus eventBus;
+        ICamera camera;
         float jumpPower = 130f;
         float jetPower = 10f;
         float jetAcceleration = 10f;
@@ -177,6 +178,13 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
             // projectiles
             fireListener.Update(time);
+
+            var mouseState = Mouse.GetState();
+            var mousePos = mouseState.Position;
+
+            // aim
+            base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
+                .GetDirectionInRadians(this.Position, (camera.CurrentFocus - BonsaiGame.Current.ScreenCenter) + new Vector2(mousePos.X, mousePos.Y));
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
@@ -194,6 +202,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                        1f,
                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                        0f);
+
+
+            var aim = Framework.Maths.MathHelper.PlotVector(base.Props.DirectionAim, 80, base.Position);
+
+            // Draw aim
+            batch.Draw(FrameworkGlobals.Pixel,
+                       aim,
+                       Color.Orange);
         }
 
         public void OnOverlapping(object actor)
@@ -222,13 +238,15 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         void fireProjectile()
         {
+            var aim = Framework.Maths.MathHelper.PlotVector(base.Props.DirectionAim, 10, base.Position);
+
             // get direction
-            var direction = new Vector2(20, 0);
+            var direction = Vector2.Subtract(aim, this.Position);
             direction.Normalize();
             // normalize
             var force = direction * new Vector2(1000);
             // create projectile
-            var projectile = new Projectile(base.Props.Position + new Vector2(30,0), force);
+            var projectile = new Projectile(base.Props.Position, force);
 
             eventBus.QueueNotification(Events.CreateProjectile, projectile);
         }

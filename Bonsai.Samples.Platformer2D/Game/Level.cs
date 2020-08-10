@@ -64,7 +64,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             _loader = loader;
 
             // Player
-            player = new Player(eventBus);
+            player = new Player(eventBus, Camera);
             player.DrawOrder = DrawOrderPosition.Foreground;
             player.Load(loader);
             GameObjects.Add(player);

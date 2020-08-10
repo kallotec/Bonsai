@@ -151,10 +151,6 @@ namespace Bonsai.Framework.Physics
                         -physSettings.TerminalVelocity,
                         physSettings.TerminalVelocity);
                 }
-                //else
-                //{
-                //    //entityProps.Velocity.Y = (entityProps.Velocity.Y + physSettings.Gravity);
-                //}
             }
 
             // [ Friction ]

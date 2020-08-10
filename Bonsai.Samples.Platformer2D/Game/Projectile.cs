@@ -16,12 +16,11 @@ namespace Bonsai.Samples.Platformer2D.Game
             base.Props.TopSpeed = 1000f;
             base.Props.HasGravity = true;
             base.Props.Weight = 0.2f;
-
             base.Props.Position = position;
             base.Props.AddForce(power);
         }
 
-        RectangleF projectileSize = new RectangleF(0, 0, 2, 2);
+        RectangleF projectileSize = new RectangleF(0, 0, 1, 1);
         Texture2D texture;
         public bool IsDisabled => false;
         public bool IsHidden { get; set; } = false;
@@ -43,7 +42,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            batch.Draw(texture, (Rectangle)CollisionBox, Color.Red);
+            batch.Draw(texture, (Rectangle)CollisionBox, Color.WhiteSmoke);
         }
 
         public void Update(GameTime time)
@@ -52,7 +51,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void OnOverlapping(object actor)
         {
-            base.DeleteMe = true;
+            if (actor is Platform)
+                base.DeleteMe = true;
         }
 
     }

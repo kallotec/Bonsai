@@ -19,7 +19,17 @@ namespace Bonsai.Framework.Physics
         // Visuals
         public Color Tint;
         public Texture2D Texture;
-        public Direction Direction;
+        public float DirectionAim;
+        public Direction Direction
+        {
+            get
+            {
+                if (DirectionAim >= 0 && DirectionAim <= 180)
+                    return Framework.Direction.Right;
+                else
+                    return Framework.Direction.Left;
+            }
+        }
 
         // Movement
         public Vector2 Velocity;
@@ -51,11 +61,6 @@ namespace Bonsai.Framework.Physics
                     TopSpeed);
             }
 
-            // Set direction
-            if (Velocity.X > 0)
-                Direction = Direction.Right;
-            else if (Velocity.X < 0)
-                Direction = Direction.Left;
         }
 
         public void AddForceX(float power, bool overrideTopSpeed = false)
@@ -71,12 +76,6 @@ namespace Bonsai.Framework.Physics
                     -TopSpeed,
                     TopSpeed);
             }
-
-            // Set direction
-            if (Velocity.X > 0)
-                Direction = Direction.Right;
-            else if (Velocity.X < 0)
-                Direction = Direction.Left;
 
         }
 
