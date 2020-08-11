@@ -20,6 +20,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/ui-general.spritefont
 
+#begin GameObjects/bullet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GameObjects/bullet.png
+
 #begin GameObjects/coin.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -103,6 +115,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sound/death.wav
+
+#begin Sound/fire.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/fire.mp3
 
 #begin Sound/openDoor.mp3
 /importer:Mp3Importer

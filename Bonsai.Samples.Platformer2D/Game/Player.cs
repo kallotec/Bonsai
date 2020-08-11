@@ -32,7 +32,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             Props.Weight = 1f;
             Props.HasGravity = true;
 
-            fireListener = new KeyPressListener(Keys.E, () => fireProjectile());
+            fireListener = new KeyPressListener(Keys.E, () => fireProjectile(), 0100);
         }
 
         EventBus eventBus;
@@ -46,7 +46,9 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         AnimationOverlay animWalking;
         AnimationOverlay animJetting;
         SoundEffect sfxDie;
+        SoundEffect sfxFire;
         KeyPressListener fireListener;
+        Texture2D bulletTexture;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
@@ -62,7 +64,10 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
             Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITESHEET_MARIO);
 
+            bulletTexture = loader.Load<Texture2D>(ContentPaths.SPRITE_BULLET);
+
             sfxDie = loader.Load<SoundEffect>(ContentPaths.SFX_DEATH);
+            sfxFire = loader.Load<SoundEffect>(ContentPaths.SFX_FIRE);
 
             animStanding = new AnimationOverlay(
                 name: "standing",
@@ -238,17 +243,12 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         void fireProjectile()
         {
-            var aim = Framework.Maths.MathHelper.PlotVector(base.Props.DirectionAim, 10, base.Position);
-
-            // get direction
-            var direction = Vector2.Subtract(aim, this.Position);
-            direction.Normalize();
-            // normalize
-            var force = direction * new Vector2(1000);
-            // create projectile
-            var projectile = new Projectile(base.Props.Position, force);
+            var projectile = new Projectile(base.Props.Position, base.Props.DirectionAim, 1000, bulletTexture);
 
             eventBus.QueueNotification(Events.CreateProjectile, projectile);
+
+            // sfx
+            sfxFire.Play(1f, 0f, 0f);
         }
 
         void die()
