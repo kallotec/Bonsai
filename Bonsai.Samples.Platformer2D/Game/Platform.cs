@@ -19,22 +19,18 @@ namespace Bonsai.Samples.Platformer2D.Game
             this.fillHex = fillHex;
             this.fillColor = getRgba(fillHex);
 
+            shape = new PolyShape(vertexes, this.fillColor);
+
             if (!string.IsNullOrWhiteSpace(strokeHex))
             {
                 this.strokeColor = getRgba(strokeHex);
-                this.drawingColor = strokeColor;
-            }
-            else
-            {
-                this.drawingColor = fillColor;
+                shape.Tint = strokeColor;
             }
 
-            shape = new PolyShape(vertexes);
         }
 
         PolyShape shape;
         string fillHex;
-        Color drawingColor;
         Color fillColor;
         Color strokeColor;
         public Vector2 Position { get; set; }
@@ -65,15 +61,16 @@ namespace Bonsai.Samples.Platformer2D.Game
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             shape.Draw(time, batch, parentPosition);
-            //batch.Draw(texture, (Rectangle)CollisionBox, drawingColor);
+            // debug:
+            //batch.Draw(texture, (Rectangle)CollisionBox, Color.Orange);
         }
 
 
         public void OnOverlapping(object actor)
         {
-            if (drawingColor != fillColor)
+            if (shape.Tint != fillColor)
             {
-                drawingColor = fillColor;
+                shape.Tint = fillColor;
                 sfxCheckpoint.Play(0.5f, 0f, 0f);
             }
 
@@ -87,6 +84,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             var b = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
             return new Color(r, g, b);
         }
+
 
     }
 }

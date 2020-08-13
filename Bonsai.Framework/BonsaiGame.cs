@@ -25,7 +25,6 @@ namespace Bonsai.Framework
         public GraphicsDeviceManager Graphics { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
         public IContentLoader Loader { get; set; }
-        public ICamera Camera { get; set; }
         bool isWindowSet;
 
         public Rectangle ScreenBounds => new Rectangle(0, 0, base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
