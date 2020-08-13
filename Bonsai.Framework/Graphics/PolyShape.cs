@@ -1,65 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using Bonsai.Framework.ContentLoading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace Bonsai.Framework.Graphics
 {
     public class PolyShape : ILoadable, IDrawable
     {
-        public PolyShape(Vector2[] points, GraphicsDevice device)
+        public PolyShape(Vector2[] positions)
         {
-            processPoints(points, device);
+            device = BonsaiGame.Current.GraphicsDevice;
+            processPoints(positions);
         }
 
         GraphicsDevice device;
         BasicEffect basicEffect;
-        short[] indexes;
-        VertexPositionColor[] vertexes;
+        int[] indexes;
+        Vector2[] points;
+        VertexPositionColor[] vertices;
+        VertexPositionColor[] triangulatedVerticies;
 
-        public bool IsHidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DrawOrderPosition DrawOrder => throw new NotImplementedException();
-        public bool IsAttachedToCamera => throw new NotImplementedException();
-        public Vector2 Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsHidden { get; set; }
+        public DrawOrderPosition DrawOrder { get; set; }
+        public bool IsAttachedToCamera { get; set; }
+        public Vector2 Position { get; set; }
+        public RectangleF Bounds { get; private set; }
+
 
         public void Load(IContentLoader loader)
         {
-            throw new NotImplementedException();
         }
 
         public void Unload()
         {
-            throw new NotImplementedException();
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
+            for (var x = 1; x < points.Length + 1; x++)
             {
-                effectPass.Apply();
+                if (x == points.Length)
+                {
+                    // complete line
+                    batch.DrawLine(points[x - 1], points[0], Color.Orange);
+                }
+                else
+                {
+                    batch.DrawLine(points[x - 1], points[x], Color.Orange);
+                }
 
-                device.DrawUserIndexedPrimitives<VertexPositionColor>(
-                    PrimitiveType.TriangleList, vertexes, 0, vertexes.Length, indexes, 0, indexes.Length / 3);
             }
+
         }
 
-        void processPoints(Vector2[] points, GraphicsDevice device)
+        void processPoints(Vector2[] points)
         {
-            basicEffect = new BasicEffect(device);
-            indexes = new short[points.Length];
-            vertexes = new VertexPositionColor[points.Length];
+            var pList = points.ToList();
 
             for (var x = 0; x < points.Length; x++)
             {
-                var point = points[x];
-                vertexes[x].Position = new Vector3(point.X, point.Y, 0);
-                vertexes[x].Color = Color.Orange;
-                indexes[x] = (short)x;
+                var p = points[x];
+
+                if (p.X == 0 && p.Y == 0)
+                    pList.RemoveAt(x);
             }
 
+            this.points = pList.ToArray();
+
+            var minX = 0f;
+            var minY = 0f;
+            var maxX = 0f;
+            var maxY = 0f;
+
+            // convert to verticies
+            for (var x = 0; x < this.points.Length; x++)
+            {
+                var point = this.points[x];
+
+                if (x == 0)
+                {
+                    minX = point.X;
+                    minY = point.Y;
+                    maxX = point.X;
+                    maxY = point.Y;
+                } 
+                else
+                {
+                    minX = Math.Min(point.X, minX);
+                    minY = Math.Min(point.Y, minY);
+                    maxX = Math.Max(point.X, maxX);
+                    maxY = Math.Max(point.Y, maxY);
+                }
+            }
+
+            Bounds = new RectangleF(minX, minY, Math.Abs(maxX - minX), Math.Abs(maxY - minY));
         }
 
     }

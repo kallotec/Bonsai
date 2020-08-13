@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with sK1/UniConvertor (http://sk1project.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="595.276pt"
+   height="841.89pt"
+   viewBox="0 0 595.276 841.89"
+   fill-rule="evenodd"
+   version="1.1">
+  <g>
+
+    <path
+       style="stroke:none; fill:#000002"
+       d="M 1993 678.89L 2006 678.89L 2006 690.89L 1993 690.89L 1993 678.89z" />
+    
+    <path
+       style="stroke:none; fill:#000001"
+       d="M 92 141.89L 105 141.89L 105 153.89L 92 153.89L 92 141.89z" />
+    
+    <path
+       style="stroke:#666666; fill:#ff64ff;"
+       d="M 50 197.89L 150 197.89L 150 297.89L 50 297.89L 50 197.89z"
+       data-type="1" />
+    
+  </g>
+</svg>

@@ -25,8 +25,8 @@ namespace Bonsai.Framework
         public GraphicsDeviceManager Graphics { get; private set; }
         public SpriteBatch SpriteBatch { get; private set; }
         public IContentLoader Loader { get; set; }
+        public ICamera Camera { get; set; }
         bool isWindowSet;
-        Color backgroundColor = Color.Black;
 
         public Rectangle ScreenBounds => new Rectangle(0, 0, base.GraphicsDevice.Viewport.Width, base.GraphicsDevice.Viewport.Height);
         public Vector2 ScreenCenter => new Vector2(base.GraphicsDevice.Viewport.Width / 2, base.GraphicsDevice.Viewport.Height / 2);

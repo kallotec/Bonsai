@@ -9,7 +9,7 @@ namespace Bonsai.Framework
 {
     public interface IDrawable
     {
-        Vector2 Position { get; set; }
+        Vector2 Position { get; }
         bool IsHidden { get; set; }
         DrawOrderPosition DrawOrder { get; }
         bool IsAttachedToCamera { get; }

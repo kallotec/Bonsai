@@ -1,5 +1,6 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.ContentLoading;
+using Bonsai.Framework.Graphics;
 using Bonsai.Samples.Platformer2D.Game.Actors;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -13,12 +14,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 {
     public class Platform : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.ICollidable
     {
-        public Platform(int x, int y, int w, int h, string fillHex, string strokeHex)
+        public Platform(string fillHex, string strokeHex, Vector2[] vertexes)
         {
-            this.Position = new Vector2(x, y);
-            this.width = w;
-            this.height = h;
-
             this.fillHex = fillHex;
             this.fillColor = getRgba(fillHex);
 
@@ -31,20 +28,21 @@ namespace Bonsai.Samples.Platformer2D.Game
             {
                 this.drawingColor = fillColor;
             }
+
+            shape = new PolyShape(vertexes);
         }
 
+        PolyShape shape;
         string fillHex;
         Color drawingColor;
         Color fillColor;
         Color strokeColor;
         public Vector2 Position { get; set; }
-        int width;
-        int height;
         Texture2D texture;
         public bool IsHazardTile => fillHex.ToLower() == "#ff0000";
         SoundEffect sfxCheckpoint;
 
-        public RectangleF CollisionBox => new RectangleF(Position.X, Position.Y, width, height);
+        public RectangleF CollisionBox => shape.Bounds;
         public bool IsCollisionEnabled => true;
         public bool IsOverlappingEnabled => true;
         public bool IsDisabled => false;
@@ -66,7 +64,8 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            batch.Draw(texture, (Rectangle)CollisionBox, drawingColor);
+            shape.Draw(time, batch, parentPosition);
+            //batch.Draw(texture, (Rectangle)CollisionBox, drawingColor);
         }
 
 

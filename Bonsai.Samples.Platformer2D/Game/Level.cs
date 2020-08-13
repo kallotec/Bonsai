@@ -2,6 +2,7 @@
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.Chunks;
 using Bonsai.Framework.ContentLoading;
+using Bonsai.Framework.Graphics;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
@@ -18,6 +19,7 @@ using Microsoft.Xna.Framework.Input;
 using Svg;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -197,7 +199,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             foreach (var elem in elements)
             {
-                // Color
+                // colors
                 var fillColor = elem.Fill?.ToString() ?? "#FF0000";
                 var strokeColor = elem.Stroke?.ToString();
 
@@ -206,13 +208,20 @@ namespace Bonsai.Samples.Platformer2D.Game
                 if (strokeColor == null || !strokeColor.StartsWith("#"))
                     strokeColor = null;
 
-                // Shape
+                // dimensions
                 var x = (int)Math.Round(elem.Bounds.X, 1);
                 var y = (int)Math.Round(elem.Bounds.Y, 1);
                 var w = (int)Math.Round(elem.Bounds.Width, 1);
                 var h = (int)Math.Round(elem.Bounds.Height, 1);
 
-                Debug.WriteLine($"{x} {y} - {w} x {h}");
+                // create poly
+                var vertexes = elem.PathData.Select(d => new Vector2(d.Start.X, d.Start.Y))
+                        .Union(elem.PathData.Select(d => new Vector2(d.End.X, d.End.Y)))
+                        .Distinct().ToArray();
+
+                Debug.WriteLine($"[shape]");
+                Debug.WriteLine($"size: {x} {y} - {w} x {h}");
+                Debug.WriteLine($"verts: {vertexes.Length}");
 
                 if (fillColor == "#000001")
                 {
@@ -228,7 +237,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 else
                 {
                     // Platform
-                    var platform = new Platform(x, y, w, h, fillColor, strokeColor);
+                    var platform = new Platform(fillColor, strokeColor, vertexes);
                     platform.Load(_loader);
                     platformsToLoad.Add(platform);
                 }

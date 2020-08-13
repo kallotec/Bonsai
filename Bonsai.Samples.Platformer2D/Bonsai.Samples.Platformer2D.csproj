@@ -41,6 +41,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Content\test.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Content\map1.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
