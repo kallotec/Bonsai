@@ -37,10 +37,8 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         EventBus eventBus;
         ICamera camera;
-        float jumpPower = 130f;
-        float jetPower = 10f;
-        float jetAcceleration = 10f;
-        float acceleration = 20f;
+        float acceleration = 5f;
+        float runModifier = 2f;
         AnimationOverlay animCurrent;
         AnimationOverlay animStanding;
         AnimationOverlay animWalking;
@@ -112,24 +110,25 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
         {
             var kbState = Keyboard.GetState();
 
+            var isRunning = kbState.IsKeyDown(Keys.LeftShift);
+
             // Movement
             if (kbState.IsKeyDown(Keys.A))
             {
-                if (Props.IsGrounded)
-                    Props.AddForceX(-acceleration);
-                else if (IsJetPacking)
-                    Props.AddForceX(-jetAcceleration);
-                else
-                    Props.AddForceX(-(acceleration / 2));
+                Props.AddForceX(-acceleration * (isRunning ? runModifier : 1));
             }
             else if (kbState.IsKeyDown(Keys.D))
             {
-                if (Props.IsGrounded)
-                    Props.AddForceX(acceleration);
-                else if (IsJetPacking)
-                    Props.AddForceX(jetAcceleration);
-                else
-                    Props.AddForceX((acceleration / 2));
+                Props.AddForceX(acceleration * (isRunning ? runModifier : 1));
+            }
+
+            if (kbState.IsKeyDown(Keys.W))
+            {
+                Props.AddForceY(-acceleration * (isRunning ? runModifier : 1));
+            }
+            else if (kbState.IsKeyDown(Keys.S))
+            {
+                Props.AddForceY(acceleration * (isRunning ? runModifier : 1));
             }
 
             // Anims
@@ -158,7 +157,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                     animCurrent = animStanding;
             }
             
-
+            /*
             // Jump action
             var canJump = (Props.IsGrounded && Props.Velocity.Y == 0);
 
@@ -180,6 +179,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             {
                 IsJetPacking = false;
             }
+            */
 
             // projectiles
             fireListener.Update(time);

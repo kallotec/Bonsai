@@ -38,6 +38,13 @@ namespace Bonsai.Samples.Platformer2D.Game
             this.eventBusSubscriptionIds = new List<string>();
 
             chunkMap = new ChunkMap(10, 10, 10, 10);
+            physSettings = new PhysicsSettings
+            {
+                Gravity = 5f,
+                PhysicsType = PhysicsType.Topdown,
+                Friction = 0.1f,
+                TerminalVelocity = 200f,
+            };
         }
 
         EventBus eventBus;
@@ -48,6 +55,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         List<KeyPressListener> keyListeners;
         MillisecCounter startGameTimer;
         MapPhysics phys;
+        PhysicsSettings physSettings;
         Door door;
         Vector2 playerStart;
         Vector2 playerExit;
@@ -92,7 +100,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             GameObjects.Add(hud);
 
             // Physics
-            phys = new MapPhysics(chunkMap);
+            phys = new MapPhysics(chunkMap, physSettings);
             GameObjects.Add(chunkMap);
 
             // Camera
@@ -142,7 +150,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 foreach (var p in GameObjects.OfType<Projectile>())
                 {
                     phys.ApplyPhysics(p.Props, p, time);
-                } 
+                }
             }
 
             if (!startGameTimer.Completed)
@@ -231,7 +239,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
                 if (fillColor == null || !fillColor.StartsWith("#"))
                     fillColor = "#FF0000";
-                
+
                 if (strokeColor == null || !strokeColor.StartsWith("#"))
                     strokeColor = null;
 
@@ -288,13 +296,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             chunkMap.Reset(chunkWidth: 100, chunkHeight: 100, mapWidth: maxMapX, mapHeight: maxMapY);
 
             // physics reset
-            var physSettings = new PhysicsSettings
-            {
-                Gravity = 5f,
-                Friction = 0.1f,
-                TerminalVelocity = 200f,
-            };
-            phys = new MapPhysics(chunkMap, physSettings);
+            var phys = new MapPhysics(chunkMap, physSettings);
 
             foreach (var platform in platformsToLoad)
             {
@@ -313,7 +315,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             // Set player position for new map
             player.Props.Position = playerStart;
 
-            addCoinToLevel(new Vector2(300,0));
+            addCoinToLevel(new Vector2(300, 0));
 
             // Add end point
             addDoorToLevel(playerExit);
@@ -327,7 +329,6 @@ namespace Bonsai.Samples.Platformer2D.Game
                 var t = Texture2D.FromStream(base.Game.GraphicsDevice, ms);
                 return t;
             }
-
         }
 
         void addCoinToLevel(Vector2 position)

@@ -13,7 +13,7 @@ namespace Bonsai.Framework.Physics
 {
     public class MapPhysics
     {
-        public MapPhysics(ChunkMap chunkMap, PhysicsSettings physSettings = null)
+        public MapPhysics(ChunkMap chunkMap, PhysicsSettings physSettings)
         {
             this.chunkMap = chunkMap;
             this.physSettings = physSettings ?? DefaultSettings;
@@ -104,9 +104,28 @@ namespace Bonsai.Framework.Physics
                 }
             }
 
+            switch (physSettings.PhysicsType)
+            {
+                case PhysicsType.Platformer:
+                    handlePlatformerAdditionalPhysics(entityProps, entity, neighbours, gameTime);
+                    break;
+
+                case PhysicsType.Topdown:
+                    handleTopDownAdditionalPhysics(entityProps, entity, neighbours, gameTime);
+                    break;
+            }
+
+            // [ Chunk map update ]
+
+            chunkMap.UpdateEntity(entity);
+
+        }
+
+        void handlePlatformerAdditionalPhysics(PhysicalProperties entityProps, ICollidable entity, ICollidable[] neighbours, GameTime gameTime)
+        {
             // [ Grounded flag ]
 
-            if (entity.IsCollisionEnabled)
+            if (physSettings.HasGravity && entity.IsCollisionEnabled)
             {
                 var groundedArea = new RectangleF(
                     entity.CollisionBox.X + (entity.CollisionBox.Width / 2),
@@ -141,16 +160,13 @@ namespace Bonsai.Framework.Physics
 
             // [ Gravity ]
 
-            if (!entityProps.IsGrounded)
+            if (physSettings.HasGravity && entityProps.HasGravity && !entityProps.IsGrounded)
             {
-                if (physSettings.HasGravity && entityProps.HasGravity)
-                {
-                    // TODO: factor weight into equation
-                    entityProps.Velocity.Y = MathHelper.Clamp(
-                        entityProps.Velocity.Y + (physSettings.Gravity * entityProps.Weight),
-                        -physSettings.TerminalVelocity,
-                        physSettings.TerminalVelocity);
-                }
+                // factors weight into equation
+                entityProps.Velocity.Y = MathHelper.Clamp(
+                    entityProps.Velocity.Y + (physSettings.Gravity * entityProps.Weight),
+                    -physSettings.TerminalVelocity,
+                    physSettings.TerminalVelocity);
             }
 
             // [ Friction ]
@@ -167,11 +183,38 @@ namespace Bonsai.Framework.Physics
                 entityProps.Velocity.X = lerped;
             }
 
-            // [ Chunk map update ]
+        }
 
-            chunkMap.UpdateEntity(entity);
+        void handleTopDownAdditionalPhysics(PhysicalProperties entityProps, ICollidable entity, ICollidable[] neighbours, GameTime gameTime)
+        {
+            // Gravity
+
+            if (entityProps.HasGravity)
+            {
+                if (entityProps.Velocity.X != 0)
+                {
+                    var lerped = MathHelper.Lerp(entityProps.Velocity.X, 0, physSettings.Friction);
+
+                    if (Math.Abs(lerped) < 2)
+                        lerped = 0;
+
+                    entityProps.Velocity.X = lerped;
+                }
+
+                if (entityProps.Velocity.Y != 0)
+                {
+                    var lerped = MathHelper.Lerp(entityProps.Velocity.Y, 0, physSettings.Friction);
+
+                    if (Math.Abs(lerped) < 2)
+                        lerped = 0;
+
+                    entityProps.Velocity.Y = lerped;
+                }
+            }
 
         }
+
+
 
     }
 }
