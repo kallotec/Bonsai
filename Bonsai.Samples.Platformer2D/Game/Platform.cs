@@ -14,12 +14,13 @@ namespace Bonsai.Samples.Platformer2D.Game
 {
     public class Platform : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.ICollidable
     {
-        public Platform(string fillHex, string strokeHex, Vector2[] vertexes)
+        public Platform(string fillHex, string strokeHex, Vector2[] vertexes, Texture2D texture)
         {
             this.fillHex = fillHex;
             this.fillColor = getRgba(fillHex);
+            this.texture = texture;
 
-            shape = new PolyShape(vertexes, this.fillColor);
+            shape = new PolyShape(vertexes, this.fillColor, texture);
 
             if (!string.IsNullOrWhiteSpace(strokeHex))
             {
@@ -46,7 +47,9 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Load(IContentLoader loader)
         {
-            texture = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
+            if (texture == null)
+                texture = loader.Load<Texture2D>(ContentPaths.TEX_PIXEL);
+
             sfxCheckpoint = loader.Load<SoundEffect>(ContentPaths.SFX_CHECKPOINT);
         }
 
@@ -73,7 +76,6 @@ namespace Bonsai.Samples.Platformer2D.Game
                 shape.Tint = fillColor;
                 sfxCheckpoint.Play(0.5f, 0f, 0f);
             }
-
         }
 
         Color getRgba(string hex)

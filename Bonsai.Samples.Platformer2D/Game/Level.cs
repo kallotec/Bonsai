@@ -189,6 +189,27 @@ namespace Bonsai.Samples.Platformer2D.Game
             var doc = SvgDocument.Open(mapPath);
             var elements = doc.Children.FindSvgElementsOf<SvgPath>();
 
+            // get images
+
+            var patterns = doc.Children.FindSvgElementsOf<SvgPatternServer>();
+            var images = new Dictionary<string, Texture2D>();
+
+            foreach (var pattern in patterns)
+            {
+                var image = pattern.Children.FindSvgElementsOf<SvgImage>().FirstOrDefault();
+                if (image == null)
+                    continue;
+
+                var v = image.Href.ToString() ?? string.Empty;
+                var startIndex = v.IndexOf(',') + 1;
+                var len = v.Length - startIndex;
+
+                var base64 = v.Substring(startIndex, len).TrimStart();
+                var texture = convertBase64ToTexure(base64);
+
+                images.Add(pattern.ID, texture);
+            }
+
             // Load new platforms
             var platformsToLoad = new List<Platform>();
 
@@ -203,10 +224,22 @@ namespace Bonsai.Samples.Platformer2D.Game
                 var fillColor = elem.Fill?.ToString() ?? "#FF0000";
                 var strokeColor = elem.Stroke?.ToString();
 
+                fillColor = fillColor.TrimStart("url(".ToArray()).TrimEnd(")".ToArray());
+
                 if (fillColor == null || !fillColor.StartsWith("#"))
                     fillColor = "#FF0000";
+                
                 if (strokeColor == null || !strokeColor.StartsWith("#"))
                     strokeColor = null;
+
+                var imageKey = fillColor.TrimStart('#');
+                Texture2D imageData = null;
+
+                if (images.ContainsKey(imageKey))
+                {
+                    imageData = images[imageKey];
+                    fillColor = "#FF0000";
+                }
 
                 // dimensions
                 var x = (int)Math.Round(elem.Bounds.X, 1);
@@ -237,7 +270,7 @@ namespace Bonsai.Samples.Platformer2D.Game
                 else
                 {
                     // Platform
-                    var platform = new Platform(fillColor, strokeColor, vertexes);
+                    var platform = new Platform(fillColor, strokeColor, vertexes, imageData);
                     platform.Load(_loader);
                     platformsToLoad.Add(platform);
                 }
@@ -281,6 +314,17 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Add end point
             addDoorToLevel(playerExit);
+        }
+
+        Texture2D convertBase64ToTexure(string base64)
+        {
+            var bytes = Convert.FromBase64String(base64);
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                var t = Texture2D.FromStream(base.Game.GraphicsDevice, ms);
+                return t;
+            }
+
         }
 
         void addCoinToLevel(Vector2 position)

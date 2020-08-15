@@ -13,15 +13,19 @@ namespace Bonsai.Framework.Graphics
 {
     public class PolyShape : ILoadable, IDrawable
     {
-        public PolyShape(Vector2[] positions, Color tint)
+        public PolyShape(Vector2[] positions, Color tint, Texture2D tileTexture)
         {
             this.Tint = tint;
             processPoints(positions);
-            this.Texture = createTexture();
+            this.Texture = createPolygonTexture(tileTexture);
+
+            debugTileTex = tileTexture;
         }
 
         Vector2[] points;
         Vector2[] pointsRelative;
+
+        Texture2D debugTileTex;
 
         public Color Tint { get; set; }
         public Texture2D Texture { get; private set; }
@@ -43,7 +47,10 @@ namespace Bonsai.Framework.Graphics
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            batch.Draw(Texture, (Rectangle)Bounds, this.Tint);
+            //if (debugTileTex != null)
+            //    batch.Draw(debugTileTex, new Vector2(Bounds.X, Bounds.Y), Color.White);
+
+            batch.Draw(Texture, (Rectangle)Bounds, Color.White);
             batch.DrawPolygon(new Vector2(), points.ToList(), this.Tint);
         }
 
@@ -74,14 +81,28 @@ namespace Bonsai.Framework.Graphics
             this.pointsRelative = this.points.Select(p => p + new Vector2(-xOffset, -yOffset)).ToArray();
         }
 
-        Texture2D createTexture()
+        Texture2D createPolygonTexture(Texture2D tile)
         {
             var w = (int)Bounds.Width;
             var h = (int)Bounds.Height;
 
-            var t = new Texture2D(BonsaiGame.Current.GraphicsDevice, w, h);
+            var baseTexture = (tile != null 
+                ? tileTexture(w, h, tile) 
+                : tileTextureWithColor(w, h, Color.White));
 
-            var array = new Color[w * h];
+            cutOutPolygon(baseTexture, pointsRelative);
+
+            return baseTexture;
+        }
+
+        void cutOutPolygon(Texture2D baseTexture, Vector2[] pointsRelative)
+        {
+            var baseData = new Color[baseTexture.Width * baseTexture.Height];
+            baseTexture.GetData(baseData);
+
+            var h = baseTexture.Height;
+            var w = baseTexture.Width;
+
             var poly = new Polygon(pointsRelative);
 
             for (var y = 0; y < h; y++)
@@ -91,11 +112,42 @@ namespace Bonsai.Framework.Graphics
                     var v = new Vector2(x, y);
                     var insidePoly = poly.Contains(v);
 
-                    array[(w * y) + x] = (insidePoly ? Color.White : Color.Transparent);
+                    // chop colors out if outside polygon
+                    if (!insidePoly)
+                        baseData[(w * y) + x] = Color.Transparent;
                 }
             }
 
-            t.SetData(array);
+            baseTexture.SetData(baseData);
+        }
+
+        Texture2D tileTextureWithColor(int w, int h, Color color)
+        {
+            var t = new Texture2D(BonsaiGame.Current.GraphicsDevice, w, h);
+            var d = new Color[w * h];
+
+            for (int x = 0; x < d.Length; x++)
+                d[x] = color;
+
+            t.SetData(d);
+            return t;
+        }
+
+        Texture2D tileTexture(int w, int h, Texture2D tile)
+        {
+            var isWidthBiggerThanTile = (w > tile.Width);
+            var isHeightBiggerThanTile = (h > tile.Height);
+
+            var tileTexRect = new Rectangle(0, 0,
+                (isWidthBiggerThanTile ? tile.Width : w),
+                (isHeightBiggerThanTile ? tile.Height : h));
+
+            var tileData = new Color[tileTexRect.Width * tileTexRect.Height];
+            tile.GetData(0, tileTexRect, tileData, 0, tileData.Length);
+
+            var t = new Texture2D(BonsaiGame.Current.GraphicsDevice, w, h);
+            t.SetData(0, tileTexRect, tileData, 0, tileData.Length);
+
             return t;
         }
 

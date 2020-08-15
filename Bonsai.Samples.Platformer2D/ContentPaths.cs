@@ -22,7 +22,7 @@ namespace Bonsai.Samples.Platformer2D
         internal static string SPRITE_BULLET = @"GameObjects/bullet";
 
         // Maps
-        public static string PATH_MAP_1 = @"Content/map1.svg";
+        public static string PATH_MAP_1 = @"Content/test.svg";
 
         // Sfx
         public static string SFX_COIN_COLLECT = @"Sound/coinCollect";
