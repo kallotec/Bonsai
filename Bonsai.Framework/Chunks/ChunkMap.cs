@@ -28,7 +28,7 @@ namespace Bonsai.Framework.Chunks
 
         public void Update(GameTime time)
         {
-            RemoveDeletedEntities();
+            removeDeletedEntities();
         }
 
         public ICollidable[] GetNearbyCollidables(ICollidable actor)
@@ -119,7 +119,7 @@ namespace Bonsai.Framework.Chunks
             chunk.Entities.Remove(entity);
         }
 
-        public void RemoveDeletedEntities()
+        void removeDeletedEntities()
         {
             var removals = index.Keys.Where(k => (k as IDeletable)?.DeleteMe == true);
 

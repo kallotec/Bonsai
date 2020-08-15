@@ -9,6 +9,9 @@ namespace Bonsai.Framework.Utility
     {
         public MillisecCounter(int millisecs)
         {
+            if (millisecs < 1)
+                throw new ArgumentException("must be at least 1 millisec", nameof(millisecs));
+
             max = millisecs;
             configuredMin = millisecs;
             configuredMax = millisecs;
@@ -16,6 +19,9 @@ namespace Bonsai.Framework.Utility
         }
         public MillisecCounter(int minMillisecs, int maxMillisecs)
         {
+            if (minMillisecs < 1)
+                throw new ArgumentException("must be at least 1 millisec", nameof(minMillisecs));
+
             max = minMillisecs;
             configuredMin = minMillisecs;
             configuredMax = maxMillisecs;
@@ -32,6 +38,7 @@ namespace Bonsai.Framework.Utility
         public int Current => current;
         public int Max => max;
         public bool Completed => completed;
+        public float ProgressPercentage => (current / max);
 
 
         public void Update(int millisecs)

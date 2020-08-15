@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.Framework", "Bonsai.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.Samples.Platformer2D", "Bonsai.Samples.Platformer2D\Bonsai.Samples.Platformer2D.csproj", "{1F59BB37-9ECD-4E2E-888E-C61A03B0555F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.MapEditor", "Bonsai.MapEditor\Bonsai.MapEditor.csproj", "{3479BA67-B83D-4E2D-A499-90BC289DA3C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.MapEditor", "Bonsai.MapEditor\Bonsai.MapEditor.csproj", "{3479BA67-B83D-4E2D-A499-90BC289DA3C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skavenger", "Skavenger\Skavenger.csproj", "{3344D9F4-2060-4A01-99EA-79FC9D9399D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{3479BA67-B83D-4E2D-A499-90BC289DA3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3479BA67-B83D-4E2D-A499-90BC289DA3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3479BA67-B83D-4E2D-A499-90BC289DA3C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3344D9F4-2060-4A01-99EA-79FC9D9399D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3344D9F4-2060-4A01-99EA-79FC9D9399D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3344D9F4-2060-4A01-99EA-79FC9D9399D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3344D9F4-2060-4A01-99EA-79FC9D9399D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

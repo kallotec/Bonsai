@@ -41,7 +41,7 @@ namespace Bonsai.Samples.Platformer2D.Game
             physSettings = new PhysicsSettings
             {
                 Gravity = 5f,
-                PhysicsType = PhysicsType.Topdown,
+                PhysicsType = PhysicsType.Platformer,
                 Friction = 0.1f,
                 TerminalVelocity = 200f,
             };
@@ -75,7 +75,6 @@ namespace Bonsai.Samples.Platformer2D.Game
 
             // Player
             player = new Player(eventBus, Camera);
-            player.DrawOrder = DrawOrderPosition.Foreground;
             player.Load(loader);
             GameObjects.Add(player);
 
@@ -162,7 +161,6 @@ namespace Bonsai.Samples.Platformer2D.Game
                 Camera.SetFocus(player, immediateFocus: false);
             }
 
-            chunkMap.RemoveDeletedEntities();
         }
 
         void setupKeyListeners()
