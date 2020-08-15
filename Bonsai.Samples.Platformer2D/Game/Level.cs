@@ -200,14 +200,17 @@ namespace Bonsai.Samples.Platformer2D.Game
                 if (image == null)
                     continue;
 
-                var v = image.Href.ToString() ?? string.Empty;
-                var startIndex = v.IndexOf(',') + 1;
-                var len = v.Length - startIndex;
+                if (!string.IsNullOrWhiteSpace(image.Href))
+                {
+                    var v = image.Href.ToString() ?? string.Empty;
+                    var startIndex = v.IndexOf(',') + 1;
+                    var len = v.Length - startIndex;
 
-                var base64 = v.Substring(startIndex, len).TrimStart();
-                var texture = convertBase64ToTexure(base64);
+                    var base64 = v.Substring(startIndex, len).TrimStart();
+                    var texture = convertBase64ToTexure(base64);
 
-                images.Add(pattern.ID, texture);
+                    images.Add(pattern.ID, texture);
+                }
             }
 
             // Load new platforms

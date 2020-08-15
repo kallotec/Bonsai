@@ -86,8 +86,8 @@ namespace Bonsai.Framework.Graphics
             var w = (int)Bounds.Width;
             var h = (int)Bounds.Height;
 
-            var baseTexture = (tile != null 
-                ? tileTexture(w, h, tile) 
+            var baseTexture = (tile != null
+                ? tileTexture(w, h, tile)
                 : tileTextureWithColor(w, h, Color.White));
 
             cutOutPolygon(baseTexture, pointsRelative);
@@ -135,18 +135,24 @@ namespace Bonsai.Framework.Graphics
 
         Texture2D tileTexture(int w, int h, Texture2D tile)
         {
-            var isWidthBiggerThanTile = (w > tile.Width);
-            var isHeightBiggerThanTile = (h > tile.Height);
+            var t = tileTextureWithColor(w, h, Color.Transparent);
 
-            var tileTexRect = new Rectangle(0, 0,
-                (isWidthBiggerThanTile ? tile.Width : w),
-                (isHeightBiggerThanTile ? tile.Height : h));
+            for (var y = 0; y < h; y += tile.Height)
+            {
+                var remainingHeight = Math.Min((h - y), tile.Height);
 
-            var tileData = new Color[tileTexRect.Width * tileTexRect.Height];
-            tile.GetData(0, tileTexRect, tileData, 0, tileData.Length);
+                for (var x = 0; x < w; x += tile.Width)
+                {
+                    var remainingWidth = Math.Min((w - x), tile.Width);
 
-            var t = new Texture2D(BonsaiGame.Current.GraphicsDevice, w, h);
-            t.SetData(0, tileTexRect, tileData, 0, tileData.Length);
+                    var tileRect = new Rectangle(x, y, remainingWidth, remainingHeight);
+
+                    var tileData = new Color[remainingWidth * remainingHeight];
+                    tile.GetData(0, new Rectangle(0, 0, remainingWidth, remainingHeight), tileData, 0, tileData.Length);
+
+                    t.SetData(0, tileRect, tileData, 0, tileData.Length);
+                }
+            }
 
             return t;
         }
