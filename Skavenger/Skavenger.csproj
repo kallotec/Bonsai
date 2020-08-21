@@ -32,11 +32,14 @@
     <ProjectReference Include="..\Bonsai.Framework\Bonsai.Framework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Game\PlatformerGame.cs">
+    <Compile Update="Game\SkavengerGame.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Content\Maps\office-v2.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Content\Maps\office-v1.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

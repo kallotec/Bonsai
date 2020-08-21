@@ -1,4 +1,5 @@
 ﻿using Bonsai.Framework;
+using Bonsai.Framework.Actors;
 using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Graphics;
 using Microsoft.Xna.Framework;
@@ -6,6 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -49,6 +51,7 @@ namespace Skavenger.Game
 
         public void OnOverlapping(object actor)
         {
+            Debug.WriteLine($"Wall.OnOverlapping = {actor.GetType().Name}");
         }
 
 

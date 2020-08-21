@@ -173,6 +173,7 @@ namespace Skavenger.Game
                     var wall = new Wall(new RectangleF(rect.X, rect.Y, rect.Width, rect.Height), fill);
                     wall.Load(_loader);
                     GameObjects.Add(wall);
+                    chunkMap.UpdateEntity(wall);
                 }
             }
 

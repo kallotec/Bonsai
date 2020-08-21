@@ -59,8 +59,10 @@ namespace Skavenger.Game
 
         public void OnOverlapping(object actor)
         {
-            //if (actor is Platform)
-            //    destroyProjectile();
+            Debug.WriteLine($"Projectile.OnOverlapping = {actor.GetType().Name}");
+
+            if (actor is Wall)
+                destroyProjectile();
         }
 
         void destroyProjectile()

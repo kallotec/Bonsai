@@ -40,7 +40,7 @@ namespace Bonsai.Framework.Physics
 
             entityProps.Position.Y += (entityProps.Velocity.Y * delta);
 
-            if (entity.IsOverlappingEnabled)
+            if (entity.IsOverlappingEnabled || entity.IsCollisionEnabled)
             {
                 neighbours = chunkMap.GetNearbyCollidables(entity);
                 var intersections = neighbours.Where(n => entity.CollisionBox.IntersectsWith(n.CollisionBox));
@@ -77,7 +77,7 @@ namespace Bonsai.Framework.Physics
 
             entityProps.Position.X = entityProps.Position.X + (entityProps.Velocity.X * delta);
 
-            if (entity.IsOverlappingEnabled)
+            if (entity.IsOverlappingEnabled || entity.IsCollisionEnabled)
             {
                 neighbours = chunkMap.GetNearbyCollidables(entity);
 
