@@ -76,25 +76,38 @@ namespace Skavenger.Game
             // Movement
             if (kbState.IsKeyDown(Keys.A))
             {
-                Props.AddForceX(-acceleration);
+                var leftAngle = Props.DirectionAim + MathHelper.ToRadians(-90);
+                var force = Bonsai.Framework.Maths.MathHelper.UpdateVelocity(
+                    leftAngle,
+                    5f);
+
+                Props.AddForce(force);
             }
             else if (kbState.IsKeyDown(Keys.D))
             {
-                Props.AddForceX(acceleration * (isRunning ? runModifier : 1));
+                var rightAngle = Props.DirectionAim + MathHelper.ToRadians(90);
+                var force = Bonsai.Framework.Maths.MathHelper.UpdateVelocity(
+                    rightAngle,
+                    5f);
+
+                Props.AddForce(force);
             }
 
             if (kbState.IsKeyDown(Keys.W))
             {
-                var force = Bonsai.Framework.Maths.MathHelper.PlotVector(
+                var force = Bonsai.Framework.Maths.MathHelper.UpdateVelocity(
                     Props.DirectionAim,
-                    10f,
-                    Props.Position);
+                    10f);
 
-                Props.AddForce(force * new Vector2(0.2f), true);
+                Props.AddForce(force);
             }
             else if (kbState.IsKeyDown(Keys.S))
             {
-                Props.AddForceY(acceleration * (isRunning ? runModifier : 1));
+                var force = Bonsai.Framework.Maths.MathHelper.UpdateVelocity(
+                    Props.DirectionAim,
+                    -5f);
+
+                Props.AddForce(force);
             }
             
             // projectiles

@@ -33,7 +33,7 @@ namespace Skavenger.Game
         protected override void Init()
         {
             // Set up the game window
-            base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: true);
+            base.SetWindow("Platformer Demo", width: 800, height: 600, showMouse: false);
 
             // events
             eventBus = new EventBus();
