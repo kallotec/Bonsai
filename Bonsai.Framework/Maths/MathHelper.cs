@@ -53,7 +53,7 @@ namespace Bonsai.Framework.Maths
             currentDirection += x;
         }
 
-        public static Vector2 PlotVector(float direction, int distance, Vector2 currentPosition)
+        public static Vector2 PlotVector(float direction, float distance, Vector2 currentPosition)
         {
             Matrix rotMatrix = Matrix.CreateRotationZ(direction);
             Vector2 dest = Vector2.Transform(up, rotMatrix);

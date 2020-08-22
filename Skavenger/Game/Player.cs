@@ -27,8 +27,6 @@ namespace Skavenger.Game
             DrawOrder = DrawOrderPosition.Foreground;
 
             // Physical properties
-            
-            Props.DirectionAim = MathHelper.ToRadians(0); // face upward
             Props.TopSpeed = 150f;
             Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
             Props.Weight = 1f;
@@ -45,7 +43,7 @@ namespace Skavenger.Game
         SoundEffect sfxFire;
         KeyPressListener fireListener;
         Texture2D bulletTexture;
-        float lastMouseX = 0f;
+        float? lastMouseX = null;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
@@ -78,7 +76,7 @@ namespace Skavenger.Game
             // Movement
             if (kbState.IsKeyDown(Keys.A))
             {
-                Props.AddForceX(-acceleration * (isRunning ? runModifier : 1));
+                Props.AddForceX(-acceleration);
             }
             else if (kbState.IsKeyDown(Keys.D))
             {
@@ -87,7 +85,12 @@ namespace Skavenger.Game
 
             if (kbState.IsKeyDown(Keys.W))
             {
-                Props.AddForceY(-acceleration * (isRunning ? runModifier : 1));
+                var force = Bonsai.Framework.Maths.MathHelper.PlotVector(
+                    Props.DirectionAim,
+                    10f,
+                    Props.Position);
+
+                Props.AddForce(force * new Vector2(0.2f), true);
             }
             else if (kbState.IsKeyDown(Keys.S))
             {
@@ -99,15 +102,30 @@ namespace Skavenger.Game
 
             var mouseState = Mouse.GetState();
             var mousePos = mouseState.Position;
-            var mouseHorizontalMovement = mousePos.X - lastMouseX;
+            if (lastMouseX == null)
+                lastMouseX = mousePos.X;
+
+            var mouseHorizontalMovement = mousePos.X - lastMouseX.Value;
             lastMouseX = mousePos.X;
 
             // aim
             /*base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
                 .GetDirectionInRadians(this.Position, (camera.CurrentFocus - BonsaiGame.Current.ScreenCenter) + new Vector2(mousePos.X, mousePos.Y));
                 */
-            base.Props.DirectionAim += mouseHorizontalMovement * 0.01f;
-            //max radians 6.28319
+
+            var minRadians = 0f;
+            var maxRadians = MathHelper.ToRadians(360);
+
+            var dir = base.Props.DirectionAim;
+            
+            dir = dir + (mouseHorizontalMovement * 0.01f);
+
+            if (dir < minRadians)
+                dir = maxRadians;
+            else if (dir > maxRadians)
+                dir = minRadians;
+
+            base.Props.DirectionAim = dir;
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
