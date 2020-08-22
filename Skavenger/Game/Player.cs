@@ -27,6 +27,8 @@ namespace Skavenger.Game
             DrawOrder = DrawOrderPosition.Foreground;
 
             // Physical properties
+            
+            Props.DirectionAim = MathHelper.ToRadians(0); // face upward
             Props.TopSpeed = 150f;
             Props.PhysicalRect = new Rectangle(0, 0, 15, 20);
             Props.Weight = 1f;
@@ -43,6 +45,7 @@ namespace Skavenger.Game
         SoundEffect sfxFire;
         KeyPressListener fireListener;
         Texture2D bulletTexture;
+        float lastMouseX = 0f;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
@@ -96,10 +99,15 @@ namespace Skavenger.Game
 
             var mouseState = Mouse.GetState();
             var mousePos = mouseState.Position;
+            var mouseHorizontalMovement = mousePos.X - lastMouseX;
+            lastMouseX = mousePos.X;
 
             // aim
-            base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
+            /*base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
                 .GetDirectionInRadians(this.Position, (camera.CurrentFocus - BonsaiGame.Current.ScreenCenter) + new Vector2(mousePos.X, mousePos.Y));
+                */
+            base.Props.DirectionAim += mouseHorizontalMovement * 0.01f;
+            //max radians 6.28319
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)

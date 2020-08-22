@@ -18,6 +18,7 @@ namespace Bonsai.Framework
         }
 
         Matrix transform;
+
         Viewport viewport;
         Actor focusedActor;
         Vector2? focusedPoint;
@@ -72,9 +73,12 @@ namespace Bonsai.Framework
             if (center.X < current.X - viewport.Width / 2)
                 center.X = current.X - viewport.Width / 2;
 
-            transform = Matrix.CreateScale(new Vector3(1, 1, 0)) * 
-                        Matrix.CreateTranslation(new Vector3(-center.X, -center.Y, 0));
-
+            transform = Matrix.Identity *
+                    Matrix.CreateTranslation(-current.X, -current.Y, 0) *
+                    Matrix.CreateRotationZ(MathHelper.ToRadians(-90)) *
+                    Matrix.CreateRotationZ(-focusedActor.Props.DirectionAim) *
+                    Matrix.CreateTranslation(viewport.Width / 2, viewport.Height / 1.5f , 0) *
+                    Matrix.CreateScale(new Vector3(1, 1, 1));
         }
 
         public void SetFocus(Actor focusedActor, bool immediateFocus)

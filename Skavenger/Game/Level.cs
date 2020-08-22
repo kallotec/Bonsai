@@ -6,6 +6,7 @@ using Bonsai.Framework.Graphics;
 using Bonsai.Framework.Input;
 using Bonsai.Framework.Particles;
 using Bonsai.Framework.Physics;
+using Bonsai.Framework.Text;
 using Bonsai.Framework.Text.Managers;
 using Bonsai.Framework.UI;
 using Bonsai.Framework.Utility;
@@ -46,8 +47,11 @@ namespace Skavenger.Game
                 TerminalVelocity = 200f,
             };
 
+            varRotation = new GameVariable<string>();
         }
 
+        GameVariable<string> varRotation;
+        TextElement<string> txtRotationDisplay;
         EventBus eventBus;
         List<string> eventBusSubscriptionIds;
         Player player;
@@ -66,6 +70,8 @@ namespace Skavenger.Game
         public override void Load(IContentLoader loader)
         {
             _loader = loader;
+
+            var defaultFont = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
 
             // Player
             player = new Player(eventBus, Camera);
@@ -94,6 +100,17 @@ namespace Skavenger.Game
                 eventBus.Subscribe(Events.CreateProjectile, (p) => playerCreatedProjectile(p as Projectile)),
             });
 
+            // Game variables
+            varRotation.Load(loader);
+            txtRotationDisplay = new TextElement<string>(varRotation, defaultFont, new TextElementSettings())
+            {
+                Position = new Vector2(10, 10),
+                IsAttachedToCamera = true,
+            };
+            txtRotationDisplay.Load(loader);
+            GameObjects.Add(varRotation);
+            GameObjects.Add(txtRotationDisplay);
+
             // Map
             loadMap();
 
@@ -121,6 +138,7 @@ namespace Skavenger.Game
             foreach (var p in GameObjects.OfType<Projectile>())
                 phys.ApplyPhysics(p.Props, p, time);
 
+            varRotation.Value = player.Props.DirectionAim.ToString();
         }
 
         void setupKeyListeners()
@@ -144,7 +162,6 @@ namespace Skavenger.Game
         {
             // reset game objects
             GameObjects.RemoveAll(o => o is Coin || o is Wall);
-
 
             // setup chunks
             chunkMap.Reset(chunkWidth: 100, chunkHeight: 100, mapWidth: 1000, mapHeight: 1000);
@@ -178,8 +195,8 @@ namespace Skavenger.Game
             }
 
             // Verify that the level has a beginning and an end.
-            if (playerStart == Vector2.Zero)
-                throw new NotSupportedException("A level must have a starting point.");
+            //if (playerStart == Vector2.Zero)
+            //    throw new NotSupportedException("A level must have a starting point.");
             if (playerExit == Vector2.Zero)
                 throw new NotSupportedException("A level must have an exit.");
 

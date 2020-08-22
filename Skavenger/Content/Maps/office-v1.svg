@@ -26,8 +26,8 @@
        id="rect1366-67"
        width="500"
        height="50"
-       x="0"
-       y="0" />
+       x="-100"
+       y="-100" />
 
     <rect
        style="fill:#5b5b5b;fill-opacity:1;stroke:#959500;stroke-width:1.38099861;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -35,7 +35,7 @@
        width="50"
        height="500"
        x="500"
-       y="0" />
+       y="-100" />
 
   </g>
   
@@ -48,8 +48,8 @@
        id="rect1569"
        width="20.574978"
        height="21.309153"
-       x="100"
-       y="100" />
+       x="0"
+       y="0" />
     <rect
        style="opacity:1;fill:#000002;fill-opacity:1;stroke:#959500;stroke-width:1.04859114;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1571"
