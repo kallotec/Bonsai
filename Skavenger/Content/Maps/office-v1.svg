@@ -48,14 +48,28 @@
        id="rect1569"
        width="20.574978"
        height="21.309153"
-       x="0"
-       y="0" />
+       x="100"
+       y="100" />
     <rect
        style="opacity:1;fill:#000002;fill-opacity:1;stroke:#959500;stroke-width:1.04859114;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1571"
        width="27.923185"
        height="22.831236"
-       x="200"
-       y="200" />
+       x="250"
+       y="250" />
   </g>
+
+  <g
+     inkscape:groupmode="layer"
+     id="loot"
+     inkscape:label="loot">
+    <rect
+       style="opacity:1;fill:#000010;fill-opacity:1;stroke:#959500;stroke-width:1.04859114;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1569"
+       width="20"
+       height="20"
+       x="300"
+       y="300" />
+  </g>
+  
 </svg>

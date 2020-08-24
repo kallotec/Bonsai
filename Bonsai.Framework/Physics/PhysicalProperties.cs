@@ -12,6 +12,7 @@ namespace Bonsai.Framework.Physics
         public PhysicalProperties()
         {
             Tint = Color.White;
+            OverlappingObjects = new List<IPhysicsObject>();
         }
 
         public Vector2 Position;
@@ -19,17 +20,7 @@ namespace Bonsai.Framework.Physics
         // Visuals
         public Color Tint;
         public Texture2D Texture;
-        public float DirectionAim;
-        public Direction Direction
-        {
-            get
-            {
-                if (DirectionAim >= 0 && DirectionAim <= 180)
-                    return Framework.Direction.Right;
-                else
-                    return Framework.Direction.Left;
-            }
-        }
+        public float Rotation;
 
         // Movement
         public Vector2 Velocity;
@@ -37,10 +28,16 @@ namespace Bonsai.Framework.Physics
         public float Weight;
         public bool HasGravity;
 
-        // Object
+        // Physics
         public Rectangle PhysicalRect;
-        public bool IsGrounded;
-
+        Rectangle? overlapRect;
+        public Rectangle OverlapRect
+        {
+            get => overlapRect ?? PhysicalRect;
+            set => overlapRect = value;
+        }
+        public bool IsGrounded { get; set; }
+        public List<IPhysicsObject> OverlappingObjects { get; set; }
 
         public void AddForce(Vector2 power, bool overrideTopSpeed = false)
         {

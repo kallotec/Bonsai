@@ -12,7 +12,7 @@ using Bonsai.Framework;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Door : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
+    public class Door : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject
     {
         public Door(EventBus eventBus)
         {
@@ -30,6 +30,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public bool IsHidden { get; set; }
         public bool IsCollisionEnabled { get; set; }
         public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public RectangleF OverlapBox => CollisionBox;
 
         public bool IsOverlappingEnabled => throw new NotImplementedException();
 

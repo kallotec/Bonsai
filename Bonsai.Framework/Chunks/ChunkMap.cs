@@ -1,4 +1,5 @@
 ﻿using Bonsai.Framework;
+using Bonsai.Framework.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,7 +13,7 @@ namespace Bonsai.Framework.Chunks
     {
         public ChunkMap(int chunkWidth, int chunkHeight, int mapWidth, int mapHeight)
         {
-            index = new Dictionary<ICollidable, Point>();
+            index = new Dictionary<IPhysicsObject, Point>();
 
             Reset(chunkWidth, chunkHeight, mapWidth, mapHeight);
         }
@@ -23,7 +24,7 @@ namespace Bonsai.Framework.Chunks
         public int MapHeight { get; private set; }
         Chunk[,] grid { get; set; }
         public bool IsDisabled => false;
-        Dictionary<ICollidable, Point> index;
+        Dictionary<IPhysicsObject, Point> index;
 
 
         public void Update(GameTime time)
@@ -31,7 +32,7 @@ namespace Bonsai.Framework.Chunks
             removeDeletedEntities();
         }
 
-        public ICollidable[] GetNearbyCollidables(ICollidable actor)
+        public IPhysicsObject[] GetNearbyCollidables(IPhysicsObject actor)
         {
             int chunkIndexX = (int)(actor.CollisionBox.X / ChunkWidth);
             int chunkIndexY = (int)(actor.CollisionBox.Y / ChunkHeight);
@@ -61,7 +62,7 @@ namespace Bonsai.Framework.Chunks
             return collidables;
         }
 
-        public bool UpdateEntity(ICollidable entity)
+        public bool UpdateEntity(IPhysicsObject entity)
         {
             var center = entity.CollisionBox.Center;
             var xIndex = (int)(center.X / ChunkWidth);
@@ -107,7 +108,7 @@ namespace Bonsai.Framework.Chunks
             return false;
         }
 
-        public void RemoveFromMap(ICollidable entity)
+        public void RemoveFromMap(IPhysicsObject entity)
         {
             if (!index.ContainsKey(entity))
                 return;

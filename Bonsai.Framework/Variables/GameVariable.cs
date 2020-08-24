@@ -19,10 +19,13 @@ namespace Bonsai.Framework.Variables
             get { return this.value; }
             set
             {
+                var isChanged = ((object)value != (object)this.value);
+
                 this.value = value;
 
                 // Notify subscribers of change
-                Changed?.Invoke(this.value);
+                if (isChanged)
+                    Changed?.Invoke(this.value);
             }
         }
 

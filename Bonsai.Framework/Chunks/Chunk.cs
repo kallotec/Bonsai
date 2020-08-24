@@ -1,4 +1,5 @@
 ﻿using Bonsai.Framework;
+using Bonsai.Framework.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,12 +15,12 @@ namespace Bonsai.Framework.Chunks
         {
             this.x = x;
             this.y = y;
-            Entities = new List<ICollidable>();
+            Entities = new List<IPhysicsObject>();
         }
 
         int x, y;
 
-        public List<ICollidable> Entities { get; private set; }
+        public List<IPhysicsObject> Entities { get; private set; }
 
     }
 }

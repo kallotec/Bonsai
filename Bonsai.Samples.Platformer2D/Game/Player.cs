@@ -17,7 +17,7 @@ using Bonsai.Framework.Input;
 
 namespace Bonsai.Samples.Platformer2D.Game.Actors
 {
-    public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable
+    public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject
     {
         public Player(EventBus eventBus, ICamera camera)
         {
@@ -188,14 +188,14 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
             var mousePos = mouseState.Position;
 
             // aim
-            base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
+            base.Props.Rotation = Bonsai.Framework.Maths.GameMathHelper
                 .GetDirectionInRadians(this.Position, (camera.CurrentFocus - BonsaiGame.Current.ScreenCenter) + new Vector2(mousePos.X, mousePos.Y));
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
             // Default direction is Right
-            var flip = (Props.Direction == Direction.Left);
+            var flip = false; // (Props.Rotation == Direction.Left);
 
             // Draw sprite
             batch.Draw(Props.Texture,
@@ -209,7 +209,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
                        0f);
 
 
-            var aim = Framework.Maths.MathHelper.PlotVector(base.Props.DirectionAim, 80, base.Position);
+            var aim = Framework.Maths.GameMathHelper.PlotVector(base.Props.Rotation, 80, base.Position);
 
             // Draw aim
             batch.Draw(FrameworkGlobals.Pixel,
@@ -243,7 +243,7 @@ namespace Bonsai.Samples.Platformer2D.Game.Actors
 
         void fireProjectile()
         {
-            var projectile = new Projectile(base.Props.Position, base.Props.DirectionAim, 1000, bulletTexture);
+            var projectile = new Projectile(base.Props.Position, base.Props.Rotation, 1000, bulletTexture);
 
             eventBus.QueueNotification(Events.CreateProjectile, projectile);
 

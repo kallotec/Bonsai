@@ -76,7 +76,7 @@ namespace Bonsai.Framework
             transform = Matrix.Identity *
                     Matrix.CreateTranslation(-current.X, -current.Y, 0) *
                     Matrix.CreateRotationZ(MathHelper.ToRadians(-90)) *
-                    Matrix.CreateRotationZ(-focusedActor.Props.DirectionAim) *
+                    Matrix.CreateRotationZ(-focusedActor.Props.Rotation) *
                     Matrix.CreateTranslation(viewport.Width / 2, viewport.Height / 1.5f , 0) *
                     Matrix.CreateScale(new Vector3(1, 1, 1));
         }

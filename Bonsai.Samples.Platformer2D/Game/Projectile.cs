@@ -1,6 +1,7 @@
 ﻿using Bonsai.Framework;
 using Bonsai.Framework.Actors;
 using Bonsai.Framework.ContentLoading;
+using Bonsai.Framework.Physics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +11,7 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Projectile : Actor, ILoadable, Framework.IUpdateable, Framework.IDrawable, IDeletable, ICollidable
+    public class Projectile : Actor, ILoadable, Framework.IUpdateable, Framework.IDrawable, IDeletable, IPhysicsObject
     {
         public Projectile(Vector2 position, float angle, int power, Texture2D bulletTexture)
         {
@@ -19,10 +20,10 @@ namespace Bonsai.Samples.Platformer2D.Game
             originalPosition = position;
             base.Props.TopSpeed = 10000f;
             base.Props.HasGravity = false;
-            base.Props.DirectionAim = angle;
+            base.Props.Rotation = angle;
 
             // calc velocity
-            var velocity = Framework.Maths.MathHelper.PlotVector(angle, power, position);
+            var velocity = Framework.Maths.GameMathHelper.PlotVector(angle, power, position);
             base.Props.AddForce(velocity);
 
         }
@@ -50,7 +51,7 @@ namespace Bonsai.Samples.Platformer2D.Game
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
         {
-            batch.Draw(texture, Position, null, Color.WhiteSmoke, Props.DirectionAim, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
+            batch.Draw(texture, Position, null, Color.WhiteSmoke, Props.Rotation, Vector2.Zero, Vector2.One, SpriteEffects.None, 1f);
         }
 
         public void Update(GameTime time)

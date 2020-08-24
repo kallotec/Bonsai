@@ -30,79 +30,112 @@ namespace Bonsai.Framework.Physics
         PhysicsSettings physSettings;
 
 
-        public void ApplyPhysics(PhysicalProperties entityProps, ICollidable entity, GameTime gameTime)
+        public void ApplyPhysics(PhysicalProperties entityProps, IPhysicsObject entity, GameTime gameTime)
         {
             var delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             var lastPos = entityProps.Position;
-            var neighbours = new ICollidable[0];
+            var neighbours = new IPhysicsObject[0];
+
+            var overlappingObjs = new List<IPhysicsObject>();
 
             // [ Y ]
 
             entityProps.Position.Y += (entityProps.Velocity.Y * delta);
 
-            if (entity.IsOverlappingEnabled || entity.IsCollisionEnabled)
+            // get new neighbours since objects have probably moved
+            neighbours = chunkMap.GetNearbyCollidables(entity);
+
+            // overlaps
+            if (entity.IsOverlappingEnabled)
             {
-                neighbours = chunkMap.GetNearbyCollidables(entity);
-                var intersections = neighbours.Where(n => entity.CollisionBox.IntersectsWith(n.CollisionBox));
-                if (intersections.Any())
+                var overlaps = neighbours.Where(n => n.IsOverlappingEnabled && entity.OverlapBox.IntersectsWith(n.OverlapBox));
+
+                foreach (var overlap in overlaps)
                 {
-                    var collided = false;
+                    overlap.OnOverlapping(entity);
+                    entity.OnOverlapping(overlap);
 
-                    foreach (var intersection in intersections)
-                    {
-                        intersection.OnOverlapping(entity);
-                        entity.OnOverlapping(intersection);
-
-                        if (!collided && entity.IsCollisionEnabled && intersection.IsCollisionEnabled)
-                        {
-                            collided = true;
-
-                            var up = entityProps.Velocity.Y < 0;
-                            entityProps.Velocity.Y = 0;
-
-                            var collision = intersections.First().CollisionBox;
-
-                            if (up)
-                                entityProps.Position.Y = collision.Bottom + 1;
-                            else
-                                entityProps.Position.Y = collision.Top - entity.CollisionBox.Height;
-
-                        }
-                    }
-
+                    if (!overlappingObjs.Contains(overlap))
+                        overlappingObjs.Add(overlap);
                 }
             }
+            
+            // collision
+            if (entity.IsCollisionEnabled)
+            {
+                var collisions = neighbours.Where(n => n.IsCollisionEnabled && entity.CollisionBox.IntersectsWith(n.CollisionBox));
+
+                var hasCollided = false;
+
+                foreach (var collision in collisions)
+                {
+                    if (hasCollided)
+                        continue;
+
+                    hasCollided = true;
+
+                    var up = entityProps.Velocity.Y < 0;
+                    entityProps.Velocity.Y = 0;
+
+                    if (up)
+                        entityProps.Position.Y = collision.CollisionBox.Bottom + 1;
+                    else
+                        entityProps.Position.Y = collision.CollisionBox.Top - entity.CollisionBox.Height;
+
+                    collision.OnCollision(entity);
+                    entity.OnCollision(collision);
+                }
+            }
+
 
             // [ X ]
 
             entityProps.Position.X = entityProps.Position.X + (entityProps.Velocity.X * delta);
+            // get new neighbours since objects have probably moved
+            neighbours = chunkMap.GetNearbyCollidables(entity);
 
-            if (entity.IsOverlappingEnabled || entity.IsCollisionEnabled)
+            if (entity.IsOverlappingEnabled)
             {
-                neighbours = chunkMap.GetNearbyCollidables(entity);
+                // overlaps
+                var overlaps = neighbours.Where(n => n.IsOverlappingEnabled && entity.OverlapBox.IntersectsWith(n.OverlapBox));
 
-                var intersections = neighbours.Where(n => entity.CollisionBox.IntersectsWith(n.CollisionBox));
-                if (intersections.Any())
+                foreach (var overlap in overlaps)
                 {
-                    var collided = false;
+                    overlap.OnOverlapping(entity);
+                    entity.OnOverlapping(overlap);
 
-                    foreach (var intersection in intersections)
-                    {
-                        intersection.OnOverlapping(entity);
-                        entity.OnOverlapping(intersection);
-
-                        if (!collided && entity.IsCollisionEnabled && intersection.IsCollisionEnabled)
-                        {
-                            collided = true;
-
-                            entityProps.Velocity.X = 0;
-                            entityProps.Position.X = lastPos.X;
-                        }
-
-                    }
-
+                    if (!overlappingObjs.Contains(overlap))
+                        overlappingObjs.Add(overlap);
                 }
             }
+
+            if (entity.IsCollisionEnabled)
+            {
+                // collision
+                var collisions = neighbours.Where(n => n.IsCollisionEnabled && entity.CollisionBox.IntersectsWith(n.CollisionBox));
+
+                var hasCollided = false;
+
+                foreach (var collision in collisions)
+                {
+                    if (hasCollided)
+                        continue;
+
+                    hasCollided = true;
+
+                    entityProps.Velocity.X = 0;
+                    entityProps.Position.X = lastPos.X;
+
+                    collision.OnCollision(entity);
+                    entity.OnCollision(collision);
+                }
+            }
+
+            // track overlappers
+            entityProps.OverlappingObjects = overlappingObjs;
+
+            // get new neighbours since objects have probably moved
+            neighbours = chunkMap.GetNearbyCollidables(entity);
 
             switch (physSettings.PhysicsType)
             {
@@ -121,7 +154,7 @@ namespace Bonsai.Framework.Physics
 
         }
 
-        void handlePlatformerAdditionalPhysics(PhysicalProperties entityProps, ICollidable entity, ICollidable[] neighbours, GameTime gameTime)
+        void handlePlatformerAdditionalPhysics(PhysicalProperties entityProps, IPhysicsObject entity, IPhysicsObject[] neighbours, GameTime gameTime)
         {
             // [ Grounded flag ]
 
@@ -185,7 +218,7 @@ namespace Bonsai.Framework.Physics
 
         }
 
-        void handleTopDownAdditionalPhysics(PhysicalProperties entityProps, ICollidable entity, ICollidable[] neighbours, GameTime gameTime)
+        void handleTopDownAdditionalPhysics(PhysicalProperties entityProps, IPhysicsObject entity, IPhysicsObject[] neighbours, GameTime gameTime)
         {
             // Gravity
 

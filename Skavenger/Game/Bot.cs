@@ -14,17 +14,15 @@ using Bonsai.Framework.ContentLoading;
 using Bonsai.Framework.Animation;
 using Microsoft.Xna.Framework.Audio;
 using Bonsai.Framework.Input;
-using Skavenger.Game.Loot;
-using Bonsai.Framework.Variables;
+using Bonsai.Framework.Maths;
 
 namespace Skavenger.Game
 {
-    public class Player : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject
+    public class Bot : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject
     {
-        public Player(EventBus eventBus, GameVariable<bool> varCanOpenBox)
+        public Bot(EventBus eventBus, ICamera camera)
         {
             this.eventBus = eventBus;
-            this.canOpenBox = varCanOpenBox;
 
             DrawOrder = DrawOrderPosition.Foreground;
 
@@ -34,16 +32,17 @@ namespace Skavenger.Game
             Props.Weight = 1f;
             Props.HasGravity = true;
 
-            fireListener = new KeyPressListener(Keys.Space, () => fireProjectile(), 0100);
+            allWaypoints = new List<Vector2>();
+            waypointsQueue = new Queue<Vector2>();
         }
 
+        List<Vector2> allWaypoints;
+        Queue<Vector2> waypointsQueue;
         EventBus eventBus;
         SoundEffect sfxDie;
         SoundEffect sfxFire;
-        KeyPressListener fireListener;
         Texture2D bulletTexture;
-        float? lastMouseX = null;
-        GameVariable<bool> canOpenBox;
+        Vector2 movingTo;
 
         public bool IsHidden { get; set; }
         public DrawOrderPosition DrawOrder { get; set; }
@@ -55,13 +54,20 @@ namespace Skavenger.Game
         public bool IsOverlappingEnabled => true;
         public bool IsCollisionEnabled => true;
 
-
         public void Load(IContentLoader loader)
         {
             Props.Texture = loader.Load<Texture2D>(ContentPaths.SPRITE_PLAYER);
             bulletTexture = loader.Load<Texture2D>(ContentPaths.SPRITE_BULLET);
             sfxDie = loader.Load<SoundEffect>(ContentPaths.SFX_DEATH);
             sfxFire = loader.Load<SoundEffect>(ContentPaths.SFX_FIRE);
+
+            allWaypoints = new List<Vector2>
+            {
+                new Vector2(50,50),
+                new Vector2(400,50),
+            };
+            waypointsQueue = new Queue<Vector2>(allWaypoints);
+            movingTo = waypointsQueue.Dequeue();
         }
 
         public void Unload()
@@ -72,77 +78,31 @@ namespace Skavenger.Game
         {
             var kbState = Keyboard.GetState();
 
-            var isRunning = kbState.IsKeyDown(Keys.LeftShift);
+            // move to point
+            var isAtPoint = Math.Abs(GameMathHelper.CalculateDistanceBetween(Props.Position, movingTo)) < 2f;
 
-            // Movement
-            if (kbState.IsKeyDown(Keys.A))
+            if (!isAtPoint)
             {
-                var leftAngle = Props.Rotation + MathHelper.ToRadians(-90);
-                var force = Bonsai.Framework.Maths.GameMathHelper.UpdateVelocity(
-                    leftAngle,
+                // look at point
+                Props.Rotation = GameMathHelper.GetDirectionInRadians(Props.Position, movingTo);
+
+                var force = GameMathHelper.UpdateVelocity(
+                    Props.Rotation,
                     5f);
 
                 Props.AddForce(force);
-            }
-            else if (kbState.IsKeyDown(Keys.D))
+            } 
+            else
             {
-                var rightAngle = Props.Rotation + MathHelper.ToRadians(90);
-                var force = Bonsai.Framework.Maths.GameMathHelper.UpdateVelocity(
-                    rightAngle,
-                    5f);
+                if (waypointsQueue.Count == 0)
+                {
+                    allWaypoints.Reverse();
+                    waypointsQueue = new Queue<Vector2>(allWaypoints);
+                }
 
-                Props.AddForce(force);
+                movingTo = waypointsQueue.Dequeue();
             }
 
-            if (kbState.IsKeyDown(Keys.W))
-            {
-                var force = Bonsai.Framework.Maths.GameMathHelper.UpdateVelocity(
-                    Props.Rotation,
-                    10f * (isRunning ? 1.5f : 1f));
-
-                Props.AddForce(force);
-            }
-            else if (kbState.IsKeyDown(Keys.S))
-            {
-                var force = Bonsai.Framework.Maths.GameMathHelper.UpdateVelocity(
-                    Props.Rotation,
-                    -5f);
-
-                Props.AddForce(force);
-            }
-            
-            // projectiles
-            fireListener.Update(time);
-
-            var mouseState = Mouse.GetState();
-            var mousePos = mouseState.Position;
-            if (lastMouseX == null)
-                lastMouseX = mousePos.X;
-
-            var mouseHorizontalMovement = mousePos.X - lastMouseX.Value;
-            lastMouseX = mousePos.X;
-
-            // aim
-            /*base.Props.DirectionAim = Bonsai.Framework.Maths.MathHelper
-                .GetDirectionInRadians(this.Position, (camera.CurrentFocus - BonsaiGame.Current.ScreenCenter) + new Vector2(mousePos.X, mousePos.Y));
-                */
-
-            var minRadians = 0f;
-            var maxRadians = MathHelper.ToRadians(360);
-
-            var dir = base.Props.Rotation;
-            
-            dir = dir + (mouseHorizontalMovement * 0.01f);
-
-            if (dir < minRadians)
-                dir = maxRadians;
-            else if (dir > maxRadians)
-                dir = minRadians;
-
-            base.Props.Rotation = dir;
-
-            // show tip
-            canOpenBox.Value = Props.OverlappingObjects.OfType<LootBox>().Any();
         }
 
         public void Draw(GameTime time, SpriteBatch batch, Vector2 parentPosition)
@@ -164,31 +124,6 @@ namespace Skavenger.Game
             batch.Draw(FrameworkGlobals.Pixel,
                        aim,
                        Color.Orange);
-        }
-
-        public void OnOverlapping(object actor)
-        {
-            if (actor == null)
-                return;
-
-            Debug.WriteLine("Player Overlapping: " + actor.GetType().Name);
-
-            if (actor is LootBox)
-            {
-                if (!canOpenBox.Value)
-                {
-                    canOpenBox.Value = true;
-                }
-
-                var lootBox = actor as LootBox;
-
-                var kbState = Keyboard.GetState();
-                if (kbState.IsKeyDown(Keys.E))
-                {
-                    var items = lootBox.OpenBox();
-                }
-            }
-            
         }
 
         public void OnCollision(object actor)
@@ -215,6 +150,10 @@ namespace Skavenger.Game
 
             // notify
             eventBus.QueueNotification(Events.PlayerDied);
+        }
+
+        public void OnOverlapping(object actor)
+        {
         }
 
     }

@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Skavenger.Game
 {
-    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable, Bonsai.Framework.IDeletable
+    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject, Bonsai.Framework.IDeletable
     {
         public Coin()
         {
@@ -26,6 +26,7 @@ namespace Skavenger.Game
         public bool IsDisabled => false;
         public bool IsHidden { get; set; }
         public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
+        public RectangleF OverlapBox => CollisionBox;
         public bool IsOverlappingEnabled => true;
         public bool IsCollisionEnabled => false;
 
@@ -64,5 +65,8 @@ namespace Skavenger.Game
             sfxCollect.Play(0.5f, 0f, 0f);
         }
 
+        public void OnCollision(object actor)
+        {
+        }
     }
 }

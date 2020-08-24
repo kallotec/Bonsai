@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Skavenger.Game
 {
-    public class Wall : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.ICollidable
+    public class Wall : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.Physics.IPhysicsObject
     {
         public Wall(RectangleF rect, Color color)
         {
@@ -25,6 +25,7 @@ namespace Skavenger.Game
         Texture2D texture;
         public Vector2 Position { get; set; }
         public RectangleF CollisionBox { get; private set; }
+        public RectangleF OverlapBox => CollisionBox;
         public bool IsCollisionEnabled => true;
         public bool IsOverlappingEnabled => true;
         public bool IsDisabled => false;
@@ -54,6 +55,9 @@ namespace Skavenger.Game
             Debug.WriteLine($"Wall.OnOverlapping = {actor.GetType().Name}");
         }
 
+        public void OnCollision(object actor)
+        {
+        }
 
     }
 }

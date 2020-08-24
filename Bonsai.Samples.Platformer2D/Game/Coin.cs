@@ -13,7 +13,7 @@ using Bonsai.Samples.Platformer2D.Game.Actors;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.ICollidable, Bonsai.Framework.IDeletable
+    public class Coin : Actor, Bonsai.Framework.ILoadable, Bonsai.Framework.IUpdateable, Bonsai.Framework.IDrawable, Bonsai.Framework.Physics.IPhysicsObject, Bonsai.Framework.IDeletable
     {
         public Coin()
         {
@@ -29,7 +29,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         public RectangleF CollisionBox => new RectangleF(Props.Position.X, Props.Position.Y, Props.PhysicalRect.Width, Props.PhysicalRect.Height);
         public bool IsOverlappingEnabled => true;
         public bool IsCollisionEnabled => false;
-
+        public RectangleF OverlapBox => CollisionBox;
 
         public void Load(IContentLoader loader)
         {

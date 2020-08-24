@@ -28,6 +28,7 @@ namespace Skavenger
         internal static string SFX_DEATH = @"Sound/death";
         internal static string SFX_FIRE = @"Sound/fire";
         internal static string SFX_COIN_COLLECT = @"Sound/coinCollect";
+        internal static string SFX_BOX_OPEN = @"Sound/openDoor";
 
     }
 }

@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Skavenger.Game.Loot;
 using Svg;
 using System;
 using System.Collections.Generic;
@@ -47,14 +48,14 @@ namespace Skavenger.Game
                 TerminalVelocity = 200f,
             };
 
-            varRotation = new GameVariable<string>();
         }
 
-        GameVariable<string> varRotation;
-        TextElement<string> txtRotationDisplay;
+        GameVariable<bool> varShowLootTip;
+        TextElement<string> txtDisplayTipLootBoxOpen;
         EventBus eventBus;
         List<string> eventBusSubscriptionIds;
         Player player;
+        Bot bot;
         TextPopupManager textPopupManager;
         List<KeyPressListener> keyListeners;
         MapPhysics phys;
@@ -73,10 +74,19 @@ namespace Skavenger.Game
 
             var defaultFont = loader.Load<SpriteFont>(ContentPaths.FONT_UI_GENERAL);
 
+            varShowLootTip = new GameVariable<bool>();
+            varShowLootTip.Load(loader);
+            GameObjects.Add(varShowLootTip);
+
             // Player
-            player = new Player(eventBus, Camera);
+            player = new Player(eventBus, varShowLootTip);
             player.Load(loader);
             GameObjects.Add(player);
+
+            // Bot
+            bot = new Bot(eventBus, Camera);
+            bot.Load(loader);
+            GameObjects.Add(bot);
 
             // Message manager
             textPopupManager = new TextPopupManager(ContentPaths.FONT_UI_GENERAL, StackingMethod.Parallel);
@@ -101,15 +111,15 @@ namespace Skavenger.Game
             });
 
             // Game variables
-            varRotation.Load(loader);
-            txtRotationDisplay = new TextElement<string>(varRotation, defaultFont, new TextElementSettings())
+            var tipLootBoxOpen = "Press <E> to open loot box";
+            txtDisplayTipLootBoxOpen = new TextElement<string>(tipLootBoxOpen, defaultFont, new TextElementSettings())
             {
                 Position = new Vector2(10, 10),
                 IsAttachedToCamera = true,
+                IsHidden = true,
             };
-            txtRotationDisplay.Load(loader);
-            GameObjects.Add(varRotation);
-            GameObjects.Add(txtRotationDisplay);
+            txtDisplayTipLootBoxOpen.Load(loader);
+            GameObjects.Add(txtDisplayTipLootBoxOpen);
 
             // Map
             loadMap();
@@ -134,11 +144,12 @@ namespace Skavenger.Game
 
             // physics
             phys.ApplyPhysics(player.Props, player, time);
+            phys.ApplyPhysics(bot.Props, bot, time);
 
             foreach (var p in GameObjects.OfType<Projectile>())
                 phys.ApplyPhysics(p.Props, p, time);
 
-            varRotation.Value = player.Props.DirectionAim.ToString();
+            txtDisplayTipLootBoxOpen.IsHidden = !varShowLootTip.Value;
         }
 
         void setupKeyListeners()
@@ -161,13 +172,13 @@ namespace Skavenger.Game
         void loadMap()
         {
             // reset game objects
-            GameObjects.RemoveAll(o => o is Coin || o is Wall);
+            GameObjects.RemoveAll(o => o is LootBox || o is Wall);
 
             // setup chunks
             chunkMap.Reset(chunkWidth: 100, chunkHeight: 100, mapWidth: 1000, mapHeight: 1000);
 
             // physics reset
-            var phys = new MapPhysics(chunkMap, physSettings);
+            phys = new MapPhysics(chunkMap, physSettings);
 
             // read map elements
             var doc = SvgDocument.Open(ContentPaths.PATH_MAP_1);
@@ -182,7 +193,15 @@ namespace Skavenger.Game
                 else if (rect.Fill.ToString() == "#000002")
                 {
                     playerExit = new Vector2(rect.X, rect.Y);
-                } 
+                }
+                else if (rect.Fill.ToString() == "#000010")
+                {
+                    var lootBox = new LootBox();
+                    lootBox.Props.Position = new Vector2(rect.X, rect.Y);
+                    lootBox.Load(_loader);
+                    GameObjects.Add(lootBox);
+                    chunkMap.UpdateEntity(lootBox);
+                }
                 else
                 {
                     // create wall
@@ -202,6 +221,9 @@ namespace Skavenger.Game
 
             // Set player position for new map
             player.Props.Position = playerStart;
+            bot.Props.Position = new Vector2(10, 10);
+            chunkMap.UpdateEntity(player);
+            chunkMap.UpdateEntity(bot);
 
             addCoinToLevel(new Vector2(200, 200));
 

@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Bonsai.Samples.Platformer2D.Game
 {
-    public class Platform : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.ICollidable
+    public class Platform : DrawableBase, Bonsai.Framework.ILoadable, Bonsai.Framework.IDrawable, Bonsai.Framework.IUpdateable, Bonsai.Framework.Physics.IPhysicsObject
     {
         public Platform(string fillHex, string strokeHex, Vector2[] vertexes, Texture2D texture)
         {
@@ -40,6 +40,7 @@ namespace Bonsai.Samples.Platformer2D.Game
         SoundEffect sfxCheckpoint;
 
         public RectangleF CollisionBox => shape.Bounds;
+        public RectangleF OverlapBox => CollisionBox;
         public bool IsCollisionEnabled => true;
         public bool IsOverlappingEnabled => true;
         public bool IsDisabled => false;

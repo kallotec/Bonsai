@@ -9,11 +9,10 @@ using System.Text;
 
 namespace Bonsai.Framework
 {
-    public interface ICollidable
+    public interface IOverlapable
     {
         bool IsOverlappingEnabled { get; }
-        bool IsCollisionEnabled { get; }
-        RectangleF CollisionBox { get; }
+        RectangleF OverlapBox { get; }
 
         void OnOverlapping(object actor);
     }

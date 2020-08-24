@@ -8,7 +8,7 @@ using Bonsai.Framework.Collision;
 
 namespace Bonsai.Framework.Maths
 {
-    public static class MathHelper
+    public static class GameMathHelper
     {
         static Vector2 up = new Vector2(1, 0);
 
